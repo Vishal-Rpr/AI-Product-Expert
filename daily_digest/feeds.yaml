@@ -1,0 +1,87 @@
+# Daily Digest - RSS Feed Sources
+# Organized by category for the daily AI PM digest email
+
+product_management:
+  - name: "Lenny's Newsletter"
+    url: "https://www.lennysnewsletter.com/feed"
+    category: "PM Strategy"
+
+  - name: "Product Talk (Teresa Torres)"
+    url: "https://www.producttalk.org/feed/"
+    category: "Discovery & Research"
+
+  - name: "SVPG (Marty Cagan)"
+    url: "https://www.svpg.com/feed/"
+    category: "Product Leadership"
+
+  - name: "Mind the Product"
+    url: "https://www.mindtheproduct.com/feed/"
+    category: "PM Community"
+
+  - name: "Shreyas Doshi (Substack)"
+    url: "https://www.intuitivepm.com/feed"
+    category: "Product Strategy"
+
+ai_and_ml:
+  - name: "Simon Willison"
+    url: "https://simonwillison.net/atom/everything/"
+    category: "AI Engineering"
+
+  - name: "One Useful Thing (Ethan Mollick)"
+    url: "https://www.oneusefulthing.org/feed"
+    category: "AI Adoption"
+
+  - name: "Chip Huyen"
+    url: "https://huyenchip.com/feed.xml"
+    category: "Production ML"
+
+  - name: "Eugene Yan"
+    url: "https://eugeneyan.com/rss/"
+    category: "ML Systems"
+
+  - name: "Hamel Husain"
+    url: "https://hamel.dev/feed.xml"
+    category: "LLM Evals & Dev"
+
+  - name: "Maggie Appleton"
+    url: "https://maggieappleton.com/rss.xml"
+    category: "AI UX & Design"
+
+ai_labs:
+  - name: "Anthropic Research"
+    url: "https://www.anthropic.com/feed"
+    category: "AI Research"
+
+  - name: "OpenAI Blog"
+    url: "https://openai.com/blog/rss.xml"
+    category: "AI Research"
+
+  - name: "Google DeepMind Blog"
+    url: "https://deepmind.google/blog/rss.xml"
+    category: "AI Research"
+
+strategy_and_tech:
+  - name: "Stratechery (Ben Thompson)"
+    url: "https://stratechery.com/feed/"
+    category: "Tech Strategy"
+
+  - name: "a16z"
+    url: "https://a16z.com/feed/"
+    category: "VC & Tech Trends"
+
+  - name: "Hacker News - AI PM"
+    url: "https://hnrss.org/newest?q=AI+product+management"
+    category: "Community"
+
+  - name: "Hacker News - LLM"
+    url: "https://hnrss.org/newest?q=LLM+product"
+    category: "Community"
+
+logistics_and_domain:
+  - name: "FreightWaves"
+    url: "https://www.freightwaves.com/feed"
+    category: "Shipping & Logistics"
+
+  - name: "Supply Chain Dive"
+    url: "https://www.supplychaindive.com/feeds/news/"
+    category: "Supply Chain"
