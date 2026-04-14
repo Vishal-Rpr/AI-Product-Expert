@@ -99,6 +99,7 @@ def generate_daily_brief(all_articles: list[dict]) -> str | None:
         return None
 
     if not all_articles:
+        log.info("No articles found, skipping AI summary.")
         return None
 
     try:
@@ -127,12 +128,17 @@ Be direct and specific. No fluff, no greetings. Write like a sharp analyst, not 
 
     try:
         client = genai.Client(api_key=api_key)
+        log.info("Calling Gemini API for daily brief...")
         response = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=prompt,
         )
-        brief = response.text.strip()
-        log.info("AI daily brief generated successfully.")
+        brief = getattr(response, "text", None)
+        if not brief or not brief.strip():
+            log.warning(f"Gemini returned empty response. Full response: {response}")
+            return None
+        brief = brief.strip()
+        log.info(f"AI daily brief generated ({len(brief)} chars).")
         return brief
     except Exception as e:
         log.warning(f"AI summary failed, continuing without it: {e}")

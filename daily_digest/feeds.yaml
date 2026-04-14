@@ -1,28 +1,48 @@
 # Daily Digest - RSS Feed Sources
-# Organized by category for the daily AI PM digest email
+# Mapped from the AI PM Learning Plan: Key People, Newsletters, Communities, Websites
 
-product_management:
+# ── PM Fundamentals ──────────────────────────────────────────────────────
+
+pm_fundamentals:
   - name: "Lenny's Newsletter"
     url: "https://www.lennysnewsletter.com/feed"
     category: "PM Strategy"
-
-  - name: "Product Talk (Teresa Torres)"
-    url: "https://www.producttalk.org/feed/"
-    category: "Discovery & Research"
 
   - name: "SVPG (Marty Cagan)"
     url: "https://www.svpg.com/feed/"
     category: "Product Leadership"
 
-  - name: "Mind the Product"
-    url: "https://www.mindtheproduct.com/feed/"
-    category: "PM Community"
+  - name: "Product Talk (Teresa Torres)"
+    url: "https://www.producttalk.org/feed/"
+    category: "Discovery & Research"
+
+  - name: "First Round Review"
+    url: "https://review.firstround.com/feed.xml"
+    category: "PM Strategy"
+
+  - name: "Reforge Blog"
+    url: "https://www.reforge.com/blog/rss.xml"
+    category: "Growth & Strategy"
+
+  - name: "Department of Product"
+    url: "https://www.departmentofproduct.com/feed/"
+    category: "PM Fundamentals"
 
   - name: "Shreyas Doshi (Substack)"
     url: "https://www.intuitivepm.com/feed"
     category: "Product Strategy"
 
-ai_and_ml:
+  - name: "Mind the Product"
+    url: "https://www.mindtheproduct.com/feed/"
+    category: "PM Community"
+
+  - name: "Product School Blog"
+    url: "https://productschool.com/blog/feed"
+    category: "PM Fundamentals"
+
+# ── AI Product & Industry ────────────────────────────────────────────────
+
+ai_product:
   - name: "Simon Willison"
     url: "https://simonwillison.net/atom/everything/"
     category: "AI Engineering"
@@ -30,6 +50,18 @@ ai_and_ml:
   - name: "One Useful Thing (Ethan Mollick)"
     url: "https://www.oneusefulthing.org/feed"
     category: "AI Adoption"
+
+  - name: "The Batch (Andrew Ng)"
+    url: "https://www.deeplearning.ai/the-batch/feed/"
+    category: "AI News"
+
+  - name: "Stratechery (Ben Thompson)"
+    url: "https://stratechery.com/feed/"
+    category: "Tech Strategy"
+
+  - name: "a16z"
+    url: "https://a16z.com/feed/"
+    category: "VC & AI Trends"
 
   - name: "Chip Huyen"
     url: "https://huyenchip.com/feed.xml"
@@ -47,8 +79,10 @@ ai_and_ml:
     url: "https://maggieappleton.com/rss.xml"
     category: "AI UX & Design"
 
+# ── AI Labs ──────────────────────────────────────────────────────────────
+
 ai_labs:
-  - name: "Anthropic Research"
+  - name: "Anthropic Blog"
     url: "https://www.anthropic.com/feed"
     category: "AI Research"
 
@@ -60,24 +94,9 @@ ai_labs:
     url: "https://deepmind.google/blog/rss.xml"
     category: "AI Research"
 
-strategy_and_tech:
-  - name: "Stratechery (Ben Thompson)"
-    url: "https://stratechery.com/feed/"
-    category: "Tech Strategy"
+# ── B2B & Logistics ─────────────────────────────────────────────────────
 
-  - name: "a16z"
-    url: "https://a16z.com/feed/"
-    category: "VC & Tech Trends"
-
-  - name: "Hacker News - AI PM"
-    url: "https://hnrss.org/newest?q=AI+product+management"
-    category: "Community"
-
-  - name: "Hacker News - LLM"
-    url: "https://hnrss.org/newest?q=LLM+product"
-    category: "Community"
-
-logistics_and_domain:
+logistics:
   - name: "FreightWaves"
     url: "https://www.freightwaves.com/feed"
     category: "Shipping & Logistics"
@@ -85,3 +104,22 @@ logistics_and_domain:
   - name: "Supply Chain Dive"
     url: "https://www.supplychaindive.com/feeds/news/"
     category: "Supply Chain"
+
+# ── Communities (Hacker News + Reddit) ───────────────────────────────────
+
+communities:
+  - name: "Hacker News - AI PM"
+    url: "https://hnrss.org/newest?q=AI+product+management"
+    category: "Community"
+
+  - name: "Hacker News - LLM Products"
+    url: "https://hnrss.org/newest?q=LLM+product"
+    category: "Community"
+
+  - name: "Reddit - Product Management"
+    url: "https://www.reddit.com/r/ProductManagement/hot.rss"
+    category: "Community"
+
+  - name: "Reddit - Artificial Intelligence"
+    url: "https://www.reddit.com/r/artificial/hot.rss"
+    category: "Community"
