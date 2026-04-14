@@ -440,6 +440,55 @@ Big tech interviews are structured rounds, not portfolio reviews. Your portfolio
 - **Eugene Yan** - Systems patterns for AI products
 - **Maggie Appleton** - AI UX and interaction design
 - **April Dunford** - Positioning and competitive strategy
+- **Andrew Ng** - AI fundamentals, weekly AI news via The Batch newsletter
+- **Ben Thompson** - AI strategy and business model analysis (Stratechery)
+- **Marily Nika** - Shipping AI features end-to-end, AI Product Playbook author
+
+## Newsletters and Blogs
+
+**PM Fundamentals**
+- Lenny's Newsletter (lennysnewsletter.com) - PM craft, career, strategy, increasingly AI-focused
+- SVPG Blog (svpg.com/articles) - Marty Cagan's team on outcomes and empowered teams
+- Product Talk (producttalk.org) - Teresa Torres on continuous discovery
+- First Round Review (review.firstround.com) - Long-form operator stories from top startups
+- Reforge Blog (reforge.com/blog) - Growth, strategy, retention frameworks
+- Department of Product (departmentofproduct.com) - Curated PM articles and frameworks
+
+**AI Product and Industry**
+- Simon Willison's Weblog (simonwillison.net) - Daily practitioner-level LLM and tools coverage
+- One Useful Thing (oneusefulthing.org) - Ethan Mollick's Substack on practical AI use
+- The Batch (deeplearning.ai/the-batch) - Andrew Ng's weekly AI news digest
+- Stratechery (stratechery.com) - Ben Thompson on AI strategy and platform dynamics
+- a16z AI Blog (a16z.com/ai) - VC perspective on AI markets and architectures
+- Anthropic Blog (anthropic.com/blog) - Agent design patterns, tool use, safety
+- OpenAI Blog (openai.com/blog) - Frontier model releases and research
+- Google DeepMind Blog (deepmind.google/blog) - Research and product-facing AI updates
+- Hamel Husain's Blog (hamel.dev) - Evals and practical LLM development
+- Eugene Yan's Blog (eugeneyan.com) - AI product design patterns
+
+**B2B and Logistics**
+- FreightWaves (freightwaves.com) - Freight industry news with growing AI coverage
+- Supply Chain Dive (supplychaindive.com) - Concise industry updates
+- The Logistics of Logistics podcast (thelogisticsoflogistics.com) - AI-focused episodes
+
+## Communities
+
+- **Lenny's Slack** - Paid (with newsletter sub). High-quality, active PMs at top companies
+- **Mind the Product Slack** - Free. Large PM community, job postings
+- **Hacker News** (news.ycombinator.com) - Filter for AI threads; comments often better than articles
+- **r/ProductManagement** (Reddit) - General PM questions and calibration
+- **r/artificial** and **r/MachineLearning** (Reddit) - AI industry news and discussion
+- **X/Twitter** - Build a list from the people above. AI news breaks here first
+- **LinkedIn PM groups** - Search "AI Product Management"; engage in comments before posting
+- **AI tool Discords** (Anthropic, LangChain, etc.) - Technical depth and builder perspectives
+
+## Websites and Publications
+
+- Mind the Product (mindtheproduct.com) - Articles, conference talks, job board
+- Product School Blog (productschool.com/blog) - Frameworks, templates, interview prep
+- Pragmatic Institute (pragmaticinstitute.com) - B2B product management focus
+- Exponent (tryexponent.com) - AI PM mock interviews and structured practice
+- IGotAnOffer (igotanoffer.com) - Google/Meta specific PM interview prep
 
 ---
 
