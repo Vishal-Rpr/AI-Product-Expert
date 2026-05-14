@@ -57,6 +57,7 @@ Start publishing from Week 2. By the time you assemble the portfolio in Week 7, 
 - [x] Watch: Andrej Karpathy, "Intro to Large Language Models" (YouTube, 1hr)
 - [x] Read: The Complete AI Agent Stack in 2026 (optijara.ai/en/blog/ai-agent-stack-2026-complete-guide)
 - [ ] Optional: Andrew Ng's "AI for Everyone" on Coursera (3hrs, free)
+- [x] Read: Anthropic "Develop Tests" docs (platform.claude.com/docs/en/test-and-evaluate/develop-tests)
 - [ ] Read: Anthropic prompt engineering docs (docs.anthropic.com)
 
 **PM Track:**
@@ -76,7 +77,7 @@ Write down 5 questions you'd ask a client about their credit limit pain points, 
 
 **AI Track:**
 - [x] Read: 2026 AI Product Strategy Guide by Mind the Product (mindtheproduct.com)
-- [ ] Read: AI Product Manager Roadmap 2026 (nextbyrahul.tech/blog/ai-product-manager-roadmap-2026)
+- [x] Read: AI Product Manager Roadmap 2026 (nextbyrahul.tech/blog/ai-product-manager-roadmap-2026)
 - [ ] Read: Chip Huyen, "Building LLM Applications for Production" (blog)
 
 **PM Track:**
