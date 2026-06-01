@@ -64,11 +64,12 @@ Start publishing from Week 2. By the time you assemble the portfolio in Week 7, 
 - [ ] * Read: The Mom Test by Rob Fitzpatrick (~2hrs). Learn how to have useful customer conversations without leading the witness. This is the #1 gap for ops-focused PMs transitioning to customer-facing roles.
 - [ ] Reflect: Think about your last 3 features (credit limits, pod board, rate APIs). Did you validate the problem with users before building? What would you do differently?
 
-**Build (PM Co-pilot v0):**
-- [ ] Set up the project from scratch on your personal PC
-- [ ] Write the AGENTS.md with a clear identity, rules, and scope
-- [ ] Define 2-3 core capabilities: PRD generation with RAG style matching, ticket creation via MCP
-- [ ] Get it working for at least one workflow end-to-end
+**Build (Logistics PM Cowork Plugin v0):**
+- [ ] Clone anthropics/knowledge-work-plugins and study the product-management plugin structure
+- [ ] Scaffold logistics-pm-plugin following their architecture (.claude-plugin/, skills/, commands/, .mcp.json)
+- [ ] Write first 2 domain skills: prd-generation.md + credit-assessment.md
+- [ ] Define the RAG style-matching skill using your existing reference PRDs
+- [ ] Get one slash command working end-to-end (/logistics-pm:write-spec)
 
 **Practice Task:**
 Write down 5 questions you'd ask a client about their credit limit pain points, following Mom Test principles. No leading questions, no pitching solutions. Then write a 1-page product brief for the PM Co-pilot.
@@ -84,16 +85,16 @@ Write down 5 questions you'd ask a client about their credit limit pain points, 
 - [ ] * Read: Continuous Discovery Habits by Teresa Torres, Chapters 1-6. Covers opportunity solution trees, continuous interviewing, assumption mapping. This is the framework that bridges your ops thinking to customer-outcome thinking.
 - [ ] Exercise: For your credit limit feature, map the outcome metrics you'd track if this were an external product (adoption rate, time-to-decision, error rate, revenue impact) vs. the internal efficiency metrics you're currently tracking.
 
-**Build (PM Co-pilot v1):**
-- [ ] Define eval criteria for the co-pilot: how do you know its output is actually good?
-- [ ] Create 5+ test scenarios and evaluate systematically
-- [ ] Identify where it fails or gives generic output, improve those areas
-- [ ] Add a Knowledge folder with PM frameworks (RICE, ICE, user story templates, opportunity solution tree template)
+**Build (Logistics PM Cowork Plugin v1 — Evals):**
+- [ ] Define eval rubric: completeness, style consistency, domain accuracy, actionability
+- [ ] Create 5+ test scenarios (PRD generation, credit assessment, RFQ analysis) and evaluate systematically
+- [ ] Identify where plugin outputs are generic vs. domain-informed, improve skills
+- [ ] Build eval-framework.md skill that auto-checks outputs against rubrics
 
 **Practice Task:**
 Build an opportunity solution tree for the credit limit feature. What's the desired outcome? What are the opportunities? What solutions map to each?
 
-**PUBLIC (Week 2):** Write a product teardown of your co-pilot and post on LinkedIn. Frame it as "I built a PM co-pilot and here's what I learned about AI product quality." Be honest about what fails. Authenticity > polish.
+**PUBLIC (Week 2):** Write a product teardown of Anthropic's PM plugin and post on LinkedIn. Frame it as "I analyzed Anthropic's knowledge-work-plugins and found two gaps: domain specificity and quality measurement. Here's what I'm building." Be honest about what fails. Authenticity > polish.
 
 ---
 
