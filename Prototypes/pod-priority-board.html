@@ -1,0 +1,3414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Silq — Pod Priority Board</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf9f7;
+    --card: #ffffff;
+    --primary: #c8842e;
+    --primary-dark: #a86b1d;
+    --primary-light: #fdf4e8;
+    --primary-lighter: #fef9f1;
+    --text: #2d2a26;
+    --text-secondary: #8a8580;
+    --border: #e8e4df;
+    --border-light: #f0ece7;
+    --green: #3d9a5f;
+    --green-bg: #edf7f0;
+    --yellow: #c8842e;
+    --yellow-bg: #fdf4e8;
+    --red: #c44b3f;
+    --red-bg: #fdf0ee;
+    --gray-bg: #f5f3f0;
+    --orange: #d4722a;
+    --orange-bg: #fdf2e9;
+    --sidebar-bg: #fefcfa;
+    --sidebar-active: #fdf4e8;
+    --purple: #7c5cbf;
+    --purple-bg: #f3effb;
+    --blue: #2563eb;
+    --blue-bg: #eff6ff;
+    --blue-light: #dbeafe;
+    --lane-submitted: #f0f4ff;
+    --lane-awaiting: #fefce8;
+    --lane-expired: #fef2f2;
+    --lane-rejected: #fdf2f8;
+    --lane-accepted: #f0fdf4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    width: 220px;
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 50;
+  }
+
+  .sidebar-logo {
+    padding: 20px 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .silq-logo { display: flex; align-items: center; gap: 8px; }
+  .silq-logo-text { font-size: 22px; font-weight: 700; color: #1e2a4a; letter-spacing: -0.5px; }
+
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0 10px;
+    flex: 1;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.12s;
+    text-decoration: none;
+  }
+
+  .nav-item:hover { background: var(--gray-bg); color: var(--text); }
+  .nav-item.active { background: var(--sidebar-active); color: var(--primary); font-weight: 600; }
+  .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.6; }
+  .nav-item.active svg { opacity: 1; }
+
+  .nav-badge {
+    margin-left: auto;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 10px;
+    background: var(--primary);
+    color: #fff;
+  }
+
+  .main {
+    flex: 1;
+    margin-left: 220px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .app-header {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .header-left { display: flex; align-items: center; gap: 14px; }
+
+  .app-header h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.3px;
+  }
+
+  .header-pod-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 14px;
+    background: var(--gray-bg);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .header-pod-info strong { color: var(--text); font-weight: 600; }
+
+  .header-actions { display: flex; gap: 10px; align-items: center; }
+
+  .live-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--green);
+    padding: 5px 12px;
+    background: var(--green-bg);
+    border-radius: 20px;
+  }
+
+  .live-dot {
+    width: 7px; height: 7px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .btn {
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+
+  .btn:hover { background: var(--gray-bg); }
+
+  /* Summary strip */
+  .summary-strip {
+    display: flex;
+    gap: 8px;
+    padding: 14px 28px;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+
+  .summary-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    font-size: 12px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .summary-pill:hover { border-color: var(--primary); }
+  .summary-pill.active { border-color: var(--primary); background: var(--primary-light); }
+
+  .summary-pill .pill-count {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .summary-pill .pill-label {
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  /* Filter bar */
+  .filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 28px;
+    flex-wrap: wrap;
+  }
+
+  .filter-bar label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  .filter-select {
+    padding: 6px 28px 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 12px;
+    font-family: inherit;
+    background: var(--card);
+    color: var(--text);
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='%238a8580' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    transition: border-color 0.15s;
+  }
+
+  .filter-select:focus { border-color: var(--primary); }
+
+  .filter-divider {
+    width: 1px;
+    height: 24px;
+    background: var(--border);
+    margin: 0 4px;
+  }
+
+  .search-input-sm {
+    padding: 6px 10px 6px 30px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 12px;
+    font-family: inherit;
+    width: 200px;
+    outline: none;
+    background: var(--card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' fill='%238a8580' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242.156a5 5 0 1 1 0-10 5 5 0 0 1 0 10z'/%3E%3C/svg%3E") 9px center no-repeat;
+    transition: border-color 0.15s;
+  }
+
+  .search-input-sm:focus { border-color: var(--primary); }
+
+  .clear-filters-btn {
+    padding: 5px 12px;
+    border: none;
+    background: transparent;
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    display: none;
+  }
+
+  .clear-filters-btn.visible { display: inline; }
+
+  /* Kanban board */
+  .board-container {
+    flex: 1;
+    padding: 16px 20px 20px;
+    overflow-x: auto;
+  }
+
+  .board {
+    display: flex;
+    gap: 14px;
+    min-height: calc(100vh - 230px);
+    align-items: flex-start;
+  }
+
+  .lane {
+    min-width: 290px;
+    max-width: 290px;
+    background: var(--gray-bg);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 240px);
+  }
+
+  .lane-header {
+    padding: 14px 16px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .lane-header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .lane-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .lane-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--text);
+  }
+
+  .lane-count {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.08);
+    color: var(--text-secondary);
+  }
+
+  .lane-stats {
+    display: flex;
+    gap: 12px;
+    padding: 0 16px 10px;
+  }
+
+  .lane-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .lane-stat-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .lane-stat-label {
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--text-secondary);
+  }
+
+  .lane-cards {
+    padding: 6px 10px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .lane-cards::-webkit-scrollbar { width: 4px; }
+  .lane-cards::-webkit-scrollbar-track { background: transparent; }
+  .lane-cards::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* RFQ Card */
+  .rfq-card {
+    background: var(--card);
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    padding: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .rfq-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 2px 8px rgba(200,132,46,0.1);
+    transform: translateY(-1px);
+  }
+
+  .rfq-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .rfq-client {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  .rfq-id {
+    font-size: 10px;
+    color: var(--text-secondary);
+    margin-top: 1px;
+  }
+
+  .rfq-flags {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .flag {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+  }
+
+  .flag-arriving {
+    background: var(--blue-bg);
+    color: var(--blue);
+    border: 1px solid var(--blue-light);
+  }
+
+  .flag-first-time {
+    background: var(--purple-bg);
+    color: var(--purple);
+    border: 1px solid #e4d9f7;
+  }
+
+  .flag-delayed {
+    background: var(--red-bg);
+    color: var(--red);
+    border: 1px solid #fcd5d2;
+  }
+
+  .rfq-route {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+
+  .rfq-route .route-arrow {
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 10px;
+  }
+
+  .rfq-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .meta-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    background: var(--gray-bg);
+    color: var(--text-secondary);
+  }
+
+  .meta-chip.mode-fcl { background: #e0f2fe; color: #0369a1; }
+  .meta-chip.mode-lcl { background: #fef3c7; color: #92400e; }
+  .meta-chip.mode-air { background: #ede9fe; color: #6d28d9; }
+  .meta-chip.mode-inspections { background: #ede9fe; color: #6d28d9; }
+
+  .transport-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px; height: 18px;
+    flex-shrink: 0;
+  }
+
+  .transport-icon svg { width: 14px; height: 14px; }
+  .transport-icon.ocean svg { color: #0369a1; }
+  .transport-icon.air svg { color: #6d28d9; }
+
+  .shipment-count {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: var(--gray-bg);
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+
+  .rfq-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 8px;
+    border-top: 1px solid var(--border-light);
+  }
+
+  .rfq-assignee {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+
+  .avatar-xs {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .rfq-days {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .days-ok { background: var(--green-bg); color: var(--green); }
+  .days-warn { background: var(--yellow-bg); color: var(--yellow); }
+  .days-danger { background: var(--red-bg); color: var(--red); }
+
+  .rfq-stage-data {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .rfq-stage-data strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .link-icon {
+    width: 14px; height: 14px;
+    color: var(--primary);
+    opacity: 0;
+    transition: opacity 0.15s;
+    position: absolute;
+    top: 14px;
+    right: 14px;
+  }
+
+  .rfq-card:hover .link-icon { opacity: 1; }
+
+  /* Tooltip for flags */
+  .flag[title] { position: relative; }
+
+  /* Lane color accents */
+  .lane[data-stage="submitted"] .lane-header { background: var(--lane-submitted); }
+  .lane[data-stage="submitted"] .lane-dot { background: #6366f1; }
+  .lane[data-stage="awaiting"] .lane-header { background: var(--lane-awaiting); }
+  .lane[data-stage="awaiting"] .lane-dot { background: #ca8a04; }
+  .lane[data-stage="expired"] .lane-header { background: var(--lane-expired); }
+  .lane[data-stage="expired"] .lane-dot { background: var(--red); }
+  .lane[data-stage="rejected"] .lane-header { background: var(--lane-rejected); }
+  .lane[data-stage="rejected"] .lane-dot { background: #be185d; }
+  .lane[data-stage="accepted"] .lane-header { background: var(--lane-accepted); }
+  .lane[data-stage="accepted"] .lane-dot { background: var(--green); }
+
+  .empty-lane {
+    padding: 24px 16px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .empty-lane svg {
+    width: 28px; height: 28px;
+    color: var(--border);
+    margin-bottom: 6px;
+  }
+
+  @media (max-width: 1400px) {
+    .lane { min-width: 260px; max-width: 260px; }
+  }
+
+  /* View toggle */
+  .view-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: var(--gray-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 3px 4px;
+  }
+
+  .toggle-option {
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.15s;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+  }
+
+  .toggle-option.active {
+    background: var(--card);
+    color: var(--text);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    font-weight: 600;
+  }
+
+  /* Ops milestone tracker on cards */
+  .ops-tracker {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    margin: 6px 0 2px;
+    padding: 5px 0 2px;
+    border-top: 1px dashed var(--border-light);
+  }
+
+  .ops-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    flex-shrink: 0;
+    position: relative;
+    cursor: default;
+  }
+
+  .ops-dot.done { background: var(--green-bg); color: var(--green); border: 1.5px solid var(--green); }
+  .ops-dot.in-progress { background: var(--yellow-bg); color: var(--yellow); border: 1.5px solid var(--yellow); animation: pulse 2s infinite; }
+  .ops-dot.pending { background: var(--gray-bg); color: var(--border); border: 1.5px solid var(--border); }
+
+  .ops-dot-line {
+    width: 8px;
+    height: 1.5px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+
+  .ops-dot-line.done { background: var(--green); }
+
+  .ops-dot[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--text);
+    color: #fff;
+    font-size: 9px;
+    font-weight: 600;
+    padding: 3px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+    z-index: 10;
+    margin-bottom: 4px;
+    pointer-events: none;
+  }
+
+  /* Action view wrapper */
+  .action-view { display: flex; flex-direction: column; flex: 1; }
+  .action-view.hidden { display: none; }
+
+
+  /* Table view */
+  .table-view { display: none; flex-direction: column; flex: 1; padding: 0 0 28px; }
+  .table-view.visible { display: flex; }
+
+  .table-view-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 0 12px; gap: 12px;
+  }
+  .table-view-header .table-count { font-size: 13px; color: var(--text-secondary); }
+
+  .table-view-filters {
+    display: flex; align-items: center; gap: 10px; padding: 0 0 14px; flex-wrap: wrap;
+  }
+  .table-view-filters label { font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .4px; }
+
+  .tv-table-wrap {
+    overflow-x: auto; border: 1px solid var(--border); border-radius: 10px;
+    background: var(--card);
+  }
+
+  .tv-table {
+    width: 100%; border-collapse: collapse; font-size: 13px;
+  }
+  .tv-table thead { position: sticky; top: 0; z-index: 2; }
+  .tv-table th {
+    text-align: left; padding: 10px 14px; font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .4px; color: var(--text-secondary);
+    background: var(--gray-bg); border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .tv-table th.col-value,
+  .tv-table td.col-value { text-align: right; }
+  .tv-table th.col-shipments,
+  .tv-table td.col-shipments { text-align: center; }
+
+  .tv-table td {
+    padding: 10px 14px; border-bottom: 1px solid var(--border-light);
+    vertical-align: middle;
+  }
+  .tv-table tbody tr { cursor: pointer; transition: background .12s; }
+  .tv-table tbody tr:hover { background: var(--primary-lighter); }
+  .tv-table tbody tr:last-child td { border-bottom: none; }
+
+  .tv-id { font-weight: 600; color: var(--primary-dark); }
+  .tv-client { font-weight: 500; }
+  .tv-route { color: var(--text-secondary); }
+  .tv-mode-chip {
+    display: inline-block; padding: 2px 8px; border-radius: 6px;
+    font-size: 11px; font-weight: 600; background: var(--gray-bg); color: var(--text);
+  }
+  .tv-mode-chip.air { background: var(--blue-bg); color: var(--blue); }
+  .tv-mode-chip.ocean { background: #e0f2fe; color: #0369a1; }
+  .tv-mode-chip.trucking { background: var(--orange-bg); color: var(--orange); }
+  .tv-mode-chip.inspections { background: #ede9fe; color: #6d28d9; }
+
+  .tv-stages { display: flex; gap: 3px; flex-wrap: wrap; max-width: 120px; }
+  .tv-stage-pill {
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 2px 6px; border-radius: 20px; font-size: 10px; font-weight: 500;
+    white-space: nowrap;
+  }
+  .tv-stage-pill.submitted { background: #e8eeff; color: #3b5bdb; }
+  .tv-stage-pill.awaiting { background: #fef9e7; color: #b8860b; }
+  .tv-stage-pill.expired { background: #fde8e8; color: #c44b3f; }
+  .tv-stage-pill.rejected { background: #fce7f3; color: #be185d; }
+  .tv-stage-pill.accepted { background: #e6f7ed; color: #1e7a42; }
+
+  .tv-stage-dot {
+    width: 6px; height: 6px; border-radius: 50%; display: inline-block;
+  }
+  .tv-stage-dot.submitted { background: #3b5bdb; }
+  .tv-stage-dot.awaiting { background: #b8860b; }
+  .tv-stage-dot.expired { background: #c44b3f; }
+  .tv-stage-dot.rejected { background: #be185d; }
+  .tv-stage-dot.accepted { background: #1e7a42; }
+
+  .tv-flag { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; padding: 2px 7px; border-radius: 6px; font-weight: 500; }
+  .tv-flag.first-time { background: var(--purple-bg); color: var(--purple); }
+  .tv-flag.delayed { background: var(--red-bg); color: var(--red); }
+  .tv-flag.arriving-today { background: var(--blue-bg); color: var(--blue); }
+
+  .tv-assignee { display: flex; align-items: center; gap: 6px; }
+  .tv-assignee-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .tv-value { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  .tv-action { display: flex; flex-direction: column; gap: 3px; }
+  .tv-action-badge {
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600;
+    white-space: nowrap;
+  }
+  .tv-action-badge.ok { background: var(--green-bg); color: var(--green); }
+  .tv-action-badge.warn { background: var(--yellow-bg); color: #92610e; }
+  .tv-action-badge.danger { background: var(--red-bg); color: var(--red); }
+
+  .tv-detail { display: flex; flex-direction: column; gap: 2px; }
+  .tv-detail-line { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+  .tv-detail-line strong { color: var(--text); font-weight: 600; }
+
+  .col-notes { min-width: 180px; }
+  .tv-notes-cell {
+    position: relative; min-height: 28px; cursor: text;
+  }
+  .tv-notes-text {
+    font-size: 12px; color: var(--text-secondary); line-height: 1.4;
+    max-width: 220px; word-wrap: break-word;
+  }
+  .tv-notes-text:empty::before {
+    content: "Click to add note...";
+    color: var(--border); font-style: italic;
+  }
+  .tv-notes-input {
+    width: 100%; min-height: 50px; padding: 6px 8px; border: 1.5px solid var(--primary);
+    border-radius: 6px; font-size: 12px; font-family: inherit; resize: vertical;
+    outline: none; background: #fffdf8; color: var(--text); line-height: 1.4;
+  }
+  .tv-notes-input:focus { box-shadow: 0 0 0 3px rgba(200,132,46,.15); }
+
+  .tv-shipper-cell {
+    position: relative; min-height: 24px; cursor: text;
+  }
+  .tv-shipper-text {
+    font-size: 12px; color: var(--text); line-height: 1.4;
+  }
+  .tv-shipper-text:empty::before {
+    content: "—";
+    color: var(--border);
+  }
+  .tv-shipper-input {
+    width: 100%; padding: 4px 6px; border: 1.5px solid var(--primary);
+    border-radius: 6px; font-size: 12px; font-family: inherit;
+    outline: none; background: #fffdf8; color: var(--text);
+  }
+  .tv-shipper-input:focus { box-shadow: 0 0 0 3px rgba(200,132,46,.15); }
+
+  .tv-id-cell { display: flex; flex-direction: column; gap: 1px; }
+  .tv-id-date { font-size: 11px; color: var(--text-secondary); }
+
+  .tv-assignee-select {
+    padding: 3px 6px; border: 1px solid var(--border); border-radius: 6px;
+    font-size: 12px; font-family: inherit; background: var(--card);
+    color: var(--text); cursor: pointer; min-width: 110px;
+  }
+  .tv-assignee-select:focus { border-color: var(--primary); outline: none; }
+
+  .tv-client-cell { display: flex; flex-direction: column; gap: 1px; }
+  .tv-client-contact { font-size: 11px; color: var(--text-secondary); font-weight: 400; }
+
+  .col-deadline { min-width: 120px; }
+  .tv-deadline-cell {
+    position: relative; min-height: 28px; cursor: text;
+  }
+  .tv-deadline-text {
+    font-size: 12px; color: var(--text-secondary); line-height: 1.4;
+    max-width: 140px; word-wrap: break-word;
+  }
+  .tv-deadline-text:empty::before {
+    content: "Set deadline...";
+    color: var(--border); font-style: italic;
+  }
+  .tv-deadline-input {
+    width: 100%; padding: 6px 8px; border: 1.5px solid var(--primary);
+    border-radius: 6px; font-size: 12px; font-family: inherit;
+    outline: none; background: #fffdf8; color: var(--text); line-height: 1.4;
+  }
+  .tv-deadline-input:focus { box-shadow: 0 0 0 3px rgba(200,132,46,.15); }
+  .tv-date { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+  .tv-shipper { font-size: 12px; color: var(--text); font-weight: 500; }
+
+  .tv-quote-cell { display: flex; flex-direction: column; gap: 1px; }
+  .tv-rev-badge {
+    display: inline-block; padding: 1px 5px; border-radius: 4px;
+    font-size: 9px; font-weight: 700; background: var(--orange-bg); color: var(--orange);
+    margin-left: 4px; cursor: default; vertical-align: middle;
+  }
+  .tv-prev-value { font-size: 10px; color: var(--text-secondary); font-style: italic; }
+  .col-attn { width: 44px; text-align: center; }
+  .tv-attn-btn {
+    width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border);
+    background: transparent; cursor: pointer; display: inline-flex;
+    align-items: center; justify-content: center; transition: all .15s;
+    font-size: 14px; line-height: 1; color: var(--border);
+  }
+  .tv-attn-btn:hover { border-color: var(--red); color: var(--red); }
+  .tv-attn-btn.active {
+    border-color: var(--red); background: var(--red); color: #fff;
+  }
+  .tv-table tbody tr.needs-attention { background: #fff5f5; }
+  .tv-table tbody tr.needs-attention:hover { background: #fee2e2; }
+
+  /* Custom views toolbar */
+  .cv-toolbar {
+    display: flex; align-items: center; gap: 8px; padding: 0 0 10px; flex-wrap: wrap;
+  }
+  .cv-tabs {
+    display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
+  }
+  .cv-tab {
+    padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 500;
+    cursor: pointer; border: 1px solid var(--border); background: var(--card);
+    color: var(--text-secondary); transition: all .15s; display: flex;
+    align-items: center; gap: 6px; font-family: inherit; white-space: nowrap;
+  }
+  .cv-tab:hover { background: var(--gray-bg); color: var(--text); }
+  .cv-tab.active {
+    background: var(--primary-light); color: var(--primary-dark);
+    border-color: var(--primary); font-weight: 600;
+  }
+  .cv-tab-delete {
+    width: 14px; height: 14px; border-radius: 50%; display: inline-flex;
+    align-items: center; justify-content: center; font-size: 11px;
+    color: var(--text-secondary); cursor: pointer; line-height: 1;
+    transition: all .12s; background: transparent; border: none;
+    font-family: inherit; padding: 0;
+  }
+  .cv-tab-delete:hover { background: var(--red-bg); color: var(--red); }
+
+  .cv-actions {
+    display: flex; align-items: center; gap: 6px; margin-left: auto;
+  }
+  .cv-btn {
+    padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 500;
+    cursor: pointer; border: 1px solid var(--border); background: var(--card);
+    color: var(--text); transition: all .15s; font-family: inherit;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .cv-btn:hover { background: var(--gray-bg); }
+  .cv-btn svg { width: 14px; height: 14px; }
+
+  .cv-col-picker {
+    position: absolute; top: 100%; right: 0; margin-top: 4px; z-index: 100;
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.12); width: 260px;
+    max-height: 420px; overflow-y: auto;
+  }
+  .cv-col-picker-header {
+    padding: 10px 14px; font-size: 12px; font-weight: 600;
+    color: var(--text-secondary); text-transform: uppercase; letter-spacing: .4px;
+    border-bottom: 1px solid var(--border-light);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .cv-col-picker-header button {
+    font-size: 11px; font-weight: 500; color: var(--primary);
+    cursor: pointer; background: none; border: none; font-family: inherit;
+  }
+  .cv-col-picker-header button:hover { text-decoration: underline; }
+  .cv-col-item {
+    display: flex; align-items: center; gap: 10px; padding: 8px 14px;
+    cursor: pointer; transition: background .1s; font-size: 13px;
+  }
+  .cv-col-item:hover { background: var(--gray-bg); }
+  .cv-col-item input[type="checkbox"] {
+    width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer;
+  }
+  .cv-col-item label { cursor: pointer; flex: 1; user-select: none; }
+
+  .cv-save-modal {
+    position: fixed; inset: 0; z-index: 200; display: flex;
+    align-items: center; justify-content: center;
+    background: rgba(0,0,0,.35);
+  }
+  .cv-save-modal-inner {
+    background: var(--card); border-radius: 12px; padding: 24px;
+    width: 360px; box-shadow: 0 12px 40px rgba(0,0,0,.2);
+  }
+  .cv-save-modal-inner h3 {
+    font-size: 16px; font-weight: 600; margin-bottom: 14px;
+  }
+  .cv-save-modal-inner input {
+    width: 100%; padding: 8px 12px; border: 1px solid var(--border);
+    border-radius: 8px; font-size: 14px; font-family: inherit;
+    margin-bottom: 16px;
+  }
+  .cv-save-modal-inner input:focus {
+    outline: none; border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(200,132,46,.15);
+  }
+  .cv-save-modal-btns {
+    display: flex; gap: 8px; justify-content: flex-end;
+  }
+  .cv-save-modal-btns button {
+    padding: 7px 16px; border-radius: 8px; font-size: 13px; font-weight: 500;
+    cursor: pointer; border: 1px solid var(--border); background: var(--card);
+    color: var(--text); font-family: inherit; transition: all .15s;
+  }
+  .cv-save-modal-btns .cv-save-confirm {
+    background: var(--primary); color: #fff; border-color: var(--primary);
+  }
+  .cv-save-modal-btns .cv-save-confirm:hover {
+    background: var(--primary-dark);
+  }
+  .cv-save-modal-btns button:not(.cv-save-confirm):hover {
+    background: var(--gray-bg);
+  }
+  .cv-picker-anchor { position: relative; }
+
+  /* Health view */
+  .health-view { display: none; flex-direction: column; flex: 1; padding: 0 0 28px; }
+  .health-view.visible { display: flex; }
+
+  .health-timeline-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .health-timeline-bar label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-right: 4px;
+  }
+
+  .timeline-chip {
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    background: var(--card);
+    color: var(--text-secondary);
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+
+  .timeline-chip:hover,
+  .timeline-chip.active {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-light);
+  }
+
+  .custom-date-range {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    margin-left: 4px;
+  }
+
+  .custom-date-range.visible { display: flex; }
+
+  .custom-date-range input[type="date"] {
+    padding: 5px 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 12px;
+    font-family: inherit;
+    color: var(--text);
+    outline: none;
+    background: var(--card);
+    transition: border-color 0.15s;
+  }
+
+  .custom-date-range input[type="date"]:focus { border-color: var(--primary); }
+
+  .custom-date-range span {
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+
+  .custom-date-apply {
+    padding: 5px 12px;
+    border: 1px solid var(--primary);
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    background: var(--primary-light);
+    color: var(--primary);
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+
+  .custom-date-apply:hover { background: var(--primary); color: #fff; }
+
+  /* Health stats row */
+  .health-stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    padding: 20px 28px 0;
+  }
+
+  .health-stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+
+  .health-stat-card .hs-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+
+  .health-stat-card .hs-value {
+    font-size: 26px;
+    font-weight: 700;
+    margin-top: 4px;
+    letter-spacing: -0.5px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .health-stat-card .hs-detail {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  /* Pipeline funnel */
+  .health-pipeline {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    padding: 20px 28px 0;
+  }
+
+  .pipeline-bucket {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pipeline-bucket::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+  }
+
+  .pipeline-bucket.bucket-submitted::before { background: #6366f1; }
+  .pipeline-bucket.bucket-approved::before { background: var(--green); }
+  .pipeline-bucket.bucket-invoiced::before { background: var(--primary); }
+
+  .pb-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .pb-title {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--text-secondary);
+  }
+
+  .pb-count {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .pb-value {
+    font-size: 20px;
+    font-weight: 700;
+    margin-top: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .pb-sub {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  .pb-bar-container {
+    margin-top: 16px;
+  }
+
+  .pb-bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .pb-bar {
+    height: 8px;
+    background: var(--border-light);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .pb-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.4s ease;
+  }
+
+  .bucket-submitted .pb-bar-fill { background: #6366f1; }
+  .bucket-approved .pb-bar-fill { background: var(--green); }
+  .bucket-invoiced .pb-bar-fill { background: var(--primary); }
+
+  .health-section-title {
+    padding: 20px 28px 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.2px;
+  }
+
+  /* Pipeline sub-sections */
+  .pipeline-section {
+    margin: 0 28px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-top: 14px;
+    overflow: hidden;
+  }
+
+  .pipeline-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .pipeline-section-header h3 {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .pipeline-section-header h3 .section-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .pipeline-section-header h3 .section-icon svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  .section-icon.rfq-icon { background: #ede9fe; color: #6d28d9; }
+  .section-icon.quote-icon { background: #dbeafe; color: #2563eb; }
+  .section-icon.shipping-icon { background: #d1fae5; color: #059669; }
+  .section-icon.inspection-icon { background: #fef3c7; color: #d97706; }
+
+  .pipeline-section-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+  }
+
+  .pipeline-section-grid.grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .ps-stat {
+    padding: 16px 20px;
+    border-right: 1px solid var(--border-light);
+    position: relative;
+  }
+
+  .ps-stat:last-child { border-right: none; }
+
+  .ps-stat .ps-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+  }
+
+  .ps-stat .ps-value {
+    font-size: 22px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+  }
+
+  .ps-stat .ps-detail {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  .ps-stat .ps-count-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: var(--gray-bg);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-top: 6px;
+  }
+
+  .ps-stat .ps-count-badge strong {
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  .ps-stat .ps-bar {
+    height: 4px;
+    background: var(--border-light);
+    border-radius: 2px;
+    margin-top: 8px;
+    overflow: hidden;
+  }
+
+  .ps-stat .ps-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  /* Mode toggle chips for Shipping */
+  .mode-toggle-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .mode-chip {
+    padding: 4px 12px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    background: var(--card);
+    color: var(--text-secondary);
+    transition: all 0.15s;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .mode-chip:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  .mode-chip.active {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    color: var(--primary);
+  }
+
+  .mode-chip .mode-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .mode-dot.dot-air { background: #6d28d9; }
+  .mode-dot.dot-ocean { background: #0369a1; }
+  .mode-dot.dot-trucking { background: #059669; }
+
+  .mode-chip .mode-badge {
+    font-size: 9px;
+    font-weight: 700;
+    background: rgba(0,0,0,0.06);
+    padding: 1px 5px;
+    border-radius: 8px;
+    color: inherit;
+  }
+
+  .mode-chip.active .mode-badge {
+    background: rgba(200,132,46,0.15);
+  }
+
+  /* Sub-section labels within pipeline sections */
+  .pipeline-subsection-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px 6px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-secondary);
+    background: var(--card);
+  }
+
+  .pipeline-subsection-label::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border-light);
+  }
+
+  .pipeline-subsection-label .sub-icon {
+    font-size: 11px;
+    opacity: 0.6;
+  }
+
+  /* Inspection status indicators */
+  .insp-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+
+  .insp-passed { background: var(--green-bg); color: var(--green); }
+  .insp-failed { background: var(--red-bg); color: var(--red); }
+  .insp-pending { background: var(--yellow-bg); color: var(--yellow); }
+  .insp-scheduled { background: var(--blue-bg); color: var(--blue); }
+
+  @media (max-width: 1200px) {
+    .health-stats { grid-template-columns: repeat(3, 1fr); }
+    .health-pipeline { grid-template-columns: 1fr; }
+    .pipeline-section-grid { grid-template-columns: repeat(2, 1fr); }
+    .pipeline-section-grid.grid-4 { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 768px) {
+    .pipeline-section-grid,
+    .pipeline-section-grid.grid-4 { grid-template-columns: 1fr; }
+    .ps-stat { border-right: none; border-bottom: 1px solid var(--border-light); }
+    .ps-stat:last-child { border-bottom: none; }
+  }
+
+  /* Pod Setup view */
+  .pod-setup-view { display: none; flex-direction: column; flex: 1; padding: 0 0 28px; gap: 20px; }
+  .pod-setup-view.visible { display: flex; }
+
+  .pod-setup-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 0 0;
+  }
+  .pod-setup-header h2 { font-size: 18px; font-weight: 700; }
+  .pod-setup-header .pod-count { font-size: 13px; color: var(--text-secondary); margin-left: 10px; }
+
+  .pod-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+  }
+
+  .pod-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; transition: box-shadow .15s;
+  }
+  .pod-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.06); }
+
+  .pod-card-header {
+    padding: 16px 18px; display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border-light); background: var(--gray-bg);
+  }
+  .pod-card-header h3 { font-size: 15px; font-weight: 600; }
+  .pod-card-header .pod-meta {
+    font-size: 11px; color: var(--text-secondary); display: flex; gap: 10px;
+  }
+  .pod-card-header .pod-lead-badge {
+    font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 10px;
+    background: var(--primary-light); color: var(--primary-dark);
+  }
+
+  .pod-member-list { padding: 12px 18px; display: flex; flex-direction: column; gap: 6px; }
+
+  .pod-member-row {
+    display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+    border-radius: 8px; transition: background .1s; font-size: 13px;
+  }
+  .pod-member-row:hover { background: var(--gray-bg); }
+
+  .pod-member-avatar {
+    width: 30px; height: 30px; border-radius: 50%; display: flex;
+    align-items: center; justify-content: center; font-size: 11px;
+    font-weight: 600; color: #fff; flex-shrink: 0;
+  }
+  .pod-member-info { flex: 1; min-width: 0; }
+  .pod-member-name { font-weight: 500; }
+  .pod-member-role { font-size: 11px; color: var(--text-secondary); }
+
+  .pod-member-actions { display: flex; gap: 4px; opacity: 0; transition: opacity .15s; }
+  .pod-member-row:hover .pod-member-actions { opacity: 1; }
+
+  .pod-member-btn {
+    width: 26px; height: 26px; border-radius: 6px; border: 1px solid var(--border);
+    background: var(--card); cursor: pointer; display: flex;
+    align-items: center; justify-content: center; font-size: 12px;
+    color: var(--text-secondary); transition: all .12s;
+  }
+  .pod-member-btn:hover { background: var(--gray-bg); color: var(--text); }
+  .pod-member-btn.danger:hover { background: var(--red-bg); color: var(--red); border-color: var(--red); }
+
+  .pod-card-footer {
+    padding: 10px 18px; border-top: 1px solid var(--border-light);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .pod-add-member-input {
+    flex: 1; padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px;
+    font-size: 12px; font-family: inherit;
+  }
+  .pod-add-member-input:focus {
+    outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(200,132,46,.12);
+  }
+  .pod-add-member-btn {
+    padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 500;
+    cursor: pointer; border: 1px solid var(--primary); background: var(--primary);
+    color: #fff; font-family: inherit; transition: background .15s;
+  }
+  .pod-add-member-btn:hover { background: var(--primary-dark); }
+
+  /* Create pod form */
+  .pod-create-card {
+    background: var(--card); border: 2px dashed var(--border); border-radius: 12px;
+    padding: 24px; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 12px; min-height: 200px;
+    cursor: pointer; transition: all .15s;
+  }
+  .pod-create-card:hover { border-color: var(--primary); background: var(--primary-lighter); }
+  .pod-create-card svg { width: 32px; height: 32px; color: var(--text-secondary); }
+  .pod-create-card span { font-size: 14px; font-weight: 500; color: var(--text-secondary); }
+
+  .pod-create-form {
+    background: var(--card); border: 2px solid var(--primary); border-radius: 12px;
+    padding: 20px; display: flex; flex-direction: column; gap: 12px;
+  }
+  .pod-create-form h3 { font-size: 15px; font-weight: 600; }
+  .pod-create-form input {
+    padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px;
+    font-size: 13px; font-family: inherit;
+  }
+  .pod-create-form input:focus {
+    outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(200,132,46,.12);
+  }
+  .pod-create-form-btns { display: flex; gap: 8px; justify-content: flex-end; }
+  .pod-create-form-btns button {
+    padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 500;
+    cursor: pointer; border: 1px solid var(--border); background: var(--card);
+    color: var(--text); font-family: inherit; transition: all .15s;
+  }
+  .pod-create-form-btns .pod-create-confirm {
+    background: var(--primary); color: #fff; border-color: var(--primary);
+  }
+  .pod-create-form-btns .pod-create-confirm:hover { background: var(--primary-dark); }
+
+  /* Move member modal */
+  .pod-move-modal {
+    position: fixed; inset: 0; z-index: 200; display: flex;
+    align-items: center; justify-content: center; background: rgba(0,0,0,.35);
+  }
+  .pod-move-inner {
+    background: var(--card); border-radius: 12px; padding: 24px;
+    width: 400px; box-shadow: 0 12px 40px rgba(0,0,0,.2);
+  }
+  .pod-move-inner h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .pod-move-inner .pod-move-desc {
+    font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5;
+  }
+  .pod-move-inner select {
+    width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px;
+    font-size: 14px; font-family: inherit; margin-bottom: 16px;
+  }
+  .pod-move-inner select:focus {
+    outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(200,132,46,.12);
+  }
+  .pod-move-warning {
+    background: var(--yellow-bg); border: 1px solid #f0d9a8; border-radius: 8px;
+    padding: 10px 14px; font-size: 12px; color: #92640d; margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .pod-move-btns { display: flex; gap: 8px; justify-content: flex-end; }
+  .pod-move-btns button {
+    padding: 7px 16px; border-radius: 8px; font-size: 13px; font-weight: 500;
+    cursor: pointer; border: 1px solid var(--border); background: var(--card);
+    color: var(--text); font-family: inherit; transition: all .15s;
+  }
+  .pod-move-btns .pod-move-confirm {
+    background: var(--primary); color: #fff; border-color: var(--primary);
+  }
+  .pod-move-btns .pod-move-confirm:hover { background: var(--primary-dark); }
+
+  .pod-empty-members {
+    padding: 20px; text-align: center; color: var(--text-secondary); font-size: 13px;
+  }
+
+  .pod-stats-row {
+    display: flex; gap: 16px; font-size: 12px; color: var(--text-secondary);
+    padding: 0 18px 12px;
+  }
+  .pod-stats-row strong { color: var(--text); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="silq-logo">
+      <span class="silq-logo-text">silq</span>
+    </div>
+  </div>
+  <div class="sidebar-nav">
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+      Projects
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/><path d="M3 4h1l1.68 8.39A2 2 0 007.65 14h4.7a2 2 0 001.97-1.61L16 6H5"/></svg>
+      Shipments
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
+      Invoices
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/></svg>
+      Rates
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V8a2 2 0 00-2-2h-5L9 4H4z"/></svg>
+      Credit Limits
+    </a>
+    <a class="nav-item active" href="#">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 6a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zm10 0a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
+      Pod Board
+      <span class="nav-badge" id="totalRfqBadge">24</span>
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+      Settings
+    </a>
+  </div>
+</nav>
+
+<div class="main">
+  <header class="app-header">
+    <div class="header-left">
+      <h1>Pod Priority Board</h1>
+      <div class="header-pod-info">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style="opacity:0.5"><path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z"/><path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/></svg>
+        Revenue AM: <strong>Sarah Kim</strong>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="view-toggle">
+        <button class="toggle-option" id="toggleTable" onclick="switchView('table')">Table View</button>
+        <button class="toggle-option active" id="toggleAction" onclick="switchView('action')">Action</button>
+        <button class="toggle-option" id="toggleHealth" onclick="switchView('health')">Pod Health</button>
+        <button class="toggle-option" id="togglePodSetup" onclick="switchView('podsetup')">Pod Setup</button>
+      </div>
+      <span class="live-badge"><span class="live-dot"></span> Live</span>
+      <button class="btn" onclick="window.print()">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" style="vertical-align:-2px;margin-right:3px"><path d="M8 1a.5.5 0 0 1 .5.5v8.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V1.5A.5.5 0 0 1 8 1z"/><path d="M2 13.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg>
+        Export
+      </button>
+    </div>
+  </header>
+
+  <!-- ACTION VIEW -->
+  <div class="action-view" id="actionView">
+    <div class="summary-strip" id="summaryStrip"></div>
+
+    <div class="filter-bar">
+      <label>Filters</label>
+      <select class="filter-select" id="filterTeam" onchange="applyFilters()">
+        <option value="">All Team Members</option>
+      </select>
+      <select class="filter-select" id="filterClient" onchange="applyFilters()">
+        <option value="">All Clients</option>
+      </select>
+      <select class="filter-select" id="filterMode" onchange="applyFilters()">
+        <option value="">All Services</option>
+        <option value="FCL">FCL</option>
+        <option value="LCL">LCL</option>
+        <option value="Air">Air</option>
+        <option value="Inspections">Inspections</option>
+      </select>
+      <select class="filter-select" id="filterLane" onchange="applyFilters()">
+        <option value="">All Trade Lanes</option>
+      </select>
+      <div class="filter-divider"></div>
+      <input type="text" class="search-input-sm" placeholder="Search by RFQ ID, client, route..." id="searchInput" oninput="applyFilters()">
+      <button class="clear-filters-btn" id="clearBtn" onclick="clearFilters()">Clear all</button>
+    </div>
+
+    <div class="board-container">
+      <div class="board" id="board"></div>
+    </div>
+  </div>
+
+  <!-- TABLE VIEW -->
+  <div class="table-view" id="tableView">
+    <div class="table-view-header">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <h2 style="font-size:16px;font-weight:600;">All RFQs / Projects</h2>
+        <span class="table-count" id="tableCount"></span>
+      </div>
+    </div>
+    <div class="cv-toolbar" id="cvToolbar">
+      <div class="cv-tabs" id="cvTabs"></div>
+      <div class="cv-actions">
+        <div class="cv-picker-anchor">
+          <button class="cv-btn" onclick="toggleColumnPicker()" title="Show/hide columns">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            Columns
+          </button>
+          <div class="cv-col-picker" id="cvColPicker" style="display:none;"></div>
+        </div>
+        <button class="cv-btn" onclick="openSaveViewModal()" title="Save current view">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Save View
+        </button>
+      </div>
+    </div>
+    <div class="table-view-filters">
+      <label>Filters</label>
+      <select class="filter-select" id="tvFilterTeam" onchange="renderTableView()">
+        <option value="">All Team Members</option>
+      </select>
+      <select class="filter-select" id="tvFilterClient" onchange="renderTableView()">
+        <option value="">All Clients</option>
+      </select>
+      <select class="filter-select" id="tvFilterMode" onchange="renderTableView()">
+        <option value="">All Services</option>
+        <option value="FCL">FCL</option>
+        <option value="LCL">LCL</option>
+        <option value="Air">Air</option>
+        <option value="Inspections">Inspections</option>
+      </select>
+      <select class="filter-select" id="tvFilterStage" onchange="renderTableView()">
+        <option value="">All Stages</option>
+      </select>
+      <div class="filter-divider"></div>
+      <input type="text" class="search-input-sm" placeholder="Search by RFQ ID, client, route..." id="tvSearch" oninput="renderTableView()">
+    </div>
+    <div class="tv-table-wrap">
+      <table class="tv-table">
+        <thead>
+          <tr>
+            <th data-col="assignee">Assignee</th>
+            <th data-col="client">Client</th>
+            <th data-col="silqId">Silq ID</th>
+            <th data-col="shipperPo">Shipper / PO #</th>
+            <th data-col="route">Route</th>
+            <th data-col="mode">Service</th>
+            <th data-col="stages">Stage(s)</th>
+            <th data-col="crd">CRD</th>
+            <th data-col="deadline" class="col-deadline">Deadline</th>
+            <th data-col="quoteSent">Quote Sent</th>
+            <th data-col="totalVal" class="col-value">Total $</th>
+            <th data-col="attn" class="col-attn">Attn</th>
+            <th data-col="notes" class="col-notes">Notes</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Save View Modal -->
+  <div class="cv-save-modal" id="cvSaveModal" style="display:none;" onclick="if(event.target===this)closeSaveViewModal()">
+    <div class="cv-save-modal-inner">
+      <h3>Save Custom View</h3>
+      <input type="text" id="cvViewName" placeholder="e.g. My Sales View, Ops Summary..." onkeydown="if(event.key==='Enter')confirmSaveView()">
+      <div class="cv-save-modal-btns">
+        <button onclick="closeSaveViewModal()">Cancel</button>
+        <button class="cv-save-confirm" onclick="confirmSaveView()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEALTH VIEW -->
+  <div class="health-view" id="healthView">
+    <div class="health-timeline-bar">
+      <label>Period</label>
+      <button class="timeline-chip" data-range="week" onclick="setTimeline('week',this)">This Week</button>
+      <button class="timeline-chip active" data-range="month" onclick="setTimeline('month',this)">This Month</button>
+      <button class="timeline-chip" data-range="quarter" onclick="setTimeline('quarter',this)">This Quarter</button>
+      <button class="timeline-chip" data-range="year" onclick="setTimeline('year',this)">This Year</button>
+      <button class="timeline-chip" data-range="custom" onclick="setTimeline('custom',this)">Custom</button>
+      <div class="custom-date-range" id="customDateRange">
+        <input type="date" id="customFrom" value="2026-03-01">
+        <span>to</span>
+        <input type="date" id="customTo" value="2026-04-01">
+        <button class="custom-date-apply" onclick="applyCustomDate()">Apply</button>
+      </div>
+    </div>
+    <div class="table-view-filters" style="padding:8px 0 14px;">
+      <label>Filters</label>
+      <select class="filter-select" id="healthFilterClient" onchange="renderHealthView()">
+        <option value="">All Clients</option>
+      </select>
+      <div class="filter-divider"></div>
+      <input type="text" class="search-input-sm" placeholder="Search by RFQ ID..." id="healthSearch" oninput="renderHealthView()">
+    </div>
+
+    <div class="health-section-title">Performance Summary</div>
+    <div class="health-stats" id="healthStats"></div>
+
+    <div class="health-section-title">Pipeline Overview</div>
+
+    <!-- Shipping Section -->
+    <div class="pipeline-section">
+      <div class="pipeline-section-header">
+        <h3><span class="section-icon shipping-icon"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/><path d="M3 4h1l1.68 8.39A2 2 0 007.65 14h4.7a2 2 0 001.97-1.61L16 6H5"/></svg></span> Shipping</h3>
+        <div class="mode-toggle-bar" id="modeToggleBar">
+          <button class="mode-chip active" onclick="setShippingMode('all', this)">All</button>
+          <button class="mode-chip" onclick="setShippingMode('Air', this)"><span class="mode-dot dot-air"></span>Air <span class="mode-badge" id="badgeAir">0</span></button>
+          <button class="mode-chip" onclick="setShippingMode('Ocean', this)"><span class="mode-dot dot-ocean"></span>Ocean <span class="mode-badge" id="badgeOcean">0</span></button>
+          <button class="mode-chip" onclick="setShippingMode('Trucking', this)"><span class="mode-dot dot-trucking"></span>Trucking <span class="mode-badge" id="badgeTrucking">0</span></button>
+        </div>
+      </div>
+      <div class="pipeline-subsection-label"><span class="sub-icon">&#9679;</span> RFQs & Quotes</div>
+      <div class="pipeline-section-grid grid-4" id="shippingRfqQuotes"></div>
+      <div class="pipeline-subsection-label"><span class="sub-icon">&#9679;</span> Shipment Tracking</div>
+      <div class="pipeline-section-grid grid-4" id="shippingTracking"></div>
+    </div>
+
+    <!-- Inspections Section -->
+    <div class="pipeline-section">
+      <div class="pipeline-section-header">
+        <h3><span class="section-icon inspection-icon"><svg viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M10.854 7.146a.5.5 0 010 .708l-3 3a.5.5 0 01-.708 0l-1.5-1.5a.5.5 0 11.708-.708L7.5 9.793l2.646-2.647a.5.5 0 01.708 0z" clip-rule="evenodd"/><path d="M4 1.5H3a2 2 0 00-2 2V14a2 2 0 002 2h10a2 2 0 002-2V3.5a2 2 0 00-2-2h-1v1h1a1 1 0 011 1V14a1 1 0 01-1 1H3a1 1 0 01-1-1V3.5a1 1 0 011-1h1v-1z"/><path d="M9.5 1a.5.5 0 01.5.5v1a.5.5 0 01-.5.5h-3a.5.5 0 01-.5-.5v-1a.5.5 0 01.5-.5h3zm-3-1A1.5 1.5 0 005 1.5v1A1.5 1.5 0 006.5 4h3A1.5 1.5 0 0011 2.5v-1A1.5 1.5 0 009.5 0h-3z"/></svg></span> Inspections</h3>
+      </div>
+      <div class="pipeline-subsection-label"><span class="sub-icon">&#9679;</span> RFQs & Quotes</div>
+      <div class="pipeline-section-grid grid-4" id="inspectionRfqQuotes"></div>
+      <div class="pipeline-subsection-label"><span class="sub-icon">&#9679;</span> Inspection Status</div>
+      <div class="pipeline-section-grid grid-4" id="inspectionTracking"></div>
+    </div>
+
+  </div>
+
+  <!-- POD SETUP VIEW -->
+  <div class="pod-setup-view" id="podSetupView">
+    <div class="pod-setup-header">
+      <div style="display:flex;align-items:center;">
+        <h2>Pod Setup</h2>
+        <span class="pod-count" id="podCount"></span>
+      </div>
+    </div>
+    <div class="pod-grid" id="podGrid"></div>
+  </div>
+
+  <!-- Move Member Modal -->
+  <div class="pod-move-modal" id="podMoveModal" style="display:none;" onclick="if(event.target===this)closeMoveModal()">
+    <div class="pod-move-inner">
+      <h3 id="moveModalTitle">Move Member</h3>
+      <div class="pod-move-desc" id="moveModalDesc"></div>
+      <select id="moveTargetPod"></select>
+      <div class="pod-move-warning">All projects, RFQs, shipments, and tasks associated with this member will move to the target pod's view.</div>
+      <div class="pod-move-btns">
+        <button onclick="closeMoveModal()">Cancel</button>
+        <button class="pod-move-confirm" onclick="confirmMoveMember()">Move</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const STAGES = [
+  { key: "submitted", label: "Submitted for Quote", stageDataLabel: "Received" },
+  { key: "awaiting", label: "Awaiting Client Response", stageDataLabel: "Validity" },
+  { key: "expired", label: "Quote Expired", stageDataLabel: "Expired" },
+  { key: "rejected", label: "Rejected", stageDataLabel: "Rejected" },
+  { key: "accepted", label: "Accepted", stageDataLabel: "Accepted" }
+];
+
+const TEAM = [
+  { name: "Sarah Kim", role: "AM", color: "#6366f1" },
+  { name: "James Chen", role: "Origin Ops", color: "#0891b2" },
+  { name: "Maria Lopez", role: "Dest Ops", color: "#db2777" },
+  { name: "David Park", role: "AM", color: "#059669" },
+  { name: "Lisa Wang", role: "Origin Ops", color: "#d97706" }
+];
+
+const today = new Date(2026, 3, 1);
+
+function daysAgo(n) {
+  const d = new Date(today);
+  d.setDate(d.getDate() - n);
+  return d.toISOString().split("T")[0];
+}
+
+function daysFromNow(n) {
+  const d = new Date(today);
+  d.setDate(d.getDate() + n);
+  return d.toISOString().split("T")[0];
+}
+
+function formatDate(str) {
+  const d = new Date(str + "T00:00:00");
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+function diffDays(dateStr) {
+  const d = new Date(dateStr + "T00:00:00");
+  return Math.round((today - d) / (1000 * 60 * 60 * 24));
+}
+
+const RFQS = [
+  // Submitted (SUBMITTED_FOR_QUOTE) — fresh RFQs awaiting quote preparation
+  { id: "RFQ-4201", client: "Global Freight Solutions", contact: "John Mitchell", origin: "Shanghai", destination: "Los Angeles", mode: "FCL", shipments: 3, quotedValue: 28500, assignee: "Sarah Kim", stage: "submitted", stageDate: daysAgo(1), rfqDate: daysAgo(1), shipperPo: "GFS-PO-2290", crd: daysFromNow(10), quoteSentDate: null, approvalStatus: null, notes: "", firstTime: false },
+  { id: "RFQ-4205", client: "Pacific Cargo Lines", contact: "Amy Zhao", origin: "Shenzhen", destination: "Newark", mode: "FCL", shipments: 1, quotedValue: 8200, assignee: "James Chen", stage: "submitted", stageDate: daysAgo(3), rfqDate: daysAgo(3), shipperPo: "PCL-8871", crd: daysFromNow(7), quoteSentDate: null, approvalStatus: null, notes: "", firstTime: false },
+  { id: "RFQ-4210", client: "Horizon Shipping Co.", contact: "Derek Müller", origin: "Hamburg", destination: "Savannah", mode: "Inspections", shipments: 2, quotedValue: 4750, assignee: "Maria Lopez", stage: "submitted", stageDate: daysAgo(0), rfqDate: daysAgo(0), shipperPo: "", crd: daysFromNow(14), quoteSentDate: null, approvalStatus: null, notes: "", firstTime: false },
+  { id: "RFQ-4212", client: "Vertex Trading LLC", contact: "Priya Sharma", origin: "Mumbai", destination: "Houston", mode: "Air", shipments: 1, quotedValue: 12300, assignee: "David Park", stage: "submitted", stageDate: daysAgo(5), rfqDate: daysAgo(5), shipperPo: "VTX-443", crd: daysAgo(1), quoteSentDate: null, approvalStatus: null, notes: "Urgent — cargo ready, waiting on rates from carrier", firstTime: true },
+  { id: "RFQ-4215", client: "Summit Intermodal", contact: "Carlos Reyes", origin: "Busan", destination: "Long Beach", mode: "FCL", shipments: 4, quotedValue: 34000, assignee: "Lisa Wang", stage: "submitted", stageDate: daysAgo(2), rfqDate: daysAgo(2), shipperPo: "SMT-6620", crd: daysFromNow(5), quoteSentDate: null, approvalStatus: null, notes: "", firstTime: false },
+  // Submitted — looped back after client declined all quotes (CRD stays SUBMITTED_FOR_QUOTE)
+  { id: "RFQ-4160", client: "Eagle Express Freight", contact: "Tom Bradley", origin: "Hong Kong", destination: "JFK", mode: "Air", shipments: 1, quotedValue: 14200, assignee: "Lisa Wang", stage: "submitted", stageDate: daysAgo(6), rfqDate: daysAgo(20), shipperPo: "EEF-5540", crd: daysAgo(3), quoteSentDate: daysAgo(15), approvalStatus: null, notes: "Client declined Q1 — preparing revised quote", firstTime: false, quoteHistory: [{date: daysAgo(15), value: 15800}] },
+
+  // Awaiting Client (AWAITING_CLIENT_RESPONSE) — quote sent, waiting on client decision
+  { id: "RFQ-4180", client: "Nordic Supply Chain AB", contact: "Erik Lindgren", origin: "Rotterdam", destination: "Miami", mode: "FCL", shipments: 2, quotedValue: 18400, assignee: "Sarah Kim", stage: "awaiting", stageDate: daysFromNow(3), rfqDate: daysAgo(8), shipperPo: "NSC-1102", crd: daysFromNow(6), quoteSentDate: daysAgo(5), approvalStatus: null, notes: "Client comparing with competitor quote", firstTime: false, quoteHistory: [{date: daysAgo(14), value: 19200}, {date: daysAgo(5), value: 18400}] },
+  { id: "RFQ-4182", client: "Eagle Express Freight", contact: "Tom Bradley", origin: "Shanghai", destination: "Seattle", mode: "Inspections", shipments: 1, quotedValue: 3200, assignee: "James Chen", stage: "awaiting", stageDate: daysFromNow(7), rfqDate: daysAgo(6), shipperPo: "EEF-5591", crd: daysFromNow(12), quoteSentDate: daysAgo(4), approvalStatus: null, notes: "", firstTime: false },
+  { id: "RFQ-4188", client: "TransAtlantic Logistics", contact: "Sofia Petrov", origin: "Ningbo", destination: "Charleston", mode: "FCL", shipments: 3, quotedValue: 26800, assignee: "David Park", stage: "awaiting", stageDate: daysFromNow(1), rfqDate: daysAgo(10), shipperPo: "TAL-3304", crd: daysFromNow(3), quoteSentDate: daysAgo(7), approvalStatus: null, notes: "Sent 2 options — air + ocean", firstTime: false, quoteHistory: [{date: daysAgo(18), value: 28500}, {date: daysAgo(12), value: 27200}, {date: daysAgo(7), value: 26800}] },
+  { id: "RFQ-4190", client: "Maple Leaf Imports", contact: "Diane Tremblay", origin: "Ho Chi Minh", destination: "Vancouver", mode: "Air", shipments: 1, quotedValue: 9500, assignee: "Maria Lopez", stage: "awaiting", stageDate: daysFromNow(12), rfqDate: daysAgo(4), shipperPo: "MLI-8823", crd: daysFromNow(8), quoteSentDate: daysAgo(2), approvalStatus: null, notes: "", firstTime: true },
+  { id: "RFQ-4195", client: "Global Freight Solutions", contact: "John Mitchell", origin: "Yantian", destination: "Long Beach", mode: "FCL", shipments: 2, quotedValue: 22000, assignee: "David Park", stage: "awaiting", stageDate: daysFromNow(0), rfqDate: daysAgo(14), shipperPo: "GFS-PO-2185", crd: daysAgo(2), quoteSentDate: daysAgo(10), approvalStatus: null, notes: "Validity expiring today — follow up", firstTime: false },
+
+  // Quote Expired (derived: QRD expired while CRD loops back to SUBMITTED_FOR_QUOTE)
+  { id: "RFQ-4120", client: "Silk Road Logistics", contact: "Wei Zhang", origin: "Qingdao", destination: "Oakland", mode: "FCL", shipments: 2, quotedValue: 15600, assignee: "Lisa Wang", stage: "expired", stageDate: daysAgo(4), rfqDate: daysAgo(18), shipperPo: "SRL-7710", crd: daysAgo(2), quoteSentDate: daysAgo(14), approvalStatus: null, notes: "Client went silent — try calling", firstTime: false, quoteHistory: [{date: daysAgo(25), value: 16800}, {date: daysAgo(14), value: 15600}] },
+  { id: "RFQ-4125", client: "Pacific Cargo Lines", contact: "Amy Zhao", origin: "Taipei", destination: "Newark", mode: "Inspections", shipments: 1, quotedValue: 2800, assignee: "Sarah Kim", stage: "expired", stageDate: daysAgo(8), rfqDate: daysAgo(22), shipperPo: "PCL-8905", crd: daysAgo(6), quoteSentDate: daysAgo(18), approvalStatus: null, notes: "", firstTime: false, quoteHistory: [{date: daysAgo(18), value: 2800}] },
+  { id: "RFQ-4130", client: "Caspian Freight Co.", contact: "Leila Mammadova", origin: "Istanbul", destination: "Houston", mode: "Air", shipments: 1, quotedValue: 7400, assignee: "James Chen", stage: "expired", stageDate: daysAgo(2), rfqDate: daysAgo(12), shipperPo: "CSP-2201", crd: daysAgo(1), quoteSentDate: daysAgo(9), approvalStatus: null, notes: "New client — follow up for relationship", firstTime: true, quoteHistory: [{date: daysAgo(20), value: 8100}, {date: daysAgo(9), value: 7400}] },
+
+  // Rejected — client declined quote, RFQ stays on board until explicitly cancelled
+  { id: "RFQ-4050", client: "Global Freight Solutions", contact: "John Mitchell", origin: "Yantian", destination: "Long Beach", mode: "FCL", shipments: 2, quotedValue: 22000, assignee: "David Park", stage: "rejected", stageDate: daysAgo(3), rfqDate: daysAgo(30), shipperPo: "GFS-PO-2185", crd: daysAgo(16), quoteSentDate: daysAgo(28), approvalStatus: null, notes: "Client chose competitor — try to win back", firstTime: false, quoteHistory: [{date: daysAgo(28), value: 19500}, {date: daysAgo(20), value: 22000}] },
+  { id: "RFQ-3990", client: "TransAtlantic Logistics", contact: "Sofia Petrov", origin: "Ningbo", destination: "Los Angeles", mode: "FCL", shipments: 2, quotedValue: 19200, assignee: "James Chen", stage: "rejected", stageDate: daysAgo(5), rfqDate: daysAgo(35), shipperPo: "TAL-3280", crd: daysAgo(20), quoteSentDate: daysAgo(32), approvalStatus: null, notes: "Rate too high — may re-quote if carrier adjusts", firstTime: false, quoteHistory: [{date: daysAgo(32), value: 20500}, {date: daysAgo(25), value: 19200}] },
+  { id: "RFQ-4100", client: "Maple Leaf Imports", contact: "Diane Tremblay", origin: "Ho Chi Minh", destination: "Vancouver", mode: "Air", shipments: 1, quotedValue: 9500, assignee: "Maria Lopez", stage: "rejected", stageDate: daysAgo(1), rfqDate: daysAgo(10), shipperPo: "MLI-8830", crd: daysFromNow(3), quoteSentDate: daysAgo(6), approvalStatus: null, notes: "Wants ocean instead — check feasibility", firstTime: true, quoteHistory: [{date: daysAgo(6), value: 9500}] },
+
+  // Accepted — quote accepted, stays until booking email is sent
+  { id: "RFQ-4170", client: "Nordic Supply Chain AB", contact: "Erik Lindgren", origin: "Rotterdam", destination: "Miami", mode: "FCL", shipments: 2, quotedValue: 18400, assignee: "Sarah Kim", stage: "accepted", stageDate: daysAgo(1), rfqDate: daysAgo(12), shipperPo: "NSC-1102", crd: daysFromNow(4), quoteSentDate: daysAgo(8), approvalStatus: null, notes: "Awaiting booking confirmation from ops", firstTime: false, quoteHistory: [{date: daysAgo(14), value: 19200}, {date: daysAgo(8), value: 18400}] },
+  { id: "RFQ-4175", client: "Summit Intermodal", contact: "Carlos Reyes", origin: "Busan", destination: "Long Beach", mode: "Inspections", shipments: 4, quotedValue: 34000, assignee: "Lisa Wang", stage: "accepted", stageDate: daysAgo(0), rfqDate: daysAgo(6), shipperPo: "SMT-6625", crd: daysFromNow(8), quoteSentDate: daysAgo(4), approvalStatus: null, notes: "", firstTime: false },
+  { id: "RFQ-4178", client: "Caspian Freight Co.", contact: "Leila Mammadova", origin: "Istanbul", destination: "Houston", mode: "Air", shipments: 1, quotedValue: 7400, assignee: "James Chen", stage: "accepted", stageDate: daysAgo(2), rfqDate: daysAgo(14), shipperPo: "CSP-2210", crd: daysAgo(1), quoteSentDate: daysAgo(10), approvalStatus: null, notes: "Booking email pending — ops to confirm space", firstTime: true, quoteHistory: [{date: daysAgo(20), value: 8100}, {date: daysAgo(10), value: 7400}] },
+
+];
+
+function getStageDataDisplay(rfq) {
+  switch (rfq.stage) {
+    case "submitted": return `Received: <strong>${formatDate(rfq.stageDate)}</strong>`;
+    case "awaiting": return `Valid until: <strong>${formatDate(rfq.stageDate)}</strong>`;
+    case "expired": return `Expired: <strong>${diffDays(rfq.stageDate)}d ago</strong>`;
+    case "rejected": return `Rejected: <strong>${diffDays(rfq.stageDate)}d ago</strong>`;
+    case "accepted": return `Accepted: <strong>${formatDate(rfq.stageDate)}</strong> — awaiting booking`;
+  }
+  return "";
+}
+
+function getDaysClass(rfq) {
+  let days;
+  switch (rfq.stage) {
+    case "submitted": days = diffDays(rfq.stageDate); break;
+    case "awaiting": {
+      const remain = -diffDays(rfq.stageDate);
+      if (remain <= 2) return "days-danger";
+      if (remain <= 5) return "days-warn";
+      return "days-ok";
+    }
+    case "expired": days = diffDays(rfq.stageDate); break;
+    case "rejected": {
+      days = diffDays(rfq.stageDate);
+      if (days >= 7) return "days-danger";
+      if (days >= 3) return "days-warn";
+      return "days-ok";
+    }
+    case "accepted": {
+      days = diffDays(rfq.stageDate);
+      if (days >= 3) return "days-danger";
+      if (days >= 1) return "days-warn";
+      return "days-ok";
+    }
+    default: days = 0;
+  }
+  if (days >= 5) return "days-danger";
+  if (days >= 2) return "days-warn";
+  return "days-ok";
+}
+
+function getDaysBadgeText(rfq) {
+  switch (rfq.stage) {
+    case "submitted": return `${diffDays(rfq.stageDate)}d waiting`;
+    case "awaiting": {
+      const remain = -diffDays(rfq.stageDate);
+      if (remain < 0) return `Expired ${-remain}d ago`;
+      return `${remain}d left`;
+    }
+    case "expired": return `${diffDays(rfq.stageDate)}d expired`;
+    case "rejected": return `${diffDays(rfq.stageDate)}d since rejected`;
+    case "accepted": {
+      const d = diffDays(rfq.stageDate);
+      return d === 0 ? "Today" : `${d}d no booking`;
+    }
+  }
+  return "";
+}
+
+function getTeamMember(name) {
+  return TEAM.find(t => t.name === name) || TEAM[0];
+}
+
+function modeClass(mode) {
+  return "mode-" + mode.toLowerCase();
+}
+
+function isOcean(mode) { return mode === "FCL" || mode === "LCL"; }
+
+function transportIcon(mode) {
+  if (mode === "Inspections") {
+    return `<span class="transport-icon" style="color:#6d28d9" title="Inspections"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>`;
+  }
+  if (isOcean(mode)) {
+    return `<span class="transport-icon ocean" title="Ocean"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20a6 6 0 0 0 12 0 6 6 0 0 0 12 0"/><path d="M12 12V2l4 4-4 4"/><path d="M2 20l4.5-4.5"/><path d="M21.5 15.5L18 20"/><path d="M12 12H2.5"/><path d="M12 12h9.5"/></svg></span>`;
+  }
+  return `<span class="transport-icon air" title="Air"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg></span>`;
+}
+
+function opsStatusClass(val) {
+  if (val === "done") return "done";
+  if (val === "in_progress" || val === "scheduled") return "in-progress";
+  if (val === "pending") return "pending";
+  return "pending";
+}
+
+function opsCheckmark(val) {
+  if (val === "done") return "&#10003;";
+  if (val === "in_progress" || val === "scheduled") return "&#9679;";
+  return "";
+}
+
+function buildOpsTracker(rfq) {
+  const stages = ["opsBooking","opsOriginCX","opsPickup","opsDestCX","opsDelivery"];
+  const labels = ["Booking","Origin CX","Pickup","Dest CX","Delivery"];
+  const hasOps = stages.some(s => rfq[s] && rfq[s] !== "pending");
+  if (!rfq.opsBooking) return "";
+
+  let html = '<div class="ops-tracker">';
+  stages.forEach((s, i) => {
+    if (i > 0) html += `<span class="ops-dot-line ${rfq[stages[i-1]] === 'done' ? 'done' : ''}"></span>`;
+    html += `<span class="ops-dot ${opsStatusClass(rfq[s])}" title="${labels[i]}: ${rfq[s] || 'N/A'}">${opsCheckmark(rfq[s])}</span>`;
+  });
+  html += '</div>';
+  return html;
+}
+
+function buildCardHTML(rfq) {
+  const tm = getTeamMember(rfq.assignee);
+  const initials = rfq.assignee.split(" ").map(w => w[0]).join("");
+  const isFirstTime = rfq.firstTime;
+  const isRejected = rfq.stage === "rejected";
+  const isAccepted = rfq.stage === "accepted";
+  const crdPassed = rfq.crd && diffDays(rfq.crd) > 0;
+  const shipLabel = rfq.shipments === 1 ? "1 shipment" : `${rfq.shipments} shipments`;
+
+  let flags = "";
+  if (crdPassed) flags += `<span class="flag flag-arriving" title="CRD has passed">⚡</span>`;
+  if (isRejected) flags += `<span class="flag flag-delayed" title="Quote rejected">✗</span>`;
+  if (isAccepted) flags += `<span class="flag flag-arriving" title="Accepted — send booking">✓</span>`;
+  if (isFirstTime) flags += `<span class="flag flag-first-time" title="First-time client">★</span>`;
+
+  return `
+    <div class="rfq-card" onclick="openRfq('${rfq.id}')" data-client="${rfq.client}" data-assignee="${rfq.assignee}" data-mode="${rfq.mode}" data-lane="${rfq.origin}-${rfq.destination}" data-search="${rfq.id} ${rfq.client} ${rfq.origin} ${rfq.destination} ${rfq.assignee}">
+      <svg class="link-icon" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/><path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/></svg>
+      <div class="rfq-card-header">
+        <div>
+          <div class="rfq-client">${rfq.client}</div>
+          <div class="rfq-id">${rfq.id}</div>
+        </div>
+        <div class="rfq-flags">${flags}</div>
+      </div>
+      <div class="rfq-route">
+        ${transportIcon(rfq.mode)}
+        <span>${rfq.origin}</span>
+        <span class="route-arrow">→</span>
+        <span>${rfq.destination}</span>
+      </div>
+      <div class="rfq-meta">
+        <span class="meta-chip ${modeClass(rfq.mode)}">${rfq.mode}</span>
+        <span class="shipment-count">${shipLabel}</span>
+      </div>
+      <div class="rfq-stage-data">${getStageDataDisplay(rfq)}</div>${buildOpsTracker(rfq)}
+      <div class="rfq-footer">
+        <div class="rfq-assignee">
+          <div class="avatar-xs" style="background:${tm.color}">${initials}</div>
+          ${rfq.assignee}
+        </div>
+        <span class="rfq-days ${getDaysClass(rfq)}">${getDaysBadgeText(rfq)}</span>
+      </div>
+    </div>`;
+}
+
+// Historical RFQs for health view (full lifecycle: submitted → quoted → approved → delivered → invoiced)
+const HEALTH_DATA = [
+  { id: "RFQ-3800", client: "Global Freight Solutions", submittedDate: "2026-03-02", quotedDate: "2026-03-04", approvedDate: "2026-03-06", invoicedDate: "2026-03-28", quotedValue: 24500, invoicedValue: 25200, mode: "Ocean", shippingStatus: "delivered", inspectionRequired: true, inspectionStatus: "passed" },
+  { id: "RFQ-3810", client: "Pacific Cargo Lines", submittedDate: "2026-03-05", quotedDate: "2026-03-06", approvedDate: "2026-03-08", invoicedDate: "2026-03-30", quotedValue: 11200, invoicedValue: 11800, mode: "Air", shippingStatus: "delivered", inspectionRequired: false, inspectionStatus: null },
+  { id: "RFQ-3815", client: "Horizon Shipping Co.", submittedDate: "2026-03-03", quotedDate: "2026-03-05", approvedDate: "2026-03-07", invoicedDate: "2026-03-26", quotedValue: 8900, invoicedValue: 9100, mode: "Trucking", shippingStatus: "delivered", inspectionRequired: true, inspectionStatus: "passed" },
+  { id: "RFQ-3820", client: "Nordic Supply Chain AB", submittedDate: "2026-03-08", quotedDate: "2026-03-09", approvedDate: "2026-03-12", invoicedDate: "2026-03-31", quotedValue: 19600, invoicedValue: 20100, mode: "Ocean", shippingStatus: "delivered", inspectionRequired: true, inspectionStatus: "failed" },
+  { id: "RFQ-3825", client: "Eagle Express Freight", submittedDate: "2026-03-10", quotedDate: "2026-03-12", approvedDate: "2026-03-14", invoicedDate: null, quotedValue: 14800, invoicedValue: null, mode: "Ocean", shippingStatus: "in_transit", inspectionRequired: true, inspectionStatus: "passed" },
+  { id: "RFQ-3830", client: "TransAtlantic Logistics", submittedDate: "2026-03-12", quotedDate: "2026-03-14", approvedDate: "2026-03-16", invoicedDate: null, quotedValue: 22300, invoicedValue: null, mode: "Air", shippingStatus: "in_transit", inspectionRequired: false, inspectionStatus: null },
+  { id: "RFQ-3835", client: "Summit Intermodal", submittedDate: "2026-03-15", quotedDate: "2026-03-16", approvedDate: null, invoicedDate: null, quotedValue: 17500, invoicedValue: null, mode: "Ocean", shippingStatus: null, inspectionRequired: false, inspectionStatus: null },
+  { id: "RFQ-3840", client: "Vertex Trading LLC", submittedDate: "2026-03-18", quotedDate: "2026-03-21", approvedDate: null, invoicedDate: null, quotedValue: 9200, invoicedValue: null, mode: "Trucking", shippingStatus: null, inspectionRequired: false, inspectionStatus: null },
+  { id: "RFQ-3845", client: "Silk Road Logistics", submittedDate: "2026-03-20", quotedDate: "2026-03-21", approvedDate: "2026-03-23", invoicedDate: null, quotedValue: 13100, invoicedValue: null, mode: "Ocean", shippingStatus: "booked", inspectionRequired: true, inspectionStatus: "scheduled" },
+  { id: "RFQ-3850", client: "Maple Leaf Imports", submittedDate: "2026-03-22", quotedDate: "2026-03-25", approvedDate: "2026-03-27", invoicedDate: null, quotedValue: 7600, invoicedValue: null, mode: "Trucking", shippingStatus: "in_transit", inspectionRequired: true, inspectionStatus: "in_progress" },
+  { id: "RFQ-3855", client: "Caspian Freight Co.", submittedDate: "2026-03-25", quotedDate: "2026-03-26", approvedDate: null, invoicedDate: null, quotedValue: 5400, invoicedValue: null, mode: "Air", shippingStatus: null, inspectionRequired: false, inspectionStatus: null },
+  { id: "RFQ-3860", client: "Global Freight Solutions", submittedDate: "2026-03-28", quotedDate: "2026-03-29", approvedDate: "2026-03-31", invoicedDate: null, quotedValue: 31200, invoicedValue: null, mode: "Ocean", shippingStatus: "booked", inspectionRequired: true, inspectionStatus: "scheduled" },
+  { id: "RFQ-3700", client: "Pacific Cargo Lines", submittedDate: "2026-02-05", quotedDate: "2026-02-07", approvedDate: "2026-02-10", invoicedDate: "2026-03-05", quotedValue: 18400, invoicedValue: 19200, mode: "Ocean", shippingStatus: "delivered", inspectionRequired: true, inspectionStatus: "passed" },
+  { id: "RFQ-3710", client: "Horizon Shipping Co.", submittedDate: "2026-02-10", quotedDate: "2026-02-11", approvedDate: "2026-02-14", invoicedDate: "2026-03-10", quotedValue: 12600, invoicedValue: 13100, mode: "Trucking", shippingStatus: "delivered", inspectionRequired: false, inspectionStatus: null },
+  { id: "RFQ-3720", client: "Summit Intermodal", submittedDate: "2026-02-15", quotedDate: "2026-02-18", approvedDate: "2026-02-20", invoicedDate: "2026-03-15", quotedValue: 27800, invoicedValue: 28500, mode: "Ocean", shippingStatus: "delivered", inspectionRequired: true, inspectionStatus: "passed" },
+  { id: "RFQ-3730", client: "Eagle Express Freight", submittedDate: "2026-02-20", quotedDate: "2026-02-21", approvedDate: null, invoicedDate: null, quotedValue: 8900, invoicedValue: null, mode: "Air", shippingStatus: null, inspectionRequired: false, inspectionStatus: null },
+  { id: "RFQ-3740", client: "Nordic Supply Chain AB", submittedDate: "2026-01-10", quotedDate: "2026-01-12", approvedDate: "2026-01-15", invoicedDate: "2026-02-10", quotedValue: 35200, invoicedValue: 36100, mode: "Ocean", shippingStatus: "delivered", inspectionRequired: true, inspectionStatus: "failed" },
+  { id: "RFQ-3750", client: "TransAtlantic Logistics", submittedDate: "2026-01-15", quotedDate: "2026-01-17", approvedDate: "2026-01-20", invoicedDate: "2026-02-15", quotedValue: 21000, invoicedValue: 21500, mode: "Air", shippingStatus: "delivered", inspectionRequired: true, inspectionStatus: "passed" },
+  { id: "RFQ-3760", client: "Vertex Trading LLC", submittedDate: "2026-01-20", quotedDate: "2026-01-24", approvedDate: null, invoicedDate: null, quotedValue: 6300, invoicedValue: null, mode: "Trucking", shippingStatus: null, inspectionRequired: false, inspectionStatus: null },
+  { id: "RFQ-3770", client: "Caspian Freight Co.", submittedDate: "2026-01-25", quotedDate: "2026-01-26", approvedDate: "2026-01-28", invoicedDate: "2026-02-25", quotedValue: 14700, invoicedValue: 15200, mode: "Ocean", shippingStatus: "delivered", inspectionRequired: true, inspectionStatus: "passed" },
+];
+
+let currentBoardView = "action";
+let healthTimelineRange = "month";
+let healthCustomFrom = "2026-03-01";
+let healthCustomTo = "2026-04-01";
+let shippingModeFilter = "all";
+
+function getTimelineRange(range) {
+  if (range === "custom") return { from: new Date(healthCustomFrom + "T00:00:00"), to: new Date(healthCustomTo + "T23:59:59") };
+  const to = new Date(today);
+  const from = new Date(today);
+  switch (range) {
+    case "week": from.setDate(from.getDate() - 7); break;
+    case "month": from.setMonth(from.getMonth() - 1); break;
+    case "quarter": from.setMonth(from.getMonth() - 3); break;
+    case "year": from.setFullYear(from.getFullYear() - 1); break;
+  }
+  return { from, to };
+}
+
+function inRange(dateStr, range) {
+  if (!dateStr) return false;
+  const d = new Date(dateStr + "T00:00:00");
+  return d >= range.from && d <= range.to;
+}
+
+function switchView(view) {
+  currentBoardView = view;
+  document.getElementById("toggleAction").classList.toggle("active", view === "action");
+  document.getElementById("toggleTable").classList.toggle("active", view === "table");
+  document.getElementById("toggleHealth").classList.toggle("active", view === "health");
+  document.getElementById("togglePodSetup").classList.toggle("active", view === "podsetup");
+  document.getElementById("actionView").classList.toggle("hidden", view !== "action");
+  document.getElementById("tableView").classList.toggle("visible", view === "table");
+  document.getElementById("healthView").classList.toggle("visible", view === "health");
+  document.getElementById("podSetupView").classList.toggle("visible", view === "podsetup");
+  if (view === "table") renderTableView();
+  if (view === "health") renderHealthView();
+  if (view === "podsetup") renderPodSetup();
+}
+
+function setTimeline(range, el) {
+  healthTimelineRange = range;
+  document.querySelectorAll(".timeline-chip").forEach(c => c.classList.remove("active"));
+  el.classList.add("active");
+  document.getElementById("customDateRange").classList.toggle("visible", range === "custom");
+  if (range !== "custom") renderHealthView();
+}
+
+function applyCustomDate() {
+  healthCustomFrom = document.getElementById("customFrom").value;
+  healthCustomTo = document.getElementById("customTo").value;
+  renderHealthView();
+}
+
+function setShippingMode(mode, el) {
+  shippingModeFilter = mode;
+  document.querySelectorAll("#modeToggleBar .mode-chip").forEach(c => c.classList.remove("active"));
+  el.classList.add("active");
+  renderHealthView();
+}
+
+function renderHealthView() {
+  const range = getTimelineRange(healthTimelineRange);
+  const healthClientF = document.getElementById("healthFilterClient").value;
+  const healthSearchF = document.getElementById("healthSearch").value.toLowerCase().trim();
+  const inPeriod = HEALTH_DATA.filter(r => {
+    if (!inRange(r.submittedDate, range)) return false;
+    if (healthClientF && r.client !== healthClientF) return false;
+    if (healthSearchF && !r.id.toLowerCase().includes(healthSearchF)) return false;
+    return true;
+  });
+  const quoted = inPeriod.filter(r => r.quotedDate);
+  const approved = inPeriod.filter(r => r.approvedDate);
+  const invoiced = inPeriod.filter(r => r.invoicedDate);
+
+  const totalSubmitted = inPeriod.length;
+  const totalQuoted = quoted.length;
+  const totalApproved = approved.length;
+  const totalInvoiced = invoiced.length;
+  const pendingQuote = inPeriod.filter(r => !r.quotedDate).length;
+  const lostExpired = quoted.filter(r => !r.approvedDate).length;
+
+  const conversionPct = totalSubmitted > 0 ? Math.round((totalApproved / totalSubmitted) * 100) : 0;
+  const quotePct = totalSubmitted > 0 ? Math.round((totalQuoted / totalSubmitted) * 100) : 0;
+  const winRate = totalQuoted > 0 ? Math.round((totalApproved / totalQuoted) * 100) : 0;
+
+  const tatDays = inPeriod
+    .filter(r => r.quotedDate)
+    .map(r => {
+      const sub = new Date(r.submittedDate + "T00:00:00");
+      const quot = new Date(r.quotedDate + "T00:00:00");
+      return Math.round((quot - sub) / (1000 * 60 * 60 * 24));
+    });
+  const avgTat = tatDays.length > 0 ? (tatDays.reduce((a, b) => a + b, 0) / tatDays.length).toFixed(1) : "—";
+
+  const totalRevenue = invoiced.reduce((sum, r) => sum + (r.invoicedValue || 0), 0);
+  const avgDeal = totalInvoiced > 0 ? Math.round(totalRevenue / totalInvoiced) : 0;
+  const activeClients = new Set(inPeriod.map(r => r.client)).size;
+
+  const submittedValue = inPeriod.reduce((sum, r) => sum + r.quotedValue, 0);
+  const approvedValue = approved.reduce((sum, r) => sum + r.quotedValue, 0);
+
+  const pipelineValue = submittedValue;
+  const lostValue = quoted.filter(r => !r.approvedDate).reduce((sum, r) => sum + r.quotedValue, 0);
+  const pendingValue = inPeriod.filter(r => !r.quotedDate).reduce((sum, r) => sum + r.quotedValue, 0);
+
+  // --- Performance Summary ($ led) ---
+  document.getElementById("healthStats").innerHTML = `
+    <div class="health-stat-card">
+      <div class="hs-label">Total Revenue</div>
+      <div class="hs-value" style="color:var(--green)">$${totalRevenue.toLocaleString("en-US")}</div>
+      <div class="hs-detail">${totalInvoiced} invoiced shipment${totalInvoiced !== 1 ? 's' : ''}</div>
+    </div>
+    <div class="health-stat-card">
+      <div class="hs-label">Pipeline Value</div>
+      <div class="hs-value" style="color:#6366f1">$${pipelineValue.toLocaleString("en-US")}</div>
+      <div class="hs-detail">${totalSubmitted} RFQs in pipeline</div>
+    </div>
+    <div class="health-stat-card">
+      <div class="hs-label">Avg Deal Size</div>
+      <div class="hs-value" style="color:var(--text)">$${avgDeal.toLocaleString("en-US")}</div>
+      <div class="hs-detail">Per invoiced RFQ</div>
+    </div>
+    <div class="health-stat-card">
+      <div class="hs-label">Conversion Rate</div>
+      <div class="hs-value" style="color:${conversionPct >= 60 ? 'var(--green)' : conversionPct >= 40 ? 'var(--yellow)' : 'var(--red)'}">${conversionPct}%</div>
+      <div class="hs-detail">$${approvedValue.toLocaleString("en-US")} of $${submittedValue.toLocaleString("en-US")}</div>
+    </div>
+    <div class="health-stat-card">
+      <div class="hs-label">Quote TAT Avg</div>
+      <div class="hs-value" style="color:var(--blue)">${avgTat}<span style="font-size:14px;font-weight:500;color:var(--text-secondary)"> days</span></div>
+      <div class="hs-detail">${activeClients} active clients</div>
+    </div>`;
+
+  // --- SHIPPING SECTION (filterable by mode) ---
+  // Mode-filtered base sets: filter ALL data by mode
+  const byModeAll = {
+    Air: inPeriod.filter(r => r.mode === "Air"),
+    Ocean: inPeriod.filter(r => r.mode === "Ocean"),
+    Trucking: inPeriod.filter(r => r.mode === "Trucking")
+  };
+
+  const modeFiltered = shippingModeFilter === "all" ? inPeriod : byModeAll[shippingModeFilter] || [];
+  const mfQuoted = modeFiltered.filter(r => r.quotedDate);
+  const mfApproved = modeFiltered.filter(r => r.approvedDate);
+  const mfLost = mfQuoted.filter(r => !r.approvedDate);
+  const mfPendingQuote = modeFiltered.filter(r => !r.quotedDate).length;
+  const mfWinRate = mfQuoted.length > 0 ? Math.round((mfApproved.length / mfQuoted.length) * 100) : 0;
+  const mfSubmittedValue = modeFiltered.reduce((sum, r) => sum + r.quotedValue, 0);
+  const mfQuotedValue = mfQuoted.reduce((sum, r) => sum + r.quotedValue, 0);
+  const mfApprovedValue = mfApproved.reduce((sum, r) => sum + r.quotedValue, 0);
+  const mfLostValue = mfLost.reduce((sum, r) => sum + r.quotedValue, 0);
+  const mfValueConvPct = mfQuotedValue > 0 ? Math.round((mfApprovedValue / mfQuotedValue) * 100) : 0;
+
+  const modeValFmt = (arr) => "$" + arr.reduce((s, r) => s + r.quotedValue, 0).toLocaleString("en-US");
+  document.getElementById("badgeAir").textContent = modeValFmt(byModeAll.Air);
+  document.getElementById("badgeOcean").textContent = modeValFmt(byModeAll.Ocean);
+  document.getElementById("badgeTrucking").textContent = modeValFmt(byModeAll.Trucking);
+
+  // Shipping > RFQs & Quotes sub-grid ($ led)
+  document.getElementById("shippingRfqQuotes").innerHTML = `
+    <div class="ps-stat">
+      <div class="ps-label">RFQ Pipeline Value</div>
+      <div class="ps-value" style="color:#6366f1">$${mfSubmittedValue.toLocaleString("en-US")}</div>
+      <div class="ps-count-badge"><strong>${modeFiltered.length}</strong> RFQs${mfPendingQuote > 0 ? ` &middot; ${mfPendingQuote} pending` : ''}</div>
+    </div>
+    <div class="ps-stat">
+      <div class="ps-label">Quoted Value</div>
+      <div class="ps-value" style="color:var(--blue)">$${mfQuotedValue.toLocaleString("en-US")}</div>
+      <div class="ps-count-badge"><strong>${mfQuoted.length}</strong> quotes sent</div>
+    </div>
+    <div class="ps-stat">
+      <div class="ps-label">Won Value</div>
+      <div class="ps-value" style="color:var(--green)">$${mfApprovedValue.toLocaleString("en-US")}</div>
+      <div class="ps-detail">${mfValueConvPct}% value conversion</div>
+      <div class="ps-count-badge"><strong>${mfApproved.length}</strong> accepted</div>
+      <div class="ps-bar"><div class="ps-bar-fill" style="width:${mfValueConvPct}%;background:var(--green)"></div></div>
+    </div>
+    <div class="ps-stat">
+      <div class="ps-label">Lost Value</div>
+      <div class="ps-value" style="color:${mfLostValue > 0 ? 'var(--red)' : 'var(--text-secondary)'}">$${mfLostValue.toLocaleString("en-US")}</div>
+      <div class="ps-detail">Win rate: ${mfWinRate}%</div>
+      <div class="ps-count-badge"><strong>${mfLost.length}</strong> lost / expired</div>
+      ${mfLostValue > 0 ? `<div class="ps-bar"><div class="ps-bar-fill" style="width:${mfQuotedValue > 0 ? Math.round((mfLostValue / mfQuotedValue) * 100) : 0}%;background:var(--red)"></div></div>` : ''}
+    </div>`;
+
+  // Shipping > Shipment Tracking sub-grid ($ led)
+  const withShipping = mfApproved.filter(r => r.shippingStatus);
+  const bookedArr = withShipping.filter(r => r.shippingStatus === "booked");
+  const inTransitArr = withShipping.filter(r => r.shippingStatus === "in_transit");
+  const deliveredArr = withShipping.filter(r => r.shippingStatus === "delivered");
+  const shippingValue = withShipping.reduce((sum, r) => sum + r.quotedValue, 0);
+  const bookedValue = bookedArr.reduce((sum, r) => sum + r.quotedValue, 0);
+  const inTransitValue = inTransitArr.reduce((sum, r) => sum + r.quotedValue, 0);
+  const deliveredValue = deliveredArr.reduce((sum, r) => sum + (r.invoicedValue || r.quotedValue), 0);
+  const fulfillPct = shippingValue > 0 ? Math.round((deliveredValue / shippingValue) * 100) : 0;
+
+  document.getElementById("shippingTracking").innerHTML = `
+    <div class="ps-stat">
+      <div class="ps-label">Shipment Value</div>
+      <div class="ps-value" style="color:var(--text)">$${shippingValue.toLocaleString("en-US")}</div>
+      <div class="ps-count-badge"><strong>${withShipping.length}</strong> shipments</div>
+    </div>
+    <div class="ps-stat">
+      <div class="ps-label">Booked Value</div>
+      <div class="ps-value" style="color:var(--blue)">$${bookedValue.toLocaleString("en-US")}</div>
+      <div class="ps-count-badge"><strong>${bookedArr.length}</strong> awaiting pickup</div>
+    </div>
+    <div class="ps-stat">
+      <div class="ps-label">In Transit Value</div>
+      <div class="ps-value" style="color:var(--orange)">$${inTransitValue.toLocaleString("en-US")}</div>
+      <div class="ps-count-badge"><strong>${inTransitArr.length}</strong> moving</div>
+    </div>
+    <div class="ps-stat">
+      <div class="ps-label">Delivered Value</div>
+      <div class="ps-value" style="color:var(--green)">$${deliveredValue.toLocaleString("en-US")}</div>
+      <div class="ps-detail">${fulfillPct}% value fulfilled</div>
+      <div class="ps-count-badge"><strong>${deliveredArr.length}</strong> delivered</div>
+      <div class="ps-bar"><div class="ps-bar-fill" style="width:${fulfillPct}%;background:var(--green)"></div></div>
+    </div>`;
+
+  // --- INSPECTIONS SECTION ---
+  const withInspection = inPeriod.filter(r => r.inspectionRequired);
+  const inspQuoted = withInspection.filter(r => r.quotedDate);
+  const inspApproved = withInspection.filter(r => r.approvedDate);
+  const inspLost = inspQuoted.filter(r => !r.approvedDate);
+  const inspPendingQuote = withInspection.filter(r => !r.quotedDate).length;
+  const inspSubmittedValue = withInspection.reduce((sum, r) => sum + r.quotedValue, 0);
+  const inspQuotedValue = inspQuoted.reduce((sum, r) => sum + r.quotedValue, 0);
+  const inspApprovedValue = inspApproved.reduce((sum, r) => sum + r.quotedValue, 0);
+  const inspLostValue = inspLost.reduce((sum, r) => sum + r.quotedValue, 0);
+  const inspValueConvPct = inspQuotedValue > 0 ? Math.round((inspApprovedValue / inspQuotedValue) * 100) : 0;
+  const inspWinRate = inspQuoted.length > 0 ? Math.round((inspApproved.length / inspQuoted.length) * 100) : 0;
+
+  // Inspections > RFQs & Quotes sub-grid ($ led)
+  document.getElementById("inspectionRfqQuotes").innerHTML = `
+    <div class="ps-stat">
+      <div class="ps-label">Inspection Pipeline Value</div>
+      <div class="ps-value" style="color:#d97706">$${inspSubmittedValue.toLocaleString("en-US")}</div>
+      <div class="ps-count-badge"><strong>${withInspection.length}</strong> RFQs${inspPendingQuote > 0 ? ` &middot; ${inspPendingQuote} pending` : ''}</div>
+    </div>
+    <div class="ps-stat">
+      <div class="ps-label">Quoted Value</div>
+      <div class="ps-value" style="color:var(--blue)">$${inspQuotedValue.toLocaleString("en-US")}</div>
+      <div class="ps-count-badge"><strong>${inspQuoted.length}</strong> quotes sent</div>
+    </div>
+    <div class="ps-stat">
+      <div class="ps-label">Won Value</div>
+      <div class="ps-value" style="color:var(--green)">$${inspApprovedValue.toLocaleString("en-US")}</div>
+      <div class="ps-detail">${inspValueConvPct}% value conversion</div>
+      <div class="ps-count-badge"><strong>${inspApproved.length}</strong> accepted</div>
+      <div class="ps-bar"><div class="ps-bar-fill" style="width:${inspValueConvPct}%;background:var(--green)"></div></div>
+    </div>
+    <div class="ps-stat">
+      <div class="ps-label">Lost Value</div>
+      <div class="ps-value" style="color:${inspLostValue > 0 ? 'var(--red)' : 'var(--text-secondary)'}">$${inspLostValue.toLocaleString("en-US")}</div>
+      <div class="ps-detail">Win rate: ${inspWinRate}%</div>
+      <div class="ps-count-badge"><strong>${inspLost.length}</strong> lost / expired</div>
+    </div>`;
+
+  // Inspections > Inspection Status sub-grid
+  const inspScheduledArr = withInspection.filter(r => r.inspectionStatus === "scheduled");
+  const inspInProgressArr = withInspection.filter(r => r.inspectionStatus === "in_progress");
+  const inspPassedArr = withInspection.filter(r => r.inspectionStatus === "passed");
+  const inspFailedArr = withInspection.filter(r => r.inspectionStatus === "failed");
+  const inspScheduledValue = inspScheduledArr.reduce((sum, r) => sum + r.quotedValue, 0);
+  const inspInProgressValue = inspInProgressArr.reduce((sum, r) => sum + r.quotedValue, 0);
+  const inspPassedValue = inspPassedArr.reduce((sum, r) => sum + r.quotedValue, 0);
+  const inspFailedValue = inspFailedArr.reduce((sum, r) => sum + r.quotedValue, 0);
+  const inspCompletedValue = inspPassedValue + inspFailedValue;
+  const passRateValue = inspCompletedValue > 0 ? Math.round((inspPassedValue / inspCompletedValue) * 100) : 0;
+  const passRateCount = (inspPassedArr.length + inspFailedArr.length) > 0 ? Math.round((inspPassedArr.length / (inspPassedArr.length + inspFailedArr.length)) * 100) : 0;
+
+  document.getElementById("inspectionTracking").innerHTML = `
+    <div class="ps-stat">
+      <div class="ps-label">Scheduled Value</div>
+      <div class="ps-value" style="color:var(--blue)">$${inspScheduledValue.toLocaleString("en-US")}</div>
+      <div class="ps-count-badge"><strong>${inspScheduledArr.length}</strong> upcoming</div>
+    </div>
+    <div class="ps-stat">
+      <div class="ps-label">In Progress Value</div>
+      <div class="ps-value" style="color:var(--orange)">$${inspInProgressValue.toLocaleString("en-US")}</div>
+      <div class="ps-count-badge"><strong>${inspInProgressArr.length}</strong> underway</div>
+    </div>
+    <div class="ps-stat">
+      <div class="ps-label">Passed Value</div>
+      <div class="ps-value" style="color:var(--green)">$${inspPassedValue.toLocaleString("en-US")}</div>
+      <div class="ps-detail">Pass rate: ${passRateCount}%</div>
+      <div class="ps-count-badge"><strong>${inspPassedArr.length}</strong> passed</div>
+      <div class="ps-bar"><div class="ps-bar-fill" style="width:${passRateValue}%;background:var(--green)"></div></div>
+    </div>
+    <div class="ps-stat">
+      <div class="ps-label">At Risk Value</div>
+      <div class="ps-value" style="color:${inspFailedValue > 0 ? 'var(--red)' : 'var(--text-secondary)'}">$${inspFailedValue.toLocaleString("en-US")}</div>
+      <div class="ps-detail">${inspFailedArr.length > 0 ? 'Failed — needs attention' : 'No failures'}</div>
+      <div class="ps-count-badge"><strong>${inspFailedArr.length}</strong> failed</div>
+      ${inspFailedValue > 0 ? `<div class="ps-bar"><div class="ps-bar-fill" style="width:${inspCompletedValue > 0 ? Math.round((inspFailedValue / inspCompletedValue) * 100) : 0}%;background:var(--red)"></div></div>` : ''}
+    </div>`;
+}
+
+function fmtK(n) {
+  if (n >= 1000) return "$" + (n / 1000).toFixed(n % 1000 === 0 ? 0 : 1) + "k";
+  return "$" + n.toLocaleString("en-US");
+}
+
+function renderBoard(rfqs) {
+  const board = document.getElementById("board");
+  board.innerHTML = "";
+
+  STAGES.forEach(stage => {
+    const stageRfqs = rfqs.filter(r => r.stage === stage.key);
+    const totalValue = stageRfqs.reduce((sum, r) => sum + r.quotedValue, 0);
+    const totalShipments = stageRfqs.reduce((sum, r) => sum + r.shipments, 0);
+    const lane = document.createElement("div");
+    lane.className = "lane";
+    lane.dataset.stage = stage.key;
+
+    let cardsHTML = "";
+    if (stageRfqs.length === 0) {
+      cardsHTML = `<div class="empty-lane">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5zm9 4a1 1 0 10-2 0v6a1 1 0 102 0V7zm-3 2a1 1 0 10-2 0v4a1 1 0 102 0V9zm-3 3a1 1 0 10-2 0v1a1 1 0 102 0v-1z" clip-rule="evenodd"/></svg>
+        <div>No RFQs in this stage</div>
+      </div>`;
+    } else {
+      cardsHTML = stageRfqs.map(r => buildCardHTML(r)).join("");
+    }
+
+    lane.innerHTML = `
+      <div class="lane-header">
+        <div class="lane-header-left">
+          <span class="lane-dot"></span>
+          <span class="lane-title">${stage.label}</span>
+        </div>
+        <span class="lane-count">${stageRfqs.length}</span>
+      </div>
+      <div class="lane-stats">
+        <div class="lane-stat">
+          <span class="lane-stat-value">${totalShipments}</span>
+          <span class="lane-stat-label">Shipments</span>
+        </div>
+        <div class="lane-stat">
+          <span class="lane-stat-value">${fmtK(totalValue)}</span>
+          <span class="lane-stat-label">Quoted Value</span>
+        </div>
+      </div>
+      <div class="lane-cards">${cardsHTML}</div>`;
+
+    board.appendChild(lane);
+  });
+}
+
+function renderSummary(rfqs) {
+  const strip = document.getElementById("summaryStrip");
+  const totalRfqs = rfqs.length;
+  const totalValue = rfqs.reduce((sum, r) => sum + r.quotedValue, 0);
+  const expiredCount = rfqs.filter(r => r.stage === "expired").length;
+  const rejectedCount = rfqs.filter(r => r.stage === "rejected").length;
+  const acceptedCount = rfqs.filter(r => r.stage === "accepted").length;
+  const crdPassedCount = rfqs.filter(r => r.crd && diffDays(r.crd) > 0 && r.stage === "submitted").length;
+  const firstTimeCount = rfqs.filter(r => r.firstTime).length;
+
+  let html = `
+    <div class="summary-pill" onclick="clearFilters()">
+      <span class="pill-count" style="color:var(--text)">${totalRfqs}</span>
+      <span class="pill-label">Active RFQs</span>
+    </div>
+    <div class="summary-pill">
+      <span class="pill-count" style="color:var(--text-secondary)">${fmtK(totalValue)}</span>
+      <span class="pill-label">Pipeline Value</span>
+    </div>`;
+
+  if (expiredCount > 0) {
+    html += `<div class="summary-pill" style="border-color:#fcd5d2;background:var(--red-bg)">
+      <span class="pill-count" style="color:var(--red)">${expiredCount}</span>
+      <span class="pill-label">Expired</span>
+    </div>`;
+  }
+  if (rejectedCount > 0) {
+    html += `<div class="summary-pill" style="border-color:#fbcfe8;background:#fdf2f8">
+      <span class="pill-count" style="color:#be185d">${rejectedCount}</span>
+      <span class="pill-label">Rejected</span>
+    </div>`;
+  }
+  if (acceptedCount > 0) {
+    html += `<div class="summary-pill" style="border-color:#bbf7d0;background:#f0fdf4">
+      <span class="pill-count" style="color:#1e7a42">${acceptedCount}</span>
+      <span class="pill-label">Accepted</span>
+    </div>`;
+  }
+  if (crdPassedCount > 0) {
+    html += `<div class="summary-pill" style="border-color:#fde68a;background:var(--yellow-bg)">
+      <span class="pill-count" style="color:var(--yellow)">${crdPassedCount}</span>
+      <span class="pill-label">CRD Passed</span>
+    </div>`;
+  }
+  if (firstTimeCount > 0) {
+    html += `<div class="summary-pill" style="border-color:#e4d9f7;background:var(--purple-bg)">
+      <span class="pill-count" style="color:var(--purple)">${firstTimeCount}</span>
+      <span class="pill-label">First-Time Client</span>
+    </div>`;
+  }
+
+  strip.innerHTML = html;
+}
+
+function populateFilters() {
+  const teamSelect = document.getElementById("filterTeam");
+  TEAM.forEach(t => {
+    const opt = document.createElement("option");
+    opt.value = t.name;
+    opt.textContent = `${t.name} (${t.role})`;
+    teamSelect.appendChild(opt);
+  });
+
+  const clients = [...new Set(RFQS.map(r => r.client))].sort();
+  const clientSelect = document.getElementById("filterClient");
+  clients.forEach(c => {
+    const opt = document.createElement("option");
+    opt.value = c;
+    opt.textContent = c;
+    clientSelect.appendChild(opt);
+  });
+
+  const lanes = [...new Set(RFQS.map(r => `${r.origin} → ${r.destination}`))].sort();
+  const laneSelect = document.getElementById("filterLane");
+  lanes.forEach(l => {
+    const opt = document.createElement("option");
+    opt.value = l;
+    opt.textContent = l;
+    laneSelect.appendChild(opt);
+  });
+}
+
+function applyFilters() {
+  const team = document.getElementById("filterTeam").value;
+  const client = document.getElementById("filterClient").value;
+  const mode = document.getElementById("filterMode").value;
+  const lane = document.getElementById("filterLane").value;
+  const search = document.getElementById("searchInput").value.toLowerCase();
+
+  const hasFilters = team || client || mode || lane || search;
+  document.getElementById("clearBtn").classList.toggle("visible", hasFilters);
+
+  let filtered = RFQS;
+
+  if (team) filtered = filtered.filter(r => r.assignee === team);
+  if (client) filtered = filtered.filter(r => r.client === client);
+  if (mode) filtered = filtered.filter(r => r.mode === mode);
+  if (lane) filtered = filtered.filter(r => `${r.origin} → ${r.destination}` === lane);
+  if (search) filtered = filtered.filter(r =>
+    `${r.id} ${r.client} ${r.origin} ${r.destination} ${r.assignee}`.toLowerCase().includes(search)
+  );
+
+  renderBoard(filtered);
+  renderSummary(filtered);
+}
+
+function clearFilters() {
+  document.getElementById("filterTeam").value = "";
+  document.getElementById("filterClient").value = "";
+  document.getElementById("filterMode").value = "";
+  document.getElementById("filterLane").value = "";
+  document.getElementById("searchInput").value = "";
+  document.getElementById("clearBtn").classList.remove("visible");
+  renderBoard(RFQS);
+  renderSummary(RFQS);
+}
+
+/* ── Table View ────────────────────────────── */
+
+function populateTableFilters() {
+  const teamSel = document.getElementById("tvFilterTeam");
+  const stageSel = document.getElementById("tvFilterStage");
+  const tvClientSel = document.getElementById("tvFilterClient");
+  const healthClientSel = document.getElementById("healthFilterClient");
+
+  const existingTeam = new Set();
+  const existingClients = new Set();
+  RFQS.forEach(r => { existingTeam.add(r.assignee); existingClients.add(r.client); });
+  HEALTH_DATA.forEach(r => existingClients.add(r.client));
+
+  [...existingTeam].sort().forEach(name => {
+    const o = document.createElement("option");
+    o.value = name; o.textContent = name;
+    teamSel.appendChild(o);
+  });
+  [...existingClients].sort().forEach(name => {
+    [tvClientSel, healthClientSel].forEach(sel => {
+      const o = document.createElement("option");
+      o.value = name; o.textContent = name;
+      sel.appendChild(o);
+    });
+  });
+  STAGES.forEach(s => {
+    const o = document.createElement("option");
+    o.value = s.key; o.textContent = s.label;
+    stageSel.appendChild(o);
+  });
+}
+
+function getStageLabel(key) {
+  const s = STAGES.find(st => st.key === key);
+  return s ? s.label : key;
+}
+
+function getStageDetailLine(rfq) {
+  switch (rfq.stage) {
+    case "submitted": return `Received: <strong>${formatDate(rfq.stageDate)}</strong>`;
+    case "awaiting": return `Valid until: <strong>${formatDate(rfq.stageDate)}</strong>`;
+    case "expired": return `Expired: <strong>${formatDate(rfq.stageDate)}</strong> (${diffDays(rfq.stageDate)}d ago)`;
+    case "rejected": return `Rejected: <strong>${formatDate(rfq.stageDate)}</strong> (${diffDays(rfq.stageDate)}d ago)`;
+    case "accepted": return `Accepted: <strong>${formatDate(rfq.stageDate)}</strong> — awaiting booking (${diffDays(rfq.stageDate)}d)`;
+  }
+  return "";
+}
+
+function getNextAction(rfq) {
+  let text = "";
+  let level = "ok";
+  switch (rfq.stage) {
+    case "submitted": {
+      const d = diffDays(rfq.stageDate);
+      text = "Prepare quote";
+      level = d >= 5 ? "danger" : d >= 2 ? "warn" : "ok";
+      break;
+    }
+    case "awaiting": {
+      const remain = -diffDays(rfq.stageDate);
+      text = "Follow up";
+      level = remain <= 0 ? "danger" : remain <= 2 ? "danger" : remain <= 5 ? "warn" : "ok";
+      break;
+    }
+    case "expired": {
+      const d = diffDays(rfq.stageDate);
+      text = "Re-quote";
+      level = d >= 8 ? "danger" : d >= 4 ? "warn" : "ok";
+      break;
+    }
+    case "rejected": {
+      const d = diffDays(rfq.stageDate);
+      text = "Re-quote or cancel";
+      level = d >= 7 ? "danger" : d >= 3 ? "warn" : "ok";
+      break;
+    }
+    case "accepted": {
+      const d = diffDays(rfq.stageDate);
+      text = "Send booking email";
+      level = d >= 3 ? "danger" : d >= 1 ? "warn" : "ok";
+      break;
+    }
+  }
+  return { text, level };
+}
+
+const rfqNotes = {};
+const rfqAttention = {};
+const rfqDeadlines = {};
+RFQS.forEach(r => { if (r.notes) rfqNotes[r.id] = r.notes; });
+
+const rfqAssigneeOverrides = {};
+
+const TABLE_COLUMNS = [
+  { key: "assignee",  label: "Assignee",      defaultOn: true },
+  { key: "client",    label: "Client",         defaultOn: true },
+  { key: "silqId",    label: "Silq ID",        defaultOn: true },
+  { key: "shipperPo", label: "Shipper / PO #", defaultOn: true },
+  { key: "route",     label: "Route",          defaultOn: true },
+  { key: "mode",      label: "Service",         defaultOn: true },
+  { key: "stages",    label: "Stage(s)",       defaultOn: true },
+  { key: "crd",       label: "CRD",            defaultOn: true },
+  { key: "deadline",  label: "Deadline",       defaultOn: true },
+  { key: "quoteSent", label: "Quote Sent",     defaultOn: true },
+  { key: "totalVal",  label: "Total $",        defaultOn: true },
+  { key: "attn",      label: "Attn",           defaultOn: true },
+  { key: "notes",     label: "Notes",          defaultOn: true }
+];
+
+const STORAGE_KEY = "podBoard_customViews";
+let activeViewId = "__default__";
+let visibleColumns = TABLE_COLUMNS.map(c => c.key);
+
+function loadSavedViews() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e) { return {}; }
+}
+function persistViews(views) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(views));
+}
+
+function getDefaultColumnSet() { return TABLE_COLUMNS.map(c => c.key); }
+
+function setActiveView(viewId) {
+  activeViewId = viewId;
+  if (viewId === "__default__") {
+    visibleColumns = getDefaultColumnSet();
+    resetTableFilters();
+  } else {
+    const views = loadSavedViews();
+    const v = views[viewId];
+    if (!v) { activeViewId = "__default__"; visibleColumns = getDefaultColumnSet(); return; }
+    visibleColumns = v.columns.slice();
+    applyViewFilters(v.filters || {});
+  }
+  renderViewTabs();
+  applyColumnVisibility();
+  renderTableView();
+}
+
+function resetTableFilters() {
+  document.getElementById("tvFilterTeam").value = "";
+  document.getElementById("tvFilterClient").value = "";
+  document.getElementById("tvFilterMode").value = "";
+  document.getElementById("tvFilterStage").value = "";
+  document.getElementById("tvSearch").value = "";
+}
+
+function applyViewFilters(filters) {
+  document.getElementById("tvFilterTeam").value = filters.team || "";
+  document.getElementById("tvFilterClient").value = filters.client || "";
+  document.getElementById("tvFilterMode").value = filters.mode || "";
+  document.getElementById("tvFilterStage").value = filters.stage || "";
+  document.getElementById("tvSearch").value = filters.search || "";
+}
+
+function getCurrentFilters() {
+  return {
+    team: document.getElementById("tvFilterTeam").value,
+    client: document.getElementById("tvFilterClient").value,
+    mode: document.getElementById("tvFilterMode").value,
+    stage: document.getElementById("tvFilterStage").value,
+    search: document.getElementById("tvSearch").value
+  };
+}
+
+function renderViewTabs() {
+  const container = document.getElementById("cvTabs");
+  const views = loadSavedViews();
+  const viewIds = Object.keys(views);
+
+  let html = `<button class="cv-tab${activeViewId === "__default__" ? " active" : ""}" onclick="setActiveView('__default__')">All Columns</button>`;
+
+  viewIds.forEach(id => {
+    const v = views[id];
+    const isActive = activeViewId === id;
+    html += `<button class="cv-tab${isActive ? " active" : ""}" onclick="setActiveView('${id}')">
+      ${v.name}
+      <span class="cv-tab-delete" onclick="event.stopPropagation();deleteCustomView('${id}')" title="Delete view">&times;</span>
+    </button>`;
+  });
+
+  container.innerHTML = html;
+}
+
+function toggleColumnPicker() {
+  const picker = document.getElementById("cvColPicker");
+  if (picker.style.display === "none") {
+    renderColumnPicker();
+    picker.style.display = "block";
+    setTimeout(() => document.addEventListener("click", closePickerOutside), 0);
+  } else {
+    picker.style.display = "none";
+    document.removeEventListener("click", closePickerOutside);
+  }
+}
+
+function closePickerOutside(e) {
+  const picker = document.getElementById("cvColPicker");
+  const anchor = picker.closest(".cv-picker-anchor");
+  if (!anchor.contains(e.target)) {
+    picker.style.display = "none";
+    document.removeEventListener("click", closePickerOutside);
+  }
+}
+
+function renderColumnPicker() {
+  const picker = document.getElementById("cvColPicker");
+  const allOn = visibleColumns.length === TABLE_COLUMNS.length;
+  let html = `<div class="cv-col-picker-header"><span>Columns</span><button onclick="${allOn ? "deselectAllColumns()" : "selectAllColumns()"}">${allOn ? "Deselect All" : "Select All"}</button></div>`;
+
+  TABLE_COLUMNS.forEach(col => {
+    const checked = visibleColumns.includes(col.key) ? "checked" : "";
+    html += `<div class="cv-col-item" onclick="toggleColumn('${col.key}')">
+      <input type="checkbox" ${checked} tabindex="-1">
+      <label>${col.label}</label>
+    </div>`;
+  });
+
+  picker.innerHTML = html;
+}
+
+function toggleColumn(key) {
+  const idx = visibleColumns.indexOf(key);
+  if (idx > -1) {
+    if (visibleColumns.length <= 1) return;
+    visibleColumns.splice(idx, 1);
+  } else {
+    const orderedPos = TABLE_COLUMNS.findIndex(c => c.key === key);
+    let insertAt = visibleColumns.length;
+    for (let i = 0; i < visibleColumns.length; i++) {
+      if (TABLE_COLUMNS.findIndex(c => c.key === visibleColumns[i]) > orderedPos) { insertAt = i; break; }
+    }
+    visibleColumns.splice(insertAt, 0, key);
+  }
+  if (activeViewId !== "__default__") activeViewId = "__default__";
+  renderViewTabs();
+  renderColumnPicker();
+  applyColumnVisibility();
+  renderTableView();
+}
+
+function selectAllColumns() {
+  visibleColumns = getDefaultColumnSet();
+  renderColumnPicker();
+  applyColumnVisibility();
+  renderTableView();
+}
+
+function deselectAllColumns() {
+  visibleColumns = [TABLE_COLUMNS[0].key];
+  renderColumnPicker();
+  applyColumnVisibility();
+  renderTableView();
+}
+
+function applyColumnVisibility() {
+  const table = document.querySelector(".tv-table");
+  if (!table) return;
+  table.querySelectorAll("thead th[data-col]").forEach(th => {
+    th.style.display = visibleColumns.includes(th.dataset.col) ? "" : "none";
+  });
+}
+
+function openSaveViewModal() {
+  document.getElementById("cvSaveModal").style.display = "flex";
+  const inp = document.getElementById("cvViewName");
+  inp.value = "";
+  inp.focus();
+}
+
+function closeSaveViewModal() {
+  document.getElementById("cvSaveModal").style.display = "none";
+}
+
+function confirmSaveView() {
+  const name = document.getElementById("cvViewName").value.trim();
+  if (!name) return;
+  const views = loadSavedViews();
+  const id = "cv_" + Date.now();
+  views[id] = {
+    name: name,
+    columns: visibleColumns.slice(),
+    filters: getCurrentFilters()
+  };
+  persistViews(views);
+  activeViewId = id;
+  closeSaveViewModal();
+  renderViewTabs();
+}
+
+function deleteCustomView(id) {
+  const views = loadSavedViews();
+  delete views[id];
+  persistViews(views);
+  if (activeViewId === id) {
+    activeViewId = "__default__";
+    visibleColumns = getDefaultColumnSet();
+    resetTableFilters();
+    applyColumnVisibility();
+    renderTableView();
+  }
+  renderViewTabs();
+}
+
+function changeAssignee(id, el) {
+  event.stopPropagation();
+  rfqAssigneeOverrides[id] = el.value;
+  RFQS.forEach(r => { if (r.id === id) r.assignee = el.value; });
+  renderTableView();
+}
+
+function toggleAttention(id) {
+  event.stopPropagation();
+  rfqAttention[id] = !rfqAttention[id];
+  renderTableView();
+}
+
+function startEditNote(id, el) {
+  event.stopPropagation();
+  const cell = el.closest('.tv-notes-cell');
+  const current = rfqNotes[id] || "";
+  cell.innerHTML = `<textarea class="tv-notes-input" onblur="saveNote('${id}', this)" onkeydown="if(event.key==='Escape'){saveNote('${id}',this)}">${current}</textarea>`;
+  const ta = cell.querySelector("textarea");
+  ta.focus();
+  ta.setSelectionRange(ta.value.length, ta.value.length);
+}
+
+function saveNote(id, el) {
+  rfqNotes[id] = el.value.trim();
+  renderTableView();
+}
+
+function startEditDeadline(id, el) {
+  event.stopPropagation();
+  const cell = el.closest('.tv-deadline-cell');
+  const current = rfqDeadlines[id] || "";
+  cell.innerHTML = `<input type="text" class="tv-deadline-input" value="${current}" placeholder="e.g. May 30, ASAP..." onblur="saveDeadline('${id}', this)" onkeydown="if(event.key==='Enter'||event.key==='Escape'){saveDeadline('${id}',this)}">`;
+  const inp = cell.querySelector("input");
+  inp.focus();
+  inp.setSelectionRange(inp.value.length, inp.value.length);
+}
+
+function saveDeadline(id, el) {
+  rfqDeadlines[id] = el.value.trim();
+  renderTableView();
+}
+
+const rfqShipperPoOverrides = {};
+RFQS.forEach(r => { if (r.shipperPo) rfqShipperPoOverrides[r.id] = r.shipperPo; });
+
+function startEditShipperPo(id, el) {
+  event.stopPropagation();
+  const cell = el.closest('.tv-shipper-cell');
+  const current = rfqShipperPoOverrides[id] || "";
+  cell.innerHTML = `<input type="text" class="tv-shipper-input" value="${current}" placeholder="PO / Shipper #" onblur="saveShipperPo('${id}', this)" onkeydown="if(event.key==='Enter'||event.key==='Escape'){saveShipperPo('${id}',this)}">`;
+  const inp = cell.querySelector("input");
+  inp.focus();
+  inp.setSelectionRange(inp.value.length, inp.value.length);
+}
+
+function saveShipperPo(id, el) {
+  rfqShipperPoOverrides[id] = el.value.trim();
+  renderTableView();
+}
+
+function buildQuoteSentCell(r) {
+  if (!r.quoteSentDate) return `<span class="tv-date">—</span>`;
+  const h = r.quoteHistory;
+  if (!h || h.length <= 1) return `<span class="tv-date">${formatDate(r.quoteSentDate)}</span>`;
+  const revNum = h.length;
+  const historyTip = h.map((q, i) => `Q${i+1}: ${formatDate(q.date)}`).join(" | ");
+  return `<div class="tv-quote-cell"><span class="tv-date">${formatDate(r.quoteSentDate)}<span class="tv-rev-badge" title="${historyTip}">Q${revNum}</span></span></div>`;
+}
+
+function buildQuoteValueCell(r) {
+  const val = `$${(r.quotedValue || 0).toLocaleString()}`;
+  const h = r.quoteHistory;
+  if (!h || h.length <= 1) return `<span class="tv-value">${val}</span>`;
+  const prevVal = h[h.length - 2].value;
+  if (prevVal === r.quotedValue) return `<span class="tv-value">${val}</span>`;
+  const prevStr = prevVal >= 1000 ? `$${(prevVal / 1000).toFixed(1)}K` : `$${prevVal.toLocaleString()}`;
+  return `<div class="tv-quote-cell"><span class="tv-value">${val}</span><span class="tv-prev-value">was ${prevStr}</span></div>`;
+}
+
+function renderTableView() {
+  const teamF = document.getElementById("tvFilterTeam").value;
+  const clientF = document.getElementById("tvFilterClient").value;
+  const modeF = document.getElementById("tvFilterMode").value;
+  const stageF = document.getElementById("tvFilterStage").value;
+  const searchF = document.getElementById("tvSearch").value.toLowerCase().trim();
+
+  const grouped = {};
+  RFQS.forEach(rfq => {
+    let pass = true;
+    if (teamF && rfq.assignee !== teamF) pass = false;
+    if (clientF && rfq.client !== clientF) pass = false;
+    if (modeF && rfq.mode !== modeF) pass = false;
+    if (stageF && rfq.stage !== stageF) pass = false;
+    if (searchF) {
+      const blob = `${rfq.id} ${rfq.client} ${rfq.origin} ${rfq.destination} ${rfq.assignee}`.toLowerCase();
+      if (!blob.includes(searchF)) pass = false;
+    }
+    if (!pass) return;
+
+    if (!grouped[rfq.id]) {
+      grouped[rfq.id] = {
+        id: rfq.id,
+        client: rfq.client,
+        origin: rfq.origin,
+        destination: rfq.destination,
+        mode: rfq.mode,
+        shipments: rfq.shipments,
+        quotedValue: rfq.quotedValue,
+        assignee: rfq.assignee,
+        contact: rfq.contact || "",
+        rfqDate: rfq.rfqDate || "",
+        shipperPo: rfqShipperPoOverrides[rfq.id] || rfq.shipperPo || "",
+        crd: rfq.crd || "",
+        quoteSentDate: rfq.quoteSentDate || "",
+        quoteHistory: rfq.quoteHistory || [],
+        approvalStatus: rfq.approvalStatus || null,
+        notes: rfqNotes[rfq.id] !== undefined ? rfqNotes[rfq.id] : (rfq.notes || ""),
+        firstTime: rfq.firstTime,
+        delayed: rfq.delayed || false,
+        stages: [],
+        stageDetails: [],
+        actions: []
+      };
+    }
+    const stageKey = rfq.stage;
+    if (!grouped[rfq.id].stages.includes(stageKey)) {
+      grouped[rfq.id].stages.push(stageKey);
+      grouped[rfq.id].stageDetails.push(getStageDetailLine(rfq));
+      grouped[rfq.id].actions.push(getNextAction(rfq));
+    }
+    if (rfq.delayed) grouped[rfq.id].delayed = true;
+    if (rfq.quotedValue > grouped[rfq.id].quotedValue) grouped[rfq.id].quotedValue = rfq.quotedValue;
+    grouped[rfq.id].shipments = Math.max(grouped[rfq.id].shipments, rfq.shipments);
+  });
+
+  const rows = Object.values(grouped);
+  const stageOrder = STAGES.map(s => s.key);
+  rows.sort((a, b) => {
+    const aMin = Math.min(...a.stages.map(s => stageOrder.indexOf(s)));
+    const bMin = Math.min(...b.stages.map(s => stageOrder.indexOf(s)));
+    return aMin - bMin;
+  });
+
+  const teamColor = (name) => {
+    const t = TEAM.find(m => m.name === name);
+    return t ? t.color : "#999";
+  };
+
+  const tvModeClass = (m) => {
+    if (m === "Air") return "air";
+    if (m === "FCL" || m === "LCL") return "ocean";
+    if (m === "Inspections") return "inspections";
+    return "trucking";
+  };
+
+  const tbody = document.getElementById("tableBody");
+  tbody.innerHTML = rows.map(r => {
+    const stagePills = r.stages.map(s =>
+      `<span class="tv-stage-pill ${s}"><span class="tv-stage-dot ${s}"></span>${getStageLabel(s)}</span>`
+    ).join("");
+
+    const detailHtml = r.stageDetails.map(d => `<div class="tv-detail-line">${d}</div>`).join("");
+
+    const actionHtml = r.actions.map(a =>
+      `<span class="tv-action-badge ${a.level}">${a.text}</span>`
+    ).join("");
+
+    const flags = [];
+    const hasCrdPassed = r.crd && diffDays(r.crd) > 0 && r.stages.includes("submitted");
+    if (r.firstTime) flags.push(`<span class="tv-flag first-time">1st client</span>`);
+    if (hasCrdPassed) flags.push(`<span class="tv-flag delayed">CRD passed</span>`);
+    if (r.stages.includes("rejected")) flags.push(`<span class="tv-flag delayed">Rejected</span>`);
+    if (r.stages.includes("accepted")) flags.push(`<span class="tv-flag first-time">Accepted</span>`);
+
+    const multiTag = r.stages.length > 1 ? ' style="background:#fffbeb;"' : '';
+
+    const noteDisplay = r.notes
+      ? `<div class="tv-notes-text">${r.notes}</div>`
+      : `<div class="tv-notes-text"></div>`;
+
+    const deadlineVal = rfqDeadlines[r.id] || "";
+    const deadlineDisplay = deadlineVal
+      ? `<div class="tv-deadline-text">${deadlineVal}</div>`
+      : `<div class="tv-deadline-text"></div>`;
+
+    const isAttn = rfqAttention[r.id];
+    const attnClass = isAttn ? " needs-attention" : "";
+    const attnBtn = `<button class="tv-attn-btn${isAttn ? " active" : ""}" onclick="toggleAttention('${r.id}')" title="${isAttn ? "Remove attention flag" : "Flag as needs attention"}">!</button>`;
+
+    const teamOptions = TEAM.map(t =>
+      `<option value="${t.name}"${t.name === r.assignee ? " selected" : ""}>${t.name}</option>`
+    ).join("");
+
+    return `<tr class="${attnClass}"${multiTag}>
+      <td data-col="assignee"><select class="tv-assignee-select" onchange="changeAssignee('${r.id}', this)">${teamOptions}</select></td>
+      <td data-col="client" onclick="openRfq('${r.id}')"><div class="tv-client-cell"><span class="tv-client">${r.client}</span>${r.contact ? `<span class="tv-client-contact">${r.contact}</span>` : ""}</div></td>
+      <td data-col="silqId" onclick="openRfq('${r.id}')"><div class="tv-id-cell"><span class="tv-id">${r.id}</span><span class="tv-id-date">${r.rfqDate ? formatDate(r.rfqDate) : ""}</span></div></td>
+      <td data-col="shipperPo"><div class="tv-shipper-cell" onclick="startEditShipperPo('${r.id}', this)"><div class="tv-shipper-text">${rfqShipperPoOverrides[r.id] || r.shipperPo || ""}</div></div></td>
+      <td data-col="route" onclick="openRfq('${r.id}')"><span class="tv-route">${r.origin} → ${r.destination}</span></td>
+      <td data-col="mode" onclick="openRfq('${r.id}')"><span class="tv-mode-chip ${tvModeClass(r.mode)}">${r.mode}</span></td>
+      <td data-col="stages" onclick="openRfq('${r.id}')"><div class="tv-stages">${stagePills}</div></td>
+      <td data-col="crd" onclick="openRfq('${r.id}')"><span class="tv-date">${r.crd ? formatDate(r.crd) : "—"}</span></td>
+      <td data-col="deadline" class="col-deadline"><div class="tv-deadline-cell" onclick="startEditDeadline('${r.id}', this)">${deadlineDisplay}</div></td>
+      <td data-col="quoteSent" onclick="openRfq('${r.id}')">${buildQuoteSentCell(r)}</td>
+      <td data-col="totalVal" onclick="openRfq('${r.id}')" class="col-value">${buildQuoteValueCell(r)}</td>
+      <td data-col="attn" class="col-attn">${attnBtn}</td>
+      <td data-col="notes" class="col-notes"><div class="tv-notes-cell" onclick="startEditNote('${r.id}', this)">${noteDisplay}</div></td>
+    </tr>`;
+  }).join("");
+
+  applyColumnVisibility();
+  document.querySelectorAll(".tv-table tbody td[data-col]").forEach(td => {
+    td.style.display = visibleColumns.includes(td.dataset.col) ? "" : "none";
+  });
+
+  document.getElementById("tableCount").textContent = `${rows.length} unique RFQs` + (rows.some(r => r.stages.length > 1) ? ` (${rows.filter(r => r.stages.length > 1).length} multi-stage)` : '');
+}
+
+function openRfq(id) {
+  const rfq = RFQS.find(r => r.id === id);
+  if (!rfq) return;
+  alert(`Opening ${rfq.id} — ${rfq.client}\n\nIn production, this would navigate to the full RFQ/Project page in the main app.`);
+}
+
+/* ── Pod Setup ────────────────────────────── */
+
+const ALL_USERS = [
+  { id: "u1", name: "Sarah Kim", role: "Account Manager", color: "#6366f1" },
+  { id: "u2", name: "James Chen", role: "Origin Shipping Coordinator", color: "#0891b2" },
+  { id: "u3", name: "Maria Lopez", role: "Destination Shipping Coordinator", color: "#db2777" },
+  { id: "u4", name: "David Park", role: "Account Manager", color: "#059669" },
+  { id: "u5", name: "Lisa Wang", role: "Origin Shipping Coordinator", color: "#d97706" },
+  { id: "u6", name: "Alex Rivera", role: "Account Manager", color: "#7c3aed" },
+  { id: "u7", name: "Rachel Tan", role: "Associate Account Manager", color: "#0d9488" },
+  { id: "u8", name: "Omar Farouk", role: "Destination Shipping Coordinator", color: "#be185d" },
+  { id: "u9", name: "Nina Patel", role: "Account Manager", color: "#ca8a04" },
+  { id: "u10", name: "Kevin Wu", role: "Finance Operations", color: "#4f46e5" }
+];
+
+const POD_STORAGE_KEY = "podBoard_pods";
+
+function loadPods() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(POD_STORAGE_KEY));
+    if (stored && stored.length > 0) return stored;
+  } catch(e) {}
+  return [
+    { id: "pod1", name: "East Asia Pod", lead: "u1", members: ["u1", "u2", "u5", "u7"] },
+    { id: "pod2", name: "South Asia Pod", lead: "u4", members: ["u4", "u3", "u8"] },
+    { id: "pod3", name: "Americas Pod", lead: "u6", members: ["u6", "u9", "u10"] }
+  ];
+}
+
+function savePods(pods) {
+  localStorage.setItem(POD_STORAGE_KEY, JSON.stringify(pods));
+}
+
+let pods = loadPods();
+let podCreateMode = false;
+let moveMemberData = null;
+
+function getUser(id) { return ALL_USERS.find(u => u.id === id); }
+function getUserInitials(name) { return name.split(" ").map(w => w[0]).join(""); }
+
+function getUnassignedUsers() {
+  const assigned = new Set();
+  pods.forEach(p => p.members.forEach(m => assigned.add(m)));
+  return ALL_USERS.filter(u => !assigned.has(u.id));
+}
+
+function renderPodSetup() {
+  const grid = document.getElementById("podGrid");
+  const unassigned = getUnassignedUsers();
+
+  let html = "";
+
+  pods.forEach(pod => {
+    const lead = pod.lead ? getUser(pod.lead) : null;
+    const memberCount = pod.members.length;
+    const rfqCount = RFQS.filter(r => {
+      const member = pod.members.map(m => getUser(m)).find(u => u && u.name === r.assignee);
+      return !!member;
+    }).length;
+
+    html += `<div class="pod-card">
+      <div class="pod-card-header">
+        <div>
+          <h3>${pod.name}</h3>
+        </div>
+        <div class="pod-meta">
+          ${lead ? `<span class="pod-lead-badge">Lead: ${lead.name}</span>` : ""}
+        </div>
+      </div>
+      <div class="pod-stats-row">
+        <span><strong>${memberCount}</strong> members</span>
+        <span><strong>${rfqCount}</strong> active RFQs</span>
+      </div>
+      <div class="pod-member-list">`;
+
+    if (pod.members.length === 0) {
+      html += `<div class="pod-empty-members">No members yet. Add members below.</div>`;
+    } else {
+      pod.members.forEach(mId => {
+        const u = getUser(mId);
+        if (!u) return;
+        const isLead = pod.lead === mId;
+        html += `<div class="pod-member-row">
+          <div class="pod-member-avatar" style="background:${u.color}">${getUserInitials(u.name)}</div>
+          <div class="pod-member-info">
+            <div class="pod-member-name">${u.name}${isLead ? ' <span style="font-size:10px;color:var(--primary);font-weight:600;">LEAD</span>' : ""}</div>
+            <div class="pod-member-role">${u.role}</div>
+          </div>
+          <div class="pod-member-actions">
+            <button class="pod-member-btn" onclick="openMoveModal('${pod.id}','${mId}')" title="Move to another pod">↗</button>
+            ${!isLead ? `<button class="pod-member-btn" onclick="setAsLead('${pod.id}','${mId}')" title="Set as lead">★</button>` : ""}
+            <button class="pod-member-btn danger" onclick="removeMember('${pod.id}','${mId}')" title="Remove from pod">×</button>
+          </div>
+        </div>`;
+      });
+    }
+
+    html += `</div>`;
+
+    const availableForPod = unassigned.concat(
+      ALL_USERS.filter(u => !pod.members.includes(u.id) && !unassigned.find(un => un.id === u.id))
+    ).filter(u => !pod.members.includes(u.id));
+
+    if (unassigned.length > 0 || availableForPod.length > 0) {
+      html += `<div class="pod-card-footer">
+        <select class="pod-add-member-input" id="addMember_${pod.id}">
+          <option value="">Add a member...</option>`;
+      if (unassigned.length > 0) {
+        html += `<optgroup label="Unassigned">`;
+        unassigned.forEach(u => {
+          html += `<option value="${u.id}">${u.name} — ${u.role}</option>`;
+        });
+        html += `</optgroup>`;
+      }
+      html += `</select>
+        <button class="pod-add-member-btn" onclick="addMemberToPod('${pod.id}')">Add</button>
+      </div>`;
+    }
+
+    html += `</div>`;
+  });
+
+  if (podCreateMode) {
+    html += `<div class="pod-create-form">
+      <h3>Create New Pod</h3>
+      <input type="text" id="newPodName" placeholder="Pod name (e.g., Europe Pod)" onkeydown="if(event.key==='Enter')createPod()">
+      <div class="pod-create-form-btns">
+        <button onclick="podCreateMode=false;renderPodSetup()">Cancel</button>
+        <button class="pod-create-confirm" onclick="createPod()">Create</button>
+      </div>
+    </div>`;
+  } else {
+    html += `<div class="pod-create-card" onclick="podCreateMode=true;renderPodSetup();setTimeout(()=>document.getElementById('newPodName').focus(),50)">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      <span>Create New Pod</span>
+    </div>`;
+  }
+
+  grid.innerHTML = html;
+  document.getElementById("podCount").textContent = `${pods.length} pod${pods.length !== 1 ? "s" : ""} · ${ALL_USERS.length} users`;
+}
+
+function createPod() {
+  const name = document.getElementById("newPodName").value.trim();
+  if (!name) return;
+  const existing = pods.find(p => p.name.toLowerCase() === name.toLowerCase());
+  if (existing) { alert("A pod with this name already exists."); return; }
+  pods.push({ id: "pod_" + Date.now(), name, lead: null, members: [] });
+  savePods(pods);
+  podCreateMode = false;
+  renderPodSetup();
+}
+
+function addMemberToPod(podId) {
+  const sel = document.getElementById("addMember_" + podId);
+  const userId = sel.value;
+  if (!userId) return;
+
+  const currentPod = pods.find(p => p.members.includes(userId));
+  if (currentPod && currentPod.id !== podId) {
+    moveMemberData = { userId, fromPodId: currentPod.id, toPodId: podId };
+    showMoveConfirmation();
+    return;
+  }
+
+  const pod = pods.find(p => p.id === podId);
+  if (!pod || pod.members.includes(userId)) return;
+  pod.members.push(userId);
+  savePods(pods);
+  renderPodSetup();
+}
+
+function removeMember(podId, userId) {
+  const pod = pods.find(p => p.id === podId);
+  if (!pod) return;
+  const user = getUser(userId);
+  if (!confirm(`Remove ${user.name} from ${pod.name}? Their projects will no longer appear in this pod's view.`)) return;
+  pod.members = pod.members.filter(m => m !== userId);
+  if (pod.lead === userId) pod.lead = null;
+  savePods(pods);
+  renderPodSetup();
+}
+
+function setAsLead(podId, userId) {
+  const pod = pods.find(p => p.id === podId);
+  if (!pod) return;
+  pod.lead = userId;
+  savePods(pods);
+  renderPodSetup();
+}
+
+function openMoveModal(fromPodId, userId) {
+  const user = getUser(userId);
+  const fromPod = pods.find(p => p.id === fromPodId);
+  moveMemberData = { userId, fromPodId, toPodId: null };
+
+  document.getElementById("moveModalTitle").textContent = `Move ${user.name}`;
+  document.getElementById("moveModalDesc").textContent = `Currently in ${fromPod.name}. Select a destination pod:`;
+
+  const sel = document.getElementById("moveTargetPod");
+  sel.innerHTML = `<option value="">Select a pod...</option>` +
+    pods.filter(p => p.id !== fromPodId).map(p =>
+      `<option value="${p.id}">${p.name} (${p.members.length} members)</option>`
+    ).join("");
+
+  document.getElementById("podMoveModal").style.display = "flex";
+}
+
+function showMoveConfirmation() {
+  const user = getUser(moveMemberData.userId);
+  const fromPod = pods.find(p => p.id === moveMemberData.fromPodId);
+  const toPod = pods.find(p => p.id === moveMemberData.toPodId);
+
+  document.getElementById("moveModalTitle").textContent = `Move ${user.name}`;
+  document.getElementById("moveModalDesc").textContent = `${user.name} is currently in ${fromPod.name}. Moving to ${toPod.name}.`;
+
+  const sel = document.getElementById("moveTargetPod");
+  sel.innerHTML = `<option value="${toPod.id}" selected>${toPod.name}</option>`;
+
+  document.getElementById("podMoveModal").style.display = "flex";
+}
+
+function closeMoveModal() {
+  document.getElementById("podMoveModal").style.display = "none";
+  moveMemberData = null;
+}
+
+function confirmMoveMember() {
+  if (!moveMemberData) return;
+  const targetId = moveMemberData.toPodId || document.getElementById("moveTargetPod").value;
+  if (!targetId) { alert("Please select a target pod."); return; }
+
+  const fromPod = pods.find(p => p.id === moveMemberData.fromPodId);
+  const toPod = pods.find(p => p.id === targetId);
+  const userId = moveMemberData.userId;
+
+  if (fromPod) {
+    fromPod.members = fromPod.members.filter(m => m !== userId);
+    if (fromPod.lead === userId) fromPod.lead = null;
+  }
+  if (toPod && !toPod.members.includes(userId)) {
+    toPod.members.push(userId);
+  }
+
+  savePods(pods);
+  closeMoveModal();
+  renderPodSetup();
+}
+
+populateFilters();
+populateTableFilters();
+renderViewTabs();
+renderBoard(RFQS);
+renderSummary(RFQS);
+document.getElementById("totalRfqBadge").textContent = RFQS.length;
+</script>
+</body>
+</html>

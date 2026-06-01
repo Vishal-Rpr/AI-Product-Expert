@@ -1,0 +1,11 @@
+Field Name,Type,Mandatory,Sample Value,Dropdown Values
+Client Name,Dropdown,Yes,Maersk Line Ltd,"Maersk Line Ltd | Kuehne + Nagel | DHL Global Forwarding | Hapag-Lloyd AG | CMA CGM Group | Expeditors International"
+Account Manager,Dropdown,Yes,Sarah Kim,"Sarah Kim | James Chen | Maria Lopez | David Park | Lisa Wang"
+Credit Limit Amount (USD),Number (text input),Yes,"500,000",—
+General Credit Terms,Dropdown,Yes,Net 30,"Net 15 | Net 30 | Net 45 | Net 60 | Net 90 | COD | Prepaid"
+Credit Limit Type,Dropdown,Yes,Revolving,"Revolving | Non-Revolving | Temporary Increase"
+Duties Outlay Option,Dropdown,Yes,Silq Duty Outlay,"Pre-pay | Silq Duty Outlay | ACH | N/A"
+Payment Terms Detail,String (text input),No,2/10 Net 30,—
+Credit Limit Application (upload),File upload (.pdf .doc .docx .xlsx),Yes,CL_Application_MaerskLine.pdf,—
+Credit Limit Allocation Document (upload),File upload (.pdf .doc .docx .xlsx),No,CL_Allocation_MaerskLine.pdf,—
+Internal Notes / Justification,Textarea,No,Strong payment history over 12 months. Approved by Finance lead.,—

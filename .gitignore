@@ -8,3 +8,18 @@ __pycache__/
 *.pyo
 .venv/
 venv/
+
+# Node
+node_modules/
+
+# MCP server (installed locally, not part of personal OS)
+google-workspace-mcp/
+
+# Cursor local config (contains MCP credentials paths)
+.cursor/
+
+# Large binary files
+*.xlsx
+
+# Embedded git repos
+Knowledge/silq-prototypes/

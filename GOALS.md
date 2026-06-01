@@ -1,17 +1,25 @@
 # Goals and priorities
 
-## Active goals
+## Work
 
-1. **Land an AI PM role in 2 months** — Fill two gaps: PM fundamentals (discovery, outcomes, strategy) and AI technical fluency. Ship portfolio projects and position publicly.
-   - Phase 1 (Weeks 1-2): LLM foundations + Discovery/Outcomes + Co-pilot v0/v1
-   - Phase 2 (Weeks 3-5): RAG/Evals/Agents + Strategy/Segmentation + Co-pilot v2 + second capstone
-   - Phase 3 (Weeks 6-7): Prompt eng/Shipping AI + Roadmapping/GTM + Co-pilot v3 + big tech interview prep
-   - Phase 4 (Week 8): Synthesis + capstone case study + go public
+### API integrations with rate providers
+Integrate rate feeds from Shipco, Flockfreight, Draymaster, and other providers into our freight forwarding application to streamline quoting and pricing workflows.
 
-## Upcoming goals
+### Client credit limit feature
+Design and build a holistic client credit limit system within the freight forwarding app — covering credit assessment, approval workflows, limit enforcement, and financial controls.
 
-- *(Add future goals here.)*
+### Pod priority board (pilot)
+Build a swim lane dashboard for Pod Leads to manage daily RFQ priorities across stages — from unquoted through delivered-not-invoiced. Evaluating Retool as the build platform.
 
-## Completed goals
+## Personal
 
-- *(Move finished goals here to track progress.)*
+### Health and fitness
+- Eat clean, whole foods consistently
+- Work out 4-5 times per week
+
+### AI upskilling
+- Build deep understanding of AI agents, context engineering, RAG, memory, and related concepts
+- Complete hands-on learning (like this course) to develop real AI product sense
+
+### Personal finance
+- Create a 5-year financial plan covering savings, investments, and long-term goals

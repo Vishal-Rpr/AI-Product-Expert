@@ -1,0 +1,8 @@
+Field Name,Type,Mandatory,Sample Value,Dropdown Values
+Client,String (read-only / auto-populated),Yes,Pacific Cargo Lines,—
+Current Limit,String (read-only / auto-populated),No (display only),"$500,000",—
+New Credit Limit (USD),Number (text input),Yes,"750,000",—
+New Credit Terms,Dropdown,Yes,Net 45,"Net 15 | Net 30 | Net 45 | Net 60 | Net 90 | COD | Prepaid"
+Revision Reason,Dropdown,Yes,Business volume increase,"Periodic review | Improved payment history | Deteriorated payment history | Business volume increase | Business volume decrease | Client request | Risk re-assessment | Other"
+Supporting Documentation (upload),File upload (.pdf .doc .docx .xlsx),No,Updated_Financials_2026.pdf,—
+Justification Notes,Textarea,Yes,Client's quarterly volume has grown 40% — recommending limit increase to $750K to support continued operations.,—

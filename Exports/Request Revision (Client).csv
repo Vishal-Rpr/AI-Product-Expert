@@ -1,0 +1,5 @@
+Field Name,Type,Mandatory,Sample Value,Dropdown Values
+Reason for Revision Request,Dropdown,Yes,Business volume has increased,"Need higher limit for upcoming orders | Business volume has increased | Current terms are too restrictive | Seasonal demand increase | Other"
+Describe your request in detail,Textarea,Yes,"Our shipping volume has grown significantly in Q1 2026. We anticipate needing a higher credit limit to cover upcoming orders in Q2 peak season.",—
+Requested New Limit,Number (text input),No,"1,000,000",—
+Supporting Documentation,File upload (.pdf .doc .docx .xlsx),No,Q1_2026_Volume_Report.pdf,—

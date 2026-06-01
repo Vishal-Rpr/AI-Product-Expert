@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Q2 2026 — Priority Board</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f5f7;--card:#fff;--border:#e2e2e6;--text:#1d1d1f;--muted:#6e6e73;
+  --p0:#ef4444;--p0bg:#fef2f2;--p0border:#fecaca;
+  --p01:#f97316;--p01bg:#fff7ed;--p01border:#fed7aa;
+  --p1:#f59e0b;--p1bg:#fffbeb;--p1border:#fde68a;
+  --p2:#3b82f6;--p2bg:#eff6ff;--p2border:#bfdbfe;
+  --p3:#6b7280;--p3bg:#f9fafb;--p3border:#e5e7eb;
+  --un:#a1a1aa;--unbg:#fafafa;--unborder:#e4e4e7;
+  --not-started:#9ca3af;--scoping:#6366f1;--handover:#f59e0b;--on-hold:#ef4444;--started:#10b981;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 6px rgba(0,0,0,.06),0 2px 4px rgba(0,0,0,.04);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh}
+header{background:#fff;border-bottom:1px solid var(--border);padding:20px 32px 0;position:sticky;top:0;z-index:100}
+header h1{font-size:22px;font-weight:700;letter-spacing:-.3px;margin-bottom:4px}
+header p{font-size:13px;color:var(--muted);margin-bottom:16px}
+.tabs{display:flex;gap:0;border-bottom:none}
+.tab{padding:10px 20px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;background:none;border-top:none;border-left:none;border-right:none;white-space:nowrap}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--text);border-bottom-color:var(--text)}
+main{padding:24px 32px 48px}
+.view{display:none}
+.view.active{display:block}
+.board{display:flex;gap:20px;overflow-x:auto;padding-bottom:16px;align-items:flex-start}
+.column{min-width:300px;max-width:340px;flex:1;background:var(--card);border-radius:12px;border:1px solid var(--border);overflow:hidden}
+.col-header{padding:14px 16px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.col-header .count{font-size:11px;font-weight:600;background:var(--bg);border-radius:10px;padding:2px 8px;color:var(--muted)}
+.col-header.p0{background:var(--p0bg);border-bottom-color:var(--p0border);color:var(--p0)}
+.col-header.p01{background:var(--p01bg);border-bottom-color:var(--p01border);color:var(--p01)}
+.col-header.p1{background:var(--p1bg);border-bottom-color:var(--p1border);color:var(--p1)}
+.col-header.p2{background:var(--p2bg);border-bottom-color:var(--p2border);color:var(--p2)}
+.col-header.p3{background:var(--p3bg);border-bottom-color:var(--p3border);color:var(--p3)}
+.col-header.un{background:var(--unbg);border-bottom-color:var(--unborder);color:var(--un)}
+.col-header.client{background:#ecfdf5;border-bottom-color:#a7f3d0;color:#059669}
+.col-header.admin{background:#eff6ff;border-bottom-color:#bfdbfe;color:#2563eb}
+.col-header.both{background:#faf5ff;border-bottom-color:#e9d5ff;color:#7c3aed}
+.col-header.internal{background:#fafafa;border-bottom-color:#e5e7eb;color:#6b7280}
+.col-header.defined{background:#ecfdf5;border-bottom-color:#a7f3d0;color:#059669}
+.col-header.unclear{background:#fffbeb;border-bottom-color:#fde68a;color:#d97706}
+.col-header.none{background:#fef2f2;border-bottom-color:#fecaca;color:#dc2626}
+.col-body{padding:8px;max-height:70vh;overflow-y:auto}
+.card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px;box-shadow:var(--shadow);transition:box-shadow .15s,transform .15s;cursor:default}
+.card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.card-title{font-size:13px;font-weight:600;margin-bottom:6px;line-height:1.4}
+.card-desc{font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
+.card-desc.expanded{display:block;-webkit-line-clamp:unset}
+.card-meta{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.pill{display:inline-flex;align-items:center;font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;white-space:nowrap}
+.pill-status{background:#f3f4f6;color:var(--not-started)}
+.pill-status.scoping{background:#eef2ff;color:var(--scoping)}
+.pill-status.handover{background:#fffbeb;color:var(--handover)}
+.pill-status.on-hold{background:#fef2f2;color:var(--on-hold)}
+.pill-status.started{background:#ecfdf5;color:var(--started)}
+.pill-priority{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;color:#fff}
+.pill-priority.p0{background:var(--p0)}
+.pill-priority.p01{background:var(--p01)}
+.pill-priority.p1{background:var(--p1)}
+.pill-priority.p2{background:var(--p2)}
+.pill-priority.p3{background:var(--p3)}
+.pill-priority.un{background:var(--un)}
+.pill-team{background:#f0f9ff;color:#0369a1;font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px}
+.pill-stakeholder{background:#faf5ff;color:#7c3aed;font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px}
+.pill-eta{background:#fefce8;color:#a16207;font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px}
+.pill-commit{background:#dcfce7;color:#15803d;font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px}
+.pill-type{background:#f1f5f9;color:#475569;font-size:10px;font-weight:500;padding:2px 7px;border-radius:10px}
+.changelog-table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+.changelog-table th{background:#f9fafb;padding:12px 16px;font-size:12px;font-weight:600;text-align:left;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);border-bottom:2px solid var(--border)}
+.changelog-table td{padding:12px 16px;font-size:13px;border-bottom:1px solid var(--border);color:var(--text)}
+.changelog-table tr:last-child td{border-bottom:none}
+.changelog-table .example{color:var(--muted);font-style:italic}
+.empty-msg{text-align:center;padding:40px;color:var(--muted);font-size:13px}
+.source-note{margin-top:32px;padding:16px 20px;background:#fff;border:1px solid var(--border);border-radius:10px;font-size:12px;color:var(--muted);line-height:1.6}
+.source-note a{color:#2563eb;text-decoration:none;font-weight:600}
+.source-note a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<header>
+  <h1>Q2 2026 — Priority Board</h1>
+  <p>Source: Release Calender - 2026 &nbsp;·&nbsp; Last generated: 27 Mar 2026</p>
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-view="active">Active P0s</button>
+    <button class="tab" data-view="priority">By Priority</button>
+    <button class="tab" data-view="stakeholder">By Stakeholder</button>
+    <button class="tab" data-view="impact">By Impact</button>
+    <button class="tab" data-view="changelog">Change Log</button>
+  </div>
+</header>
+
+<main id="main"></main>
+
+<script>
+const PROJECTS = [
+  {id:1,name:"Finops Pipeline -1: Credit Limit Visibility",desc:"Ingest, store, and display Client credit limits on the app. Create onboarding form for new clients with credit limit step. Incorporate updates with validity. Different views for Internal vs External users.",type:"New",priority:"P0",team:"India",impact:"Clear visibility of client credit limits; Ground work for credit controls; Improved QuickBooks integrations",stakeholder:"Internal",status:"Not Started",commit:"Yes",eta:"",product:"",devs:""},
+  {id:2,name:"Shipco Rates Automation",desc:"Missing forms; RFQ benchmark; Regular rate pull and push.",type:"New",priority:"P0",team:"India",impact:"Time saved in manual rate conversion/upload; Benchmarked rates during quoting phase",stakeholder:"Admin",status:"Product Scoping",commit:"Yes",eta:"",product:"",devs:""},
+  {id:3,name:"Change of Planned Dates",desc:"Update based on route changes.",type:"New",priority:"P0",team:"",impact:"",stakeholder:"",status:"Not Started",commit:"",eta:"",product:"",devs:""},
+  {id:4,name:"Silq App Tour",desc:"App-wide tour showing all individual components and important pages in a full user journey. Hybrid interactive video format.",type:"Spillover",priority:"P0",team:"India",impact:"Significantly improved user education (new, existing, admin users); Good spotlight for prospective clients",stakeholder:"Client + Admin",status:"Product Handover",commit:"Yes",eta:"24th Apr",product:"Vishal Prabhakar",devs:""},
+  {id:5,name:"Email Tracking",desc:"",type:"New",priority:"P0",team:"India",impact:"?",stakeholder:"",status:"Not Started",commit:"Yes",eta:"",product:"",devs:""},
+  {id:6,name:"Syn Doc Processing Framework",desc:"Usecase for Arrival Notice; Information accuracy; UI review layer for AI parsed; Extend to all absorbable documents.",type:"New",priority:"P0",team:"",impact:"",stakeholder:"",status:"Not Started",commit:"",eta:"30th Apr",product:"",devs:""},
+  {id:7,name:"Shipment Tracking Public Link",desc:"",type:"Spillover",priority:"P0",team:"",impact:"",stakeholder:"",status:"Not Started",commit:"",eta:"9th Apr",product:"",devs:""},
+  {id:8,name:"Tasks Cleanup",desc:"Trigger movement; Project Template & org.",type:"Spillover",priority:"P0",team:"",impact:"",stakeholder:"Admin",status:"Not Started",commit:"",eta:"24th Apr",product:"",devs:""},
+  {id:9,name:"Tech - Silq RFQ Definition Deprecation",desc:"Silq RFQ definition deprecation.",type:"New",priority:"P0",team:"India",impact:"?",stakeholder:"",status:"Not Started",commit:"No",eta:"",product:"",devs:""},
+  {id:10,name:"Pods View",desc:"For AMs & Ops.",type:"New",priority:"P0/P1",team:"",impact:"?",stakeholder:"",status:"Not Started",commit:"",eta:"",product:"",devs:""},
+  {id:11,name:"Tasks Table - AM View",desc:"Tasks table; Add sorting to table configs.",type:"New",priority:"P0/P1",team:"Tbd",impact:"?",stakeholder:"",status:"Not Started",commit:"Yes",eta:"",product:"",devs:""},
+  {id:12,name:"Astra - Inside Project Page",desc:"Increase surface area for Astra (AI chatbot) to help with user/admin queries inside projects page. App level chat.",type:"New",priority:"P1",team:"US",impact:"?",stakeholder:"Client facing",status:"Not Started",commit:"Yes",eta:"",product:"",devs:""},
+  {id:13,name:"Org Multi User Ability",desc:"Allow same user to be onboarded to multiple clients; Introduce client + user layer; Importal integration impact.",type:"New",priority:"P1",team:"Tbd",impact:"?",stakeholder:"",status:"Not Started",commit:"No",eta:"",product:"",devs:""},
+  {id:14,name:"Rate Sheet Automations Pipeline",desc:"Fully absorb DT rate sheet from source email to Silq app; Flockfreight; Draymaster.",type:"New",priority:"P1",team:"India",impact:"Automate end to end absorption of DT rates; Time saved for procurement to do more value add actions",stakeholder:"Admin",status:"Not Started",commit:"No",eta:"",product:"",devs:""},
+  {id:15,name:"AI for PM",desc:"Integrate with codebase + user feedback for idea suggestions; Deeper prototypes that can function independently with entire Silq base.",type:"New",priority:"P1",team:"Tbd",impact:"Quicker and more contextual prototypes, leading to quicker decisions; AI driven Idea generation",stakeholder:"",status:"Not Started",commit:"No",eta:"",product:"",devs:""},
+  {id:16,name:"AI for PM 2",desc:"Automated, scalable, modular testing framework. Keep adding tests for new features/deployments that run automatically.",type:"New",priority:"P1",team:"Tbd",impact:"Testing time saved; Scalable dependency testing for future features",stakeholder:"",status:"Not Started",commit:"No",eta:"",product:"",devs:""},
+  {id:17,name:"Network Page Revamp: Clients",desc:"Revamp current network page UI, bring everything outside Retool. Update client-side UI with better metrics & actions.",type:"New",priority:"P1",team:"US",impact:"?",stakeholder:"Client facing",status:"Not Started",commit:"No",eta:"",product:"",devs:""},
+  {id:18,name:"Finops Pipeline -2: Credit Limit Controls",desc:"Create in-app controls when client exhausts limit; Display to clients and AMs in app / via report; Pending controls TBD.",type:"New",priority:"P1",team:"Tbd",impact:"In app checks and controls for credit limits; Improved credit health for Silq",stakeholder:"",status:"Not Started",commit:"No",eta:"",product:"",devs:""},
+  {id:19,name:"Improvements to API",desc:"Improvements to API fields/concepts; metrics for API use; Documentation upgrade; Feature parity with Flexport.",type:"New",priority:"P1",team:"US",impact:"Better clientele reach with improved APIs",stakeholder:"",status:"Not Started",commit:"Yes",eta:"",product:"",devs:""},
+  {id:20,name:"Improvements to Client Insights",desc:"Scheduled reporting (Metabase); Download & Drilldown.",type:"New",priority:"P1",team:"US",impact:"Better clientele reach with improved APIs",stakeholder:"",status:"Not Started",commit:"Yes",eta:"",product:"",devs:""},
+  {id:21,name:"Improvement for Feedback Section",desc:"Improve workflow for collecting issues/bugs on the channel.",type:"New",priority:"P1",team:"US",impact:"?",stakeholder:"Client facing",status:"Not Started",commit:"No",eta:"",product:"Anurag Mishra",devs:""},
+  {id:22,name:"QuPo - Part II: Requotes & Clone Quotes",desc:"Upgrade Requote logic and implement banner alerting admins.",type:"New",priority:"P2",team:"Tbd",impact:"",stakeholder:"Admin",status:"Product Scoping",commit:"",eta:"",product:"",devs:""},
+  {id:23,name:"Capture, Optimize, Monitor Ops Efficiency",desc:"Figure out an Ops holy grail efficiency metric.",type:"New",priority:"P2",team:"Tbd",impact:"",stakeholder:"Admin",status:"Not Started",commit:"",eta:"",product:"",devs:""},
+  {id:24,name:"HTS Code Classification Tool",desc:"Flexport product (Calculate tariff); Public HTS codes.",type:"New",priority:"P2",team:"Tbd",impact:"",stakeholder:"",status:"Not Started",commit:"",eta:"",product:"",devs:""},
+  {id:25,name:"Tags Across the App",desc:"",type:"New",priority:"P2",team:"Tbd",impact:"",stakeholder:"",status:"Not Started",commit:"",eta:"",product:"",devs:""},
+  {id:26,name:"Upselling",desc:"Customs, Insurance, Inspections, Demurrage rollovers; Add nudges at appropriate project stages to upsell.",type:"New",priority:"P2",team:"Tbd",impact:"",stakeholder:"Client facing",status:"On hold",commit:"",eta:"",product:"",devs:""},
+  {id:27,name:"NPS",desc:"Capture client feedback after milestones; Capture user painpoints via Silq app; NPS score tracking for all clients.",type:"New",priority:"P2",team:"Tbd",impact:"",stakeholder:"Client facing",status:"Not Started",commit:"",eta:"",product:"",devs:""},
+  {id:28,name:"Projects & Shipments - Product Dashboard",desc:"Capture all product metrics to understand usage of current features and data-back future enhancements.",type:"New",priority:"P2",team:"Tbd",impact:"",stakeholder:"Admin",status:"Not Started",commit:"",eta:"",product:"",devs:""},
+  {id:29,name:"Shipment Tracking Public Link (v2)",desc:"New public URL that will enable clients to track shipments effectively without authentication.",type:"Spillover",priority:"P2",team:"Tbd",impact:"",stakeholder:"Client facing",status:"Product Scoping",commit:"",eta:"",product:"Anurag Mishra",devs:""},
+  {id:30,name:"Silq Tracker - Voyager",desc:"Allow clients to track shipments in Silq experience. Input: HBL / MBL / E-way bill reference.",type:"Spillover",priority:"P2",team:"Tbd",impact:"",stakeholder:"Client facing",status:"Not Started",commit:"",eta:"",product:"Vishal Prabhakar",devs:""},
+  {id:31,name:"Task Calendar View",desc:"Weekly calendar view for tasks.",type:"New",priority:"P3",team:"Tbd",impact:"",stakeholder:"",status:"On hold",commit:"",eta:"",product:"",devs:""},
+  {id:32,name:"Expand AQ to Trucking",desc:"",type:"New",priority:"P3",team:"Tbd",impact:"",stakeholder:"Admin",status:"On hold",commit:"",eta:"",product:"",devs:""},
+  {id:33,name:"Self Onboarding",desc:"Allow clients to onboard themselves onto the app from the website. Sandbox environment, guided tours.",type:"New",priority:"P3",team:"Tbd",impact:"",stakeholder:"Client facing",status:"On hold",commit:"",eta:"",product:"",devs:""},
+  {id:34,name:"LLM Evals (Ongoing)",desc:"",type:"Spillover",priority:"",team:"",impact:"",stakeholder:"",status:"",commit:"",eta:"16th Apr (ongoing)",product:"",devs:""},
+  {id:35,name:"Merge Shipment Mode and Freight Mode",desc:"",type:"Spillover",priority:"",team:"",impact:"",stakeholder:"",status:"",commit:"",eta:"",product:"",devs:""},
+  {id:36,name:"Migrate Quoting Graphene to Strawberry",desc:"",type:"Spillover",priority:"",team:"",impact:"",stakeholder:"",status:"",commit:"",eta:"",product:"",devs:""},
+  {id:37,name:"Arrival Notice Automation",desc:"",type:"",priority:"",team:"",impact:"",stakeholder:"",status:"",commit:"",eta:"",product:"",devs:""},
+  {id:38,name:"Destination Ops Pipeline",desc:"",type:"",priority:"",team:"",impact:"",stakeholder:"",status:"",commit:"",eta:"",product:"",devs:""},
+  {id:39,name:"Invoicing Enhancements",desc:"Payment gateway integration; Mapping invoices to payments.",type:"New",priority:"",team:"",impact:"",stakeholder:"Client facing",status:"On hold",commit:"",eta:"",product:"",devs:""}
+];
+
+function statusClass(s){
+  if(!s) return "";
+  if(s==="Product Scoping") return "scoping";
+  if(s==="Product Handover") return "handover";
+  if(s==="On hold") return "on-hold";
+  return "";
+}
+function priorityClass(p){
+  if(!p) return "un";
+  if(p==="P0") return "p0";
+  if(p==="P0/P1") return "p01";
+  if(p==="P1") return "p1";
+  if(p==="P2") return "p2";
+  if(p==="P3") return "p3";
+  return "un";
+}
+function priorityLabel(p){ return p || "Unassigned"; }
+
+function renderCard(proj, opts={}){
+  const pills = [];
+  if(opts.showPriority && proj.priority) pills.push(`<span class="pill pill-priority ${priorityClass(proj.priority)}">${proj.priority}</span>`);
+  if(proj.status) pills.push(`<span class="pill pill-status ${statusClass(proj.status)}">${proj.status}</span>`);
+  if(proj.team) pills.push(`<span class="pill pill-team">${proj.team}</span>`);
+  if(proj.stakeholder) pills.push(`<span class="pill pill-stakeholder">${proj.stakeholder}</span>`);
+  if(proj.eta) pills.push(`<span class="pill pill-eta">ETA: ${proj.eta}</span>`);
+  if(proj.commit==="Yes") pills.push(`<span class="pill pill-commit">Committed</span>`);
+  if(proj.type) pills.push(`<span class="pill pill-type">${proj.type}</span>`);
+
+  const descHtml = proj.desc ? `<div class="card-desc" onclick="this.classList.toggle('expanded')">${proj.desc}</div>` : "";
+  const impactHtml = opts.showImpact && proj.impact && proj.impact !== "?" ? `<div class="card-desc" onclick="this.classList.toggle('expanded')" style="color:#059669;margin-top:4px"><strong>Impact:</strong> ${proj.impact}</div>` : "";
+
+  return `<div class="card"><div class="card-title">${proj.name}</div>${descHtml}${impactHtml}<div class="card-meta">${pills.join("")}</div></div>`;
+}
+
+function renderColumn(label, headerClass, projects, opts={}){
+  const cards = projects.map(p=>renderCard(p,opts)).join("");
+  return `<div class="column"><div class="col-header ${headerClass}"><span>${label}</span><span class="count">${projects.length}</span></div><div class="col-body">${cards || '<div class="empty-msg">No projects</div>'}</div></div>`;
+}
+
+function groupBy(arr, fn){
+  const m = new Map();
+  arr.forEach(p=>{const k=fn(p);if(!m.has(k)) m.set(k,[]);m.get(k).push(p)});
+  return m;
+}
+
+function statusSort(a,b){
+  const order={"Product Handover":0,"Product Scoping":1,"Not Started":2,"On hold":3,"":4};
+  return (order[a.status]??4)-(order[b.status]??4);
+}
+
+// ---- VIEWS ----
+
+function renderActive(){
+  const p0 = PROJECTS.filter(p=>p.priority==="P0").sort(statusSort);
+  const p01 = PROJECTS.filter(p=>p.priority==="P0/P1").sort(statusSort);
+  return `<div class="board">${renderColumn("P0 — Active",  "p0", p0, {showPriority:false})}${renderColumn("P0/P1 — Borderline","p01",p01,{showPriority:false})}</div>
+  <div class="source-note">This board is a <strong>read-only view</strong>. Data source: <a href="https://docs.google.com/spreadsheets/d/1sftCTRitS_sbCq47mWMlhV3nF4VopkNqjTVDpsMSPEQ/edit" target="_blank">Q2 2026 - Priority Board (Google Sheet)</a>. To make changes, edit the Sheet and ask to regenerate this board.</div>`;
+}
+
+function renderByPriority(){
+  const buckets = [
+    {key:"P0",label:"P0",cls:"p0"},
+    {key:"P0/P1",label:"P0 / P1",cls:"p01"},
+    {key:"P1",label:"P1",cls:"p1"},
+    {key:"P2",label:"P2",cls:"p2"},
+    {key:"P3",label:"P3",cls:"p3"},
+    {key:"",label:"Unassigned",cls:"un"}
+  ];
+  const cols = buckets.map(b=>{
+    const items = PROJECTS.filter(p=>p.priority===b.key).sort(statusSort);
+    return renderColumn(b.label, b.cls, items, {showPriority:false});
+  });
+  return `<div class="board">${cols.join("")}</div>`;
+}
+
+function renderByStakeholder(){
+  const normalize = s => {
+    if(!s) return "Internal / Unspecified";
+    const l = s.toLowerCase();
+    if(l.includes("client") && l.includes("admin")) return "Client + Admin";
+    if(l.includes("client")) return "Client Facing";
+    if(l.includes("admin")) return "Admin";
+    if(l.includes("internal")) return "Internal / Unspecified";
+    return "Internal / Unspecified";
+  };
+  const buckets = [
+    {key:"Client Facing",label:"Client Facing",cls:"client"},
+    {key:"Admin",label:"Admin",cls:"admin"},
+    {key:"Client + Admin",label:"Client + Admin",cls:"both"},
+    {key:"Internal / Unspecified",label:"Internal / Unspecified",cls:"internal"}
+  ];
+  const cols = buckets.map(b=>{
+    const items = PROJECTS.filter(p=>normalize(p.stakeholder)===b.key).sort(statusSort);
+    return renderColumn(b.label, b.cls, items, {showPriority:true});
+  });
+  return `<div class="board">${cols.join("")}</div>`;
+}
+
+function renderByImpact(){
+  const classify = p => {
+    if(!p.impact) return "none";
+    if(p.impact==="?") return "unclear";
+    return "defined";
+  };
+  const buckets = [
+    {key:"defined",label:"Impact Defined",cls:"defined"},
+    {key:"unclear",label:'Impact Unclear ("?")',cls:"unclear"},
+    {key:"none",label:"No Impact Stated",cls:"none"}
+  ];
+  const cols = buckets.map(b=>{
+    const items = PROJECTS.filter(p=>classify(p)===b.key).sort(statusSort);
+    return renderColumn(b.label, b.cls, items, {showPriority:true, showImpact:true});
+  });
+  return `<div class="board">${cols.join("")}</div>`;
+}
+
+function renderChangelog(){
+  return `
+  <table class="changelog-table">
+    <thead><tr><th>Date</th><th>Project</th><th>Change Type</th><th>From</th><th>To</th><th>Reason</th><th>Changed By</th></tr></thead>
+    <tbody>
+      <tr class="example"><td>27-Mar-2026</td><td>Example Project</td><td>Priority</td><td>P1</td><td>P0</td><td>Client escalation — needed for Q2 launch</td><td>Vishal</td></tr>
+    </tbody>
+  </table>
+  <div class="source-note" style="margin-top:20px">Maintain the change log in the <a href="https://docs.google.com/spreadsheets/d/1sftCTRitS_sbCq47mWMlhV3nF4VopkNqjTVDpsMSPEQ/edit" target="_blank">Google Sheet</a> and regenerate this board to see updates here.</div>`;
+}
+
+// ---- TAB SWITCHING ----
+const views = {active:renderActive, priority:renderByPriority, stakeholder:renderByStakeholder, impact:renderByImpact, changelog:renderChangelog};
+const mainEl = document.getElementById("main");
+const tabEls = document.querySelectorAll(".tab");
+
+function switchView(name){
+  tabEls.forEach(t=>t.classList.toggle("active", t.dataset.view===name));
+  mainEl.innerHTML = `<div class="view active">${views[name]()}</div>`;
+}
+
+tabEls.forEach(t=>t.addEventListener("click",()=>switchView(t.dataset.view)));
+switchView("active");
+</script>
+</body>
+</html>

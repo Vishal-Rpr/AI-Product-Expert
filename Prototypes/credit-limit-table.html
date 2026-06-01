@@ -1,0 +1,2363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Silq — Client Credit Limit Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf9f7;
+    --card: #ffffff;
+    --primary: #c8842e;
+    --primary-dark: #a86b1d;
+    --primary-light: #fdf4e8;
+    --primary-lighter: #fef9f1;
+    --text: #2d2a26;
+    --text-secondary: #8a8580;
+    --border: #e8e4df;
+    --border-light: #f0ece7;
+    --green: #3d9a5f;
+    --green-bg: #edf7f0;
+    --yellow: #c8842e;
+    --yellow-bg: #fdf4e8;
+    --red: #c44b3f;
+    --red-bg: #fdf0ee;
+    --gray-bg: #f5f3f0;
+    --orange: #d4722a;
+    --orange-bg: #fdf2e9;
+    --sidebar-bg: #fefcfa;
+    --sidebar-active: #fdf4e8;
+    --purple: #7c5cbf;
+    --purple-bg: #f3effb;
+    --revision-row: #fef7ee;
+    --revision-border: #f0d9b5;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 220px;
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 50;
+  }
+
+  .sidebar-logo {
+    padding: 20px 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .silq-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .silq-logo svg { width: 36px; height: 20px; }
+
+  .silq-logo-text {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1e2a4a;
+    letter-spacing: -0.5px;
+  }
+
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0 10px;
+    flex: 1;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.12s;
+    text-decoration: none;
+  }
+
+  .nav-item:hover { background: var(--gray-bg); color: var(--text); }
+
+  .nav-item.active {
+    background: var(--sidebar-active);
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.6; }
+  .nav-item.active svg { opacity: 1; }
+
+  .nav-badge {
+    margin-left: auto;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 10px;
+    background: var(--primary);
+    color: #fff;
+  }
+
+  /* Main content */
+  .main {
+    flex: 1;
+    margin-left: 220px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .app-header {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .header-left { display: flex; align-items: center; gap: 16px; }
+
+  .app-header h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.3px;
+  }
+
+  .header-view-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  /* Toggle switch */
+  .view-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--gray-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 3px 4px;
+  }
+
+  .toggle-option {
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.15s;
+    border: none;
+    background: transparent;
+  }
+
+  .toggle-option.active {
+    background: var(--card);
+    color: var(--text);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    font-weight: 600;
+  }
+
+  .btn {
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+
+  .btn:hover { background: var(--gray-bg); }
+
+  .btn-primary {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+  }
+
+  .btn-primary:hover { background: var(--primary-dark); }
+
+  /* Client view header */
+  .client-header {
+    display: none;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 28px;
+  }
+
+  .client-header.visible { display: block; }
+
+  .client-header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .client-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .client-avatar-lg {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    background: var(--primary);
+  }
+
+  .client-meta h2 { font-size: 16px; font-weight: 600; }
+  .client-meta p { font-size: 12px; color: var(--text-secondary); }
+
+  /* Summary bar */
+  .summary-bar {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    padding: 18px 28px;
+  }
+
+  .summary-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+  }
+
+  .summary-card .label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+
+  .summary-card .value {
+    font-size: 22px;
+    font-weight: 700;
+    margin-top: 4px;
+    letter-spacing: -0.5px;
+  }
+
+  .summary-card .detail {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  /* Admin summary cards */
+  .admin-summary-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    padding: 18px 28px;
+  }
+
+  .admin-summary-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 22px;
+  }
+
+  .admin-summary-card .card-title {
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+
+  .admin-summary-card .card-subtitle {
+    font-size: 10px;
+    color: var(--text-secondary);
+    margin-top: 6px;
+  }
+
+  .admin-pie-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .admin-pie-wrapper {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    flex-shrink: 0;
+  }
+
+  .admin-pie-wrapper canvas { width: 90px; height: 90px; }
+
+  .admin-pie-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+  .admin-pie-center .pie-num {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .admin-pie-center .pie-sub {
+    font-size: 9px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  .admin-pie-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+  }
+
+  .admin-pie-legend-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+  }
+
+  .admin-pie-legend-item .legend-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .admin-pie-legend-item .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .admin-pie-legend-item .legend-label { color: var(--text-secondary); }
+  .admin-pie-legend-item .legend-count { font-weight: 700; color: var(--text); }
+
+  .exposure-progress-wrap { margin-top: 2px; }
+
+  .exposure-progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+
+  .exposure-progress-header .exp-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+
+  .exposure-progress-header .exp-of {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  .exposure-progress-track {
+    height: 10px;
+    background: var(--border-light);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .exposure-progress-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.4s ease;
+  }
+
+  .exposure-progress-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+
+  .ar-value-display {
+    margin-top: 2px;
+  }
+
+  .ar-value-display .ar-amount {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+
+  .ar-value-display .ar-detail {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+
+  /* Toolbar */
+  .toolbar {
+    padding: 0 28px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .toolbar-left {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .search-input {
+    padding: 7px 12px 7px 34px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: inherit;
+    width: 260px;
+    background: var(--card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' fill='%238a8580' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242.156a5 5 0 1 1 0-10 5 5 0 0 1 0 10z'/%3E%3C/svg%3E") 11px center no-repeat;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .search-input:focus { border-color: var(--primary); }
+
+  .filter-chip {
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    background: var(--card);
+    color: var(--text-secondary);
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+
+  .filter-chip:hover, .filter-chip.active {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-light);
+  }
+
+  .sync-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+
+  /* Table */
+  .table-wrapper { padding: 0 28px 28px; }
+
+  .table-container {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .table-scroll { overflow-x: auto; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1200px;
+  }
+
+  thead th {
+    background: var(--gray-bg);
+    padding: 10px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+  }
+
+  thead th .sort-icon { cursor: pointer; opacity: 0.35; margin-left: 3px; font-size: 10px; }
+  thead th:hover .sort-icon { opacity: 1; }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border-light);
+    transition: background 0.1s;
+  }
+
+  tbody tr:hover { background: var(--primary-lighter); }
+  tbody tr:last-child { border-bottom: none; }
+
+  tbody tr.revision-request-row {
+    background: var(--revision-row);
+    border-left: 3px solid var(--primary);
+  }
+
+  tbody tr.revision-request-row:hover { background: #fdf0dd; }
+
+  td {
+    padding: 12px 14px;
+    font-size: 13px;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  .client-cell { display: flex; flex-direction: column; gap: 1px; }
+
+  .client-name {
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  .client-name:hover { color: var(--primary); }
+
+  .client-id { font-size: 11px; color: var(--text-secondary); }
+
+  .am-cell { display: flex; align-items: center; gap: 8px; }
+
+  .avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 600;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .money { font-variant-numeric: tabular-nums; font-weight: 500; }
+  .money.positive { color: var(--green); }
+  .money.negative { color: var(--red); }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .badge-green { background: var(--green-bg); color: var(--green); }
+  .badge-yellow { background: var(--yellow-bg); color: var(--yellow); }
+  .badge-red { background: var(--red-bg); color: var(--red); }
+  .badge-gray { background: var(--gray-bg); color: var(--text-secondary); }
+  .badge-orange { background: var(--orange-bg); color: var(--orange); }
+  .badge-purple { background: var(--purple-bg); color: var(--purple); }
+
+  .badge-dot {
+    width: 6px; height: 6px; border-radius: 50%; display: inline-block;
+  }
+
+  .badge-green .badge-dot { background: var(--green); }
+  .badge-yellow .badge-dot { background: var(--yellow); }
+  .badge-red .badge-dot { background: var(--red); }
+  .badge-gray .badge-dot { background: var(--text-secondary); }
+  .badge-orange .badge-dot { background: var(--orange); }
+  .badge-purple .badge-dot { background: var(--purple); }
+
+  .credit-terms { max-width: 140px; overflow: hidden; text-overflow: ellipsis; }
+
+  .progress-bar-container { display: flex; flex-direction: column; gap: 3px; min-width: 110px; }
+
+  .progress-bar {
+    height: 5px;
+    background: var(--border-light);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+
+  .progress-label { font-size: 10px; color: var(--text-secondary); }
+
+  .actions-cell { display: flex; gap: 4px; }
+
+  .icon-btn {
+    width: 28px; height: 28px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--card);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    color: var(--text-secondary);
+  }
+
+  .icon-btn:hover {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  .table-footer {
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .pagination { display: flex; gap: 4px; align-items: center; }
+
+  .page-btn {
+    width: 30px; height: 30px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--card);
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+
+  .page-btn:hover { background: var(--gray-bg); }
+  .page-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+  .revision-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--primary);
+    margin-left: 6px;
+  }
+
+  /* Modal */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(45,42,38,0.35);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--card);
+    border-radius: 12px;
+    width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+  }
+
+  .modal-header {
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .modal-header h2 { font-size: 15px; font-weight: 600; }
+
+  .modal-close {
+    background: none; border: none; cursor: pointer;
+    font-size: 18px; color: var(--text-secondary); line-height: 1; padding: 4px;
+  }
+
+  .modal-body { padding: 18px 22px; }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .form-group.full-width { grid-column: 1 / -1; }
+
+  .form-group label {
+    font-size: 11px; font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  .form-group label .req { color: var(--red); margin-left: 2px; }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 7px 11px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    outline: none;
+    font-family: inherit;
+    transition: border-color 0.15s;
+    background: var(--card);
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus { border-color: var(--primary); }
+
+  .form-group textarea { resize: vertical; min-height: 56px; }
+
+  .modal-footer {
+    padding: 14px 22px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  /* Detail panel */
+  .detail-panel-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(45,42,38,0.25); z-index: 900;
+  }
+
+  .detail-panel-overlay.open { display: block; }
+
+  .detail-panel {
+    position: fixed; top: 0; right: -520px;
+    width: 520px; height: 100vh;
+    background: var(--card);
+    box-shadow: -4px 0 24px rgba(0,0,0,0.08);
+    z-index: 901;
+    transition: right 0.25s ease;
+    overflow-y: auto;
+  }
+
+  .detail-panel.open { right: 0; }
+
+  .detail-header {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .detail-section {
+    padding: 14px 22px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .detail-section h3 {
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+  }
+
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    font-size: 13px;
+  }
+
+  .detail-row .label { color: var(--text-secondary); }
+  .detail-row .value { font-weight: 500; text-align: right; }
+
+  .formula-box {
+    background: var(--gray-bg);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 11px;
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    margin-top: 8px;
+  }
+
+  .formula-box .highlight { color: var(--text); font-weight: 600; }
+
+  .revision-timeline { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+
+  .revision-item { display: flex; gap: 10px; font-size: 12px; }
+
+  .revision-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--primary); margin-top: 5px; flex-shrink: 0;
+  }
+
+  .revision-content { flex: 1; }
+  .revision-date { color: var(--text-secondary); }
+  .revision-detail { color: var(--text); margin-top: 1px; }
+
+  .doc-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    background: var(--gray-bg);
+    border-radius: 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+
+  .doc-chip:hover { background: var(--primary-light); color: var(--primary); }
+  .doc-chip svg { width: 12px; height: 12px; flex-shrink: 0; }
+
+  .tooltip { position: relative; }
+
+  .tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--text);
+    color: #fff;
+    padding: 4px 9px;
+    border-radius: 6px;
+    font-size: 10px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 100;
+  }
+
+  .tooltip:hover::after { opacity: 1; }
+
+  .hidden { display: none !important; }
+
+  /* Client dashboard (pie chart view) */
+  .client-dashboard {
+    display: none;
+    padding: 0 28px 28px;
+    gap: 24px;
+  }
+
+  .client-dashboard.visible {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+  }
+
+  .pie-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .pie-card h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+
+  .pie-wrapper {
+    position: relative;
+    width: 220px;
+    height: 220px;
+  }
+
+  .pie-wrapper canvas {
+    width: 220px;
+    height: 220px;
+  }
+
+  .pie-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+  .pie-center .pie-pct {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .pie-center .pie-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+  }
+
+  .pie-legend {
+    display: flex;
+    gap: 24px;
+    margin-top: 20px;
+  }
+
+  .pie-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .pie-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .pie-legend-value {
+    font-weight: 600;
+    color: var(--text);
+    display: block;
+    font-size: 14px;
+    margin-top: 2px;
+  }
+
+  .pie-drilldown-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--primary);
+    cursor: pointer;
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--primary);
+    background: var(--primary-lighter);
+    transition: all 0.15s;
+  }
+
+  .pie-drilldown-link:hover {
+    background: var(--primary-light);
+    box-shadow: 0 1px 4px rgba(200,132,46,0.15);
+  }
+
+  .pie-drilldown-link svg { width: 14px; height: 14px; }
+
+  .pie-wrapper { cursor: pointer; }
+
+  .nav-toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--text);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    pointer-events: none;
+  }
+
+  .nav-toast.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .nav-toast svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+  .nav-toast-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .client-actions-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .client-action-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .client-action-card:hover {
+    border-color: var(--primary);
+    background: var(--primary-lighter);
+  }
+
+  .action-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .action-icon svg { width: 20px; height: 20px; }
+
+  .action-content { flex: 1; }
+
+  .action-content h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .action-content p {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  .action-arrow {
+    color: var(--text-secondary);
+    font-size: 18px;
+    transition: transform 0.15s;
+  }
+
+  .client-action-card:hover .action-arrow {
+    transform: translateX(3px);
+    color: var(--primary);
+  }
+
+  .exposure-breakdown-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+  }
+
+  .exposure-breakdown-card h3 {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+  }
+
+  .ageing-popup-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(45,42,38,0.3);
+    z-index: 1100;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ageing-popup-overlay.open { display: flex; }
+
+  .ageing-popup {
+    background: var(--card);
+    border-radius: 12px;
+    width: 520px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.14);
+    overflow: hidden;
+  }
+
+  .ageing-popup-header {
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .ageing-popup-header h3 {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .ageing-popup-body { padding: 16px 20px 20px; }
+
+  .ageing-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+  }
+
+  .ageing-bucket {
+    background: var(--gray-bg);
+    border-radius: 8px;
+    padding: 12px 10px;
+    text-align: center;
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+
+  .ageing-bucket:hover { background: var(--primary-lighter); }
+
+  .ageing-bucket .bucket-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+  }
+
+  .ageing-bucket .bucket-amount {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ageing-bucket .bucket-count {
+    font-size: 10px;
+    color: var(--text-secondary);
+    margin-top: 3px;
+  }
+
+  .ageing-bucket.bucket-current { border-bottom: 3px solid var(--green); }
+  .ageing-bucket.bucket-1-30 { border-bottom: 3px solid #60a5fa; }
+  .ageing-bucket.bucket-31-60 { border-bottom: 3px solid var(--yellow); }
+  .ageing-bucket.bucket-61-90 { border-bottom: 3px solid var(--orange); }
+  .ageing-bucket.bucket-90plus { border-bottom: 3px solid var(--red); }
+
+  .ageing-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .ageing-inline {
+    margin: 8px 0 4px;
+    padding: 10px 12px;
+    background: var(--gray-bg);
+    border-radius: 8px;
+  }
+
+  .ageing-inline-title {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+
+  .ageing-inline-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+  }
+
+  .ageing-inline-bucket {
+    background: var(--card);
+    border-radius: 6px;
+    padding: 8px 6px;
+    text-align: center;
+    border: 1px solid var(--border-light);
+  }
+
+  .ageing-inline-bucket .aib-label {
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--text-secondary);
+    margin-bottom: 3px;
+  }
+
+  .ageing-inline-bucket .aib-amount {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ageing-inline-bucket .aib-count {
+    font-size: 9px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  .ageing-inline-bucket.aib-current { border-top: 2px solid var(--green); }
+  .ageing-inline-bucket.aib-1-30 { border-top: 2px solid #60a5fa; }
+  .ageing-inline-bucket.aib-31-60 { border-top: 2px solid var(--yellow); }
+  .ageing-inline-bucket.aib-61-90 { border-top: 2px solid var(--orange); }
+  .ageing-inline-bucket.aib-90plus { border-top: 2px solid var(--red); }
+
+  @media (max-width: 1200px) {
+    .summary-bar { grid-template-columns: repeat(3, 1fr); }
+    .client-dashboard.visible { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="silq-logo">
+      <span class="silq-logo-text">silq</span>
+    </div>
+  </div>
+  <div class="sidebar-nav">
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+      Projects
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/><path d="M3 4h1l1.68 8.39A2 2 0 007.65 14h4.7a2 2 0 001.97-1.61L16 6H5"/></svg>
+      Shipments
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
+      Invoices
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/></svg>
+      Rates
+    </a>
+    <a class="nav-item active" href="#">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V8a2 2 0 00-2-2h-5L9 4H4z"/></svg>
+      Credit Limits
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
+      Tasks
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+      Settings
+    </a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <h1>Credit Limits</h1>
+      <span class="header-view-badge" id="viewBadge" style="background:var(--primary-light);color:var(--primary)">Admin View</span>
+    </div>
+    <div class="header-actions">
+      <div class="view-toggle">
+        <button class="toggle-option active" id="toggleAdmin" onclick="switchView('admin')">Admin</button>
+        <button class="toggle-option" id="toggleClient" onclick="switchView('client')">Client</button>
+      </div>
+      <button class="btn" onclick="exportTable()">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" style="vertical-align:-2px;margin-right:3px"><path d="M8 1a.5.5 0 0 1 .5.5v8.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V1.5A.5.5 0 0 1 8 1z"/><path d="M2 13.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg>
+        Export
+      </button>
+      <button class="btn btn-primary" id="addBtn" onclick="openModal()">+ Add Credit Limit</button>
+    </div>
+  </header>
+
+  <!-- Client view header (only in client mode) -->
+  <div class="client-header" id="clientHeader">
+    <div class="client-header-inner">
+      <div class="client-info">
+        <div class="client-avatar-lg">GF</div>
+        <div class="client-meta">
+          <h2>Global Freight Solutions Inc.</h2>
+          <p>CLT-1001 &middot; Account Manager: Sarah Kim &middot; 30 Days</p>
+        </div>
+      </div>
+      <span class="badge badge-green"><span class="badge-dot"></span>Within Limit</span>
+    </div>
+  </div>
+
+  <!-- Admin Summary Cards -->
+  <div class="admin-summary-bar" id="summaryBar">
+    <div class="admin-summary-card">
+      <div class="card-title">Clients by Status</div>
+      <div class="admin-pie-row">
+        <div class="admin-pie-wrapper">
+          <canvas id="adminPieChart" width="90" height="90"></canvas>
+          <div class="admin-pie-center">
+            <div class="pie-num" id="adminPieTotal">7</div>
+            <div class="pie-sub">clients</div>
+          </div>
+        </div>
+        <div class="admin-pie-legend" id="adminPieLegend"></div>
+      </div>
+      <div class="card-subtitle">Excludes DOR clients</div>
+    </div>
+    <div class="admin-summary-card">
+      <div class="card-title">Credit Exposure vs. Limit</div>
+      <div class="exposure-progress-wrap" id="exposureProgressCard"></div>
+      <div class="card-subtitle">Clients with assigned credit limits only</div>
+    </div>
+    <div class="admin-summary-card">
+      <div class="card-title">Total A/R Receivable</div>
+      <div class="ar-value-display" id="arCard"></div>
+    </div>
+  </div>
+
+  <!-- Client-mode summary (single client, rendered dynamically) -->
+  <div class="summary-bar hidden" id="clientSummaryBar"></div>
+
+  <!-- Client Dashboard (pie chart view, replaces table in client mode) -->
+  <div class="client-dashboard" id="clientDashboard">
+    <div class="pie-card">
+      <h3>Credit Utilization</h3>
+      <div class="pie-wrapper" onclick="navigateToInvoices()" title="Click to view invoice-level breakdown">
+        <canvas id="pieChart" width="220" height="220"></canvas>
+        <div class="pie-center">
+          <div class="pie-pct" id="piePct">61%</div>
+          <div class="pie-label">consumed</div>
+        </div>
+      </div>
+      <div class="pie-legend">
+        <div class="pie-legend-item">
+          <div class="pie-legend-dot" style="background:var(--red)"></div>
+          <div>Consumed<span class="pie-legend-value" id="legendConsumed">$455,500</span></div>
+        </div>
+        <div class="pie-legend-item">
+          <div class="pie-legend-dot" style="background:var(--green)"></div>
+          <div>Available<span class="pie-legend-value" id="legendAvailable">$294,500</span></div>
+        </div>
+      </div>
+      <div class="pie-drilldown-link" onclick="navigateToInvoices()">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M4 0h5.293A1 1 0 0 1 10 .293L13.707 4a1 1 0 0 1 .293.707V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm5.5 1.5v2a1 1 0 0 0 1 1h2l-3-3zM4.5 8a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7zm0 2a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7zm0 2a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1h-4z"/></svg>
+        View Invoice Breakdown
+        <svg viewBox="0 0 16 16" fill="currentColor" style="opacity:0.6"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
+      </div>
+    </div>
+
+    <div class="client-actions-panel">
+      <div class="client-action-card" onclick="openDetail('CLT-1001')">
+        <div class="action-icon" style="background:var(--green-bg);color:var(--green)">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/><path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/></svg>
+        </div>
+        <div class="action-content">
+          <h4>View Full Details</h4>
+          <p>See exposure breakdown, credit terms, documents, and revision history</p>
+        </div>
+        <span class="action-arrow">&rsaquo;</span>
+      </div>
+
+      <div class="client-action-card" onclick="navigateToInvoices()">
+        <div class="action-icon" style="background:#eef2ff;color:#4f46e5">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M4 0h5.293A1 1 0 0 1 10 .293L13.707 4a1 1 0 0 1 .293.707V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm5.5 1.5v2a1 1 0 0 0 1 1h2l-3-3zM4.5 8a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7zm0 2a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7zm0 2a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1h-4z"/></svg>
+        </div>
+        <div class="action-content">
+          <h4>View Invoice Breakdown</h4>
+          <p>Drilldown into individual invoices, payments, and adjustments behind your exposure</p>
+        </div>
+        <span class="action-arrow">&rsaquo;</span>
+      </div>
+
+      <div class="client-action-card" onclick="openRequestRevisionModal()">
+        <div class="action-icon" style="background:var(--yellow-bg);color:var(--yellow)">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5L13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5z"/></svg>
+        </div>
+        <div class="action-content">
+          <h4>Request Credit Limit Revision</h4>
+          <p>Submit a request to the Finance team to revise your credit terms or limit</p>
+        </div>
+        <span class="action-arrow">&rsaquo;</span>
+      </div>
+
+      <div class="client-action-card" onclick="openDetail('CLT-1001')">
+        <div class="action-icon" style="background:var(--gray-bg);color:var(--text-secondary)">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 0h5.293A1 1 0 0 1 10 .293L13.707 4a1 1 0 0 1 .293.707V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm5.5 1.5v2a1 1 0 0 0 1 1h2l-3-3zM4.5 8a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7zm0 2a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7zm0 2a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1h-4z"/></svg>
+        </div>
+        <div class="action-content">
+          <h4>View Documents</h4>
+          <p id="clientDocCount">CL Application, CL Allocation, Bank Reference (3 files)</p>
+        </div>
+        <span class="action-arrow">&rsaquo;</span>
+      </div>
+
+      <div class="exposure-breakdown-card" id="clientBreakdownCard">
+        <h3>Exposure Breakdown</h3>
+        <div id="clientBreakdown"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar" id="adminToolbar">
+    <div class="toolbar-left">
+      <input type="text" class="search-input" placeholder="Search clients, account managers..." oninput="filterTable(this.value)">
+      <button class="filter-chip active" onclick="setFilter(this,'all')">All</button>
+      <button class="filter-chip" onclick="setFilter(this,'within')">Within Limit</button>
+      <button class="filter-chip" onclick="setFilter(this,'near')">Near Limit</button>
+      <button class="filter-chip" onclick="setFilter(this,'over')">Over Limit</button>
+      <button class="filter-chip" onclick="setFilter(this,'revision_requested')">Revision Requests</button>
+    </div>
+    <span class="sync-label">Last synced with QuickBooks: <strong>Mar 25, 2026 10:42 AM</strong></span>
+  </div>
+
+  <!-- Main Table -->
+  <div class="table-wrapper">
+    <div class="table-container">
+      <div class="table-scroll">
+        <table id="creditTable">
+          <thead>
+            <tr id="tableHead">
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+          </tbody>
+        </table>
+      </div>
+      <div class="table-footer">
+        <div id="footerCount">Showing 1-8 of 8 clients</div>
+        <div class="pagination">
+          <button class="page-btn">&laquo;</button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">&raquo;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Navigation Toast -->
+<div class="nav-toast" id="navToast">
+  <div class="nav-toast-icon">
+    <svg viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M4 0h5.293A1 1 0 0 1 10 .293L13.707 4a1 1 0 0 1 .293.707V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm5.5 1.5v2a1 1 0 0 0 1 1h2l-3-3zM4.5 8a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7zm0 2a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7zm0 2a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1h-4z"/></svg>
+  </div>
+  <span id="navToastMsg">Navigating to Invoices table for Global Freight Solutions Inc.…</span>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalTitle">Add Client Credit Limit</h2>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Client Name <span class="req">*</span></label>
+          <select><option>Select client...</option><option>Maersk Line Ltd</option><option>Kuehne + Nagel</option><option>DHL Global Forwarding</option><option>Hapag-Lloyd AG</option><option>CMA CGM Group</option><option>Expeditors International</option></select>
+        </div>
+        <div class="form-group">
+          <label>Account Manager <span class="req">*</span></label>
+          <select><option>Select...</option><option>Sarah Kim</option><option>James Chen</option><option>Maria Lopez</option><option>David Park</option><option>Lisa Wang</option></select>
+        </div>
+        <div class="form-group">
+          <label>Credit Limit Amount (USD) <span class="req">*</span></label>
+          <input type="text" id="addLimitAmount" placeholder="e.g. 500,000">
+        </div>
+        <div class="form-group">
+          <label>General Credit Terms <span class="req">*</span></label>
+          <select id="addCreditTerms" onchange="handleTermsChange(this)"><option>Select...</option><option>DOR</option><option>7 Days</option><option>10 Days</option><option>15 Days</option><option>30 Days</option><option>45 Days</option><option>60 Days</option></select>
+        </div>
+        <div class="form-group">
+          <label>Credit Limit Type <span class="req">*</span></label>
+          <select><option>Revolving</option></select>
+        </div>
+        <div class="form-group">
+          <label>Duties Outlay Option</label>
+          <select><option>Select...</option><option>Silq Duty</option><option>Pre-Pay</option><option>ACH</option><option>Not Applicable</option></select>
+        </div>
+        <div class="form-group full-width">
+          <label>Credit Limit Application (upload) <span class="req">*</span></label>
+          <input type="file" accept=".pdf,.doc,.docx,.xlsx" multiple>
+        </div>
+        <div class="form-group full-width">
+          <label>Credit Limit Allocation Document (upload) <span class="req">*</span></label>
+          <input type="file" accept=".pdf,.doc,.docx,.xlsx" multiple>
+        </div>
+        <div class="form-group full-width">
+          <label>Internal Notes / Justification</label>
+          <textarea placeholder="Add notes about the credit decision..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal()">Save Credit Limit</button>
+    </div>
+  </div>
+</div>
+
+<!-- Revise Credit Terms Modal (Admin) -->
+<div class="modal-overlay" id="reviseModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Revise Credit Terms</h2>
+      <button class="modal-close" onclick="closeReviseModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Client <span class="req">*</span></label>
+          <input type="text" id="reviseClient" readonly style="background:var(--gray-bg)">
+        </div>
+        <div class="form-group">
+          <label>Current Limit</label>
+          <input type="text" id="reviseCurrentLimit" readonly style="background:var(--gray-bg)">
+        </div>
+        <div class="form-group">
+          <label>New Credit Limit (USD) <span class="req">*</span></label>
+          <input type="text" placeholder="Enter revised limit">
+        </div>
+        <div class="form-group">
+          <label>Credit Terms <span class="req">*</span></label>
+          <select><option>Select...</option><option>DOR</option><option>7 Days</option><option>10 Days</option><option>15 Days</option><option>30 Days</option><option>45 Days</option><option>60 Days</option></select>
+        </div>
+        <div class="form-group full-width">
+          <label>Revision Reason <span class="req">*</span></label>
+          <select>
+            <option>Select reason...</option>
+            <option>Periodic review</option>
+            <option>Improved payment history</option>
+            <option>Deteriorated payment history</option>
+            <option>Business volume increase</option>
+            <option>Business volume decrease</option>
+            <option>Client request</option>
+            <option>Risk re-assessment</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group full-width">
+          <label>Supporting Documentation (upload)</label>
+          <input type="file" accept=".pdf,.doc,.docx,.xlsx" multiple>
+        </div>
+        <div class="form-group full-width">
+          <label>Justification Notes</label>
+          <textarea placeholder="Explain the reason for this revision..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeReviseModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="closeReviseModal()">Submit for Approval</button>
+    </div>
+  </div>
+</div>
+
+<!-- Request Revision Modal (Client) -->
+<div class="modal-overlay" id="requestRevisionModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Request Credit Limit Revision</h2>
+      <button class="modal-close" onclick="closeRequestRevisionModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--primary-light);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--primary-dark)">
+        Your request will be sent to the Finance team for review. You will be notified once a decision is made.
+      </div>
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label>Reason for Revision Request <span class="req">*</span></label>
+          <select id="requestReason">
+            <option>Select reason...</option>
+            <option>Need higher limit for upcoming orders</option>
+            <option>Business volume has increased</option>
+            <option>Current terms are too restrictive</option>
+            <option>Seasonal demand increase</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group full-width">
+          <label>Describe your request in detail <span class="req">*</span></label>
+          <textarea id="requestDetail" placeholder="Explain why you need a revision to your credit terms..." style="min-height:80px"></textarea>
+        </div>
+        <div class="form-group full-width">
+          <label>Requested New Limit</label>
+          <input type="text" placeholder="e.g. $1,000,000">
+        </div>
+        <div class="form-group full-width">
+          <label>Supporting Documentation</label>
+          <input type="file" accept=".pdf,.doc,.docx,.xlsx" multiple>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeRequestRevisionModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitRevisionRequest()">Submit Request</button>
+    </div>
+  </div>
+</div>
+
+<!-- Ageing Breakdown Popup -->
+<div class="ageing-popup-overlay" id="ageingPopup" onclick="closeAgeingPopup()">
+  <div class="ageing-popup" onclick="event.stopPropagation()">
+    <div class="ageing-popup-header">
+      <h3 id="ageingPopupTitle">Invoice Ageing — Outstanding Invoices</h3>
+      <button class="modal-close" onclick="closeAgeingPopup()">&times;</button>
+    </div>
+    <div class="ageing-popup-body">
+      <div class="ageing-grid" id="ageingGrid"></div>
+      <div class="ageing-total-row">
+        <span>Total Outstanding</span>
+        <span id="ageingTotal"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Side Panel -->
+<div class="detail-panel-overlay" id="detailOverlay" onclick="closeDetail()"></div>
+<div class="detail-panel" id="detailPanel">
+  <div class="detail-header">
+    <div>
+      <h2 id="detailClientName" style="font-size:15px;font-weight:600"></h2>
+      <div id="detailClientId" style="font-size:11px;color:var(--text-secondary);margin-top:2px"></div>
+    </div>
+    <button class="modal-close" onclick="closeDetail()">&times;</button>
+  </div>
+  <div class="detail-section">
+    <h3>Credit Position</h3>
+    <div id="detailPosition"></div>
+    <div class="formula-box" style="margin-top:10px">
+      <div><span class="highlight">Credit Exposure</span> =</div>
+      <div>&nbsp;&nbsp;Sum of outstanding invoices (net of payments &amp; adjustments)</div>
+      <div>&nbsp;&nbsp;+ Debit notes at customer level</div>
+      <div>&nbsp;&nbsp;&minus; Credit notes at customer level</div>
+      <div>&nbsp;&nbsp;&minus; Unadjusted advances/payments at customer level</div>
+    </div>
+  </div>
+  <div class="detail-section">
+    <h3>Exposure Breakdown</h3>
+    <div id="detailBreakdown"></div>
+  </div>
+  <div class="detail-section">
+    <h3>Credit Terms</h3>
+    <div id="detailTerms"></div>
+  </div>
+  <div class="detail-section">
+    <h3>Documentation</h3>
+    <div id="detailDocs" style="display:flex;flex-direction:column;gap:6px"></div>
+  </div>
+  <div class="detail-section">
+    <h3>Revision History</h3>
+    <div id="detailRevisions" class="revision-timeline"></div>
+  </div>
+</div>
+
+<script>
+let currentView = "admin";
+
+const DATA = [
+  {
+    id: "CLT-1001", name: "Global Freight Solutions Inc.", am: "Sarah Kim", amColor: "#6366f1",
+    terms: "30 Days", assignedLimit: 750000,
+    outstandingInvoices: 482000, customerCreditNotes: 18000, unadjustedAdvances: 12000, customerDebitNotes: 3500,
+    limitType: "Revolving", approvalStatus: "Approved", dutyOutlay: "Silq Duty", revisionRequested: false,
+    currentBookings: 87500, currentBookingsCount: 4,
+    ageing: { current: { amt: 185000, count: 5 }, d1_30: { amt: 142000, count: 4 }, d31_60: { amt: 88000, count: 3 }, d61_90: { amt: 45000, count: 2 }, d90plus: { amt: 22000, count: 1 } },
+    docs: [{ name: "CL Application", type: "pdf" }, { name: "CL Allocation", type: "pdf" }, { name: "Bank Reference", type: "pdf" }],
+    revisions: [
+      { date: "2025-10-01", detail: "Initial limit set at $750,000 — Sarah Kim" },
+      { date: "2025-06-15", detail: "Upgraded from $500,000 based on 12-month payment history — James Chen" }
+    ]
+  },
+  {
+    id: "CLT-1002", name: "Pacific Cargo Lines", am: "James Chen", amColor: "#0891b2",
+    terms: "45 Days", assignedLimit: 500000,
+    outstandingInvoices: 378000, customerCreditNotes: 5000, unadjustedAdvances: 8000, customerDebitNotes: 2000,
+    limitType: "Revolving", approvalStatus: "Approved", dutyOutlay: "Pre-Pay", revisionRequested: true,
+    currentBookings: 62000, currentBookingsCount: 3,
+    ageing: { current: { amt: 120000, count: 3 }, d1_30: { amt: 135000, count: 4 }, d31_60: { amt: 78000, count: 2 }, d61_90: { amt: 30000, count: 1 }, d90plus: { amt: 15000, count: 1 } },
+    revisionRequestDetail: "Requesting limit increase to $750,000 — business volume has grown 40% this quarter.",
+    docs: [{ name: "CL Application", type: "pdf" }, { name: "CL Allocation", type: "xlsx" }],
+    revisions: [{ date: "2025-08-15", detail: "Initial limit set at $500,000 — James Chen" }]
+  },
+  {
+    id: "CLT-1003", name: "TransAtlantic Logistics Ltd", am: "Maria Lopez", amColor: "#db2777",
+    terms: "30 Days", assignedLimit: 300000,
+    outstandingInvoices: 315000, customerCreditNotes: 2000, unadjustedAdvances: 0, customerDebitNotes: 5000,
+    limitType: "Revolving", approvalStatus: "Approved", dutyOutlay: "ACH", revisionRequested: false,
+    currentBookings: 45000, currentBookingsCount: 2,
+    ageing: { current: { amt: 95000, count: 3 }, d1_30: { amt: 110000, count: 3 }, d31_60: { amt: 65000, count: 2 }, d61_90: { amt: 28000, count: 1 }, d90plus: { amt: 17000, count: 1 } },
+    docs: [{ name: "CL Application", type: "pdf" }, { name: "CL Allocation", type: "pdf" }, { name: "Financials 2024", type: "xlsx" }],
+    revisions: [
+      { date: "2025-07-01", detail: "Initial limit set at $300,000 — Maria Lopez" },
+      { date: "2025-11-20", detail: "Flagged for review — multiple late payments in Q3" }
+    ]
+  },
+  {
+    id: "CLT-1004", name: "Horizon Shipping Co.", am: "Sarah Kim", amColor: "#6366f1",
+    terms: "60 Days", assignedLimit: 1000000,
+    outstandingInvoices: 410000, customerCreditNotes: 25000, unadjustedAdvances: 50000, customerDebitNotes: 8000,
+    limitType: "Revolving", approvalStatus: "Approved", dutyOutlay: "Silq Duty", revisionRequested: false,
+    currentBookings: 125000, currentBookingsCount: 5,
+    ageing: { current: { amt: 160000, count: 4 }, d1_30: { amt: 120000, count: 3 }, d31_60: { amt: 75000, count: 2 }, d61_90: { amt: 35000, count: 2 }, d90plus: { amt: 20000, count: 1 } },
+    docs: [{ name: "CL Application", type: "pdf" }, { name: "CL Allocation", type: "pdf" }, { name: "Trade References", type: "pdf" }, { name: "Financials 2024", type: "xlsx" }],
+    revisions: [
+      { date: "2025-09-01", detail: "Limit increased to $1,000,000 — Excellent payment history" },
+      { date: "2025-03-01", detail: "Initial limit set at $600,000 — Sarah Kim" }
+    ]
+  },
+  {
+    id: "CLT-1005", name: "Eagle Express Freight", am: "James Chen", amColor: "#0891b2",
+    terms: "15 Days", assignedLimit: 200000,
+    outstandingInvoices: 125000, customerCreditNotes: 3000, unadjustedAdvances: 2000, customerDebitNotes: 1500,
+    limitType: "Revolving", approvalStatus: "Approved", dutyOutlay: "Pre-Pay", revisionRequested: false,
+    currentBookings: 18000, currentBookingsCount: 1,
+    ageing: { current: { amt: 55000, count: 2 }, d1_30: { amt: 40000, count: 2 }, d31_60: { amt: 20000, count: 1 }, d61_90: { amt: 10000, count: 1 }, d90plus: { amt: 0, count: 0 } },
+    docs: [{ name: "CL Application", type: "pdf" }, { name: "CL Allocation", type: "pdf" }],
+    revisions: [{ date: "2026-01-10", detail: "Initial limit set at $200,000 — Non-revolving, 6-month trial" }]
+  },
+  {
+    id: "CLT-1006", name: "Nordic Supply Chain AB", am: "Maria Lopez", amColor: "#db2777",
+    terms: "30 Days", assignedLimit: 450000,
+    outstandingInvoices: 198000, customerCreditNotes: 10000, unadjustedAdvances: 15000, customerDebitNotes: 4000,
+    limitType: "Revolving", approvalStatus: "Approved", dutyOutlay: "ACH", revisionRequested: false,
+    currentBookings: 32000, currentBookingsCount: 2,
+    ageing: { current: { amt: 78000, count: 3 }, d1_30: { amt: 62000, count: 2 }, d31_60: { amt: 38000, count: 1 }, d61_90: { amt: 12000, count: 1 }, d90plus: { amt: 8000, count: 1 } },
+    docs: [{ name: "CL Application", type: "pdf" }, { name: "CL Allocation", type: "pdf" }, { name: "Bank Reference", type: "pdf" }],
+    revisions: [{ date: "2025-11-01", detail: "Initial limit set at $450,000 — Maria Lopez" }]
+  },
+  {
+    id: "CLT-1007", name: "Silk Road Logistics", am: "James Chen", amColor: "#0891b2",
+    terms: "DOR", assignedLimit: 0,
+    outstandingInvoices: 42000, customerCreditNotes: 0, unadjustedAdvances: 5000, customerDebitNotes: 500,
+    limitType: "Revolving", approvalStatus: "Under Review", dutyOutlay: "Not Applicable", revisionRequested: false,
+    currentBookings: 8500, currentBookingsCount: 1,
+    ageing: { current: { amt: 22000, count: 2 }, d1_30: { amt: 12000, count: 1 }, d31_60: { amt: 8000, count: 1 }, d61_90: { amt: 0, count: 0 }, d90plus: { amt: 0, count: 0 } },
+    docs: [{ name: "CL Application", type: "pdf" }],
+    revisions: [{ date: "2026-02-01", detail: "Temporary limit of $75,000 granted — pending full credit review" }]
+  },
+  {
+    id: "CLT-1008", name: "Summit Intermodal Partners", am: "Sarah Kim", amColor: "#6366f1",
+    terms: "45 Days", assignedLimit: 600000,
+    outstandingInvoices: 290000, customerCreditNotes: 8000, unadjustedAdvances: 20000, customerDebitNotes: 3000,
+    limitType: "Revolving", approvalStatus: "Approved", dutyOutlay: "Silq Duty", revisionRequested: true,
+    currentBookings: 55000, currentBookingsCount: 3,
+    ageing: { current: { amt: 105000, count: 3 }, d1_30: { amt: 90000, count: 3 }, d31_60: { amt: 55000, count: 2 }, d61_90: { amt: 25000, count: 1 }, d90plus: { amt: 15000, count: 1 } },
+    revisionRequestDetail: "Current exposure nearing limit — requesting temporary increase for Q2 peak season.",
+    docs: [{ name: "CL Application", type: "pdf" }, { name: "CL Allocation", type: "pdf" }, { name: "Trade References", type: "pdf" }],
+    revisions: [{ date: "2025-12-01", detail: "Initial limit set at $600,000 — Sarah Kim" }]
+  }
+];
+
+function computeExposure(c) {
+  return c.outstandingInvoices + c.customerDebitNotes - c.customerCreditNotes - c.unadjustedAdvances;
+}
+
+function computeAvailable(c) { return c.assignedLimit - computeExposure(c); }
+
+function isDOR(c) { return c.terms === "DOR"; }
+
+function getStatus(c) {
+  if (isDOR(c)) return "dor";
+  const avail = computeAvailable(c);
+  if (avail < 0) return "over";
+  if (avail < c.assignedLimit * 0.20) return "near";
+  return "within";
+}
+
+function statusBadge(s) {
+  const map = {
+    within: { cls: "badge-green", label: "Within Limit" },
+    near: { cls: "badge-yellow", label: "Near Limit" },
+    over: { cls: "badge-red", label: "Over Limit" },
+    expired: { cls: "badge-gray", label: "Expired" },
+    dor: { cls: "badge-gray", label: "N/A" }
+  };
+  const m = map[s];
+  return `<span class="badge ${m.cls}"><span class="badge-dot"></span>${m.label}</span>`;
+}
+
+function fmt(n) { return "$" + n.toLocaleString("en-US"); }
+
+function pct(exposure, limit) {
+  if (limit === 0) return 100;
+  return Math.round((exposure / limit) * 100);
+}
+
+function progressColor(p) {
+  if (p >= 90) return "var(--red)";
+  if (p >= 75) return "var(--yellow)";
+  return "var(--green)";
+}
+
+function dutyBadgeClass(d) {
+  if (d === "Silq Duty") return "badge-green";
+  if (d === "ACH") return "badge-yellow";
+  if (d === "Pre-Pay") return "badge-orange";
+  return "badge-gray";
+}
+
+function docIcon() {
+  return `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 0h5.293A1 1 0 0 1 10 .293L13.707 4a1 1 0 0 1 .293.707V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm5.5 1.5v2a1 1 0 0 0 1 1h2l-3-3z"/></svg>`;
+}
+
+function renderTableHead() {
+  const head = document.getElementById("tableHead");
+  head.innerHTML = `
+    <th>Client <span class="sort-icon">&#8597;</span></th>
+    <th>Account Manager</th>
+    <th>General Credit Terms</th>
+    <th>Assigned Limit <span class="sort-icon">&#8597;</span></th>
+    <th>Current Exposure <span class="sort-icon">&#8597;</span></th>
+    <th>Available Credit <span class="sort-icon">&#8597;</span></th>
+    <th>Status</th>
+    <th>Duties Outlay Option</th>
+    <th>Actions</th>`;
+}
+
+function renderTable(data) {
+  renderTableHead();
+  const tbody = document.getElementById("tableBody");
+
+  tbody.innerHTML = data.map(c => {
+    const dor = isDOR(c);
+    const exposure = computeExposure(c);
+    const available = computeAvailable(c);
+    const status = getStatus(c);
+    const util = dor ? 0 : pct(exposure, c.assignedLimit);
+    const hasRevisionRequest = c.revisionRequested;
+
+    const limitCell = dor
+      ? `<td><div class="money" style="color:var(--text-secondary)">N/A</div></td>`
+      : `<td>
+          <div>
+            <div class="money">${fmt(c.assignedLimit)}</div>
+            <div class="progress-bar-container" style="margin-top:5px">
+              <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(util,100)}%;background:${progressColor(util)}"></div></div>
+              <div class="progress-label">${util}% used</div>
+            </div>
+          </div>
+        </td>`;
+
+    const exposureCell = `<td class="money ${!dor && exposure > c.assignedLimit ? 'negative' : ''}">${fmt(exposure)}</td>`;
+
+    const availableCell = dor
+      ? `<td><span class="money" style="color:var(--text-secondary)">N/A</span></td>`
+      : `<td class="money ${available < 0 ? 'negative' : 'positive'}">${fmt(available)}</td>`;
+
+    return `<tr data-status="${status}" data-id="${c.id}" class="${hasRevisionRequest ? 'revision-request-row' : ''}">
+      <td>
+        <div class="client-cell">
+          <span class="client-name" onclick="openDetail('${c.id}')">${c.name}</span>
+          <span class="client-id">${c.id}${hasRevisionRequest ? '<span class="revision-indicator"><svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412l-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.399l-.244-.002.024-.112.896-.147h.63l-.015.07zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg> Revision Requested</span>' : ''}</span>
+        </div>
+      </td>
+      <td>
+        <div class="am-cell">
+          <div class="avatar" style="background:${c.amColor}">${c.am.split(" ").map(w=>w[0]).join("")}</div>
+          ${c.am}
+        </div>
+      </td>
+      <td><div class="credit-terms" title="${c.terms}">${c.terms}</div></td>
+      ${limitCell}
+      ${exposureCell}
+      ${availableCell}
+      <td>${statusBadge(status)}</td>
+      <td><span class="badge ${dutyBadgeClass(c.dutyOutlay)}">${c.dutyOutlay}</span></td>
+      <td>
+        <div class="actions-cell">
+          <button class="icon-btn tooltip" data-tooltip="View Details" onclick="openDetail('${c.id}')">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/><path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/></svg>
+          </button>
+          <button class="icon-btn tooltip" data-tooltip="Revise Terms" onclick="openRevise('${c.id}')">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5L13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5z"/></svg>
+          </button>
+          <button class="icon-btn tooltip" data-tooltip="Documents (${c.docs.length})" onclick="openDetail('${c.id}')">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M4 0h5.293A1 1 0 0 1 10 .293L13.707 4a1 1 0 0 1 .293.707V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm5.5 1.5v2a1 1 0 0 0 1 1h2l-3-3zM4.5 8a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7zm0 2a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7zm0 2a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1h-4z"/></svg>
+          </button>
+        </div>
+      </td>
+    </tr>`;
+  }).join("");
+  document.getElementById("footerCount").textContent = `Showing 1-${data.length} of ${data.length} clients`;
+}
+
+function drawPieChart(consumed, available) {
+  const canvas = document.getElementById("pieChart");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = 220 * dpr;
+  canvas.height = 220 * dpr;
+  ctx.scale(dpr, dpr);
+
+  const cx = 110, cy = 110, r = 90, lineWidth = 28;
+  const total = consumed + available;
+  const consumedAngle = (consumed / total) * Math.PI * 2;
+
+  ctx.clearRect(0, 0, 220, 220);
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.strokeStyle = "#edf7f0";
+  ctx.lineWidth = lineWidth;
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + consumedAngle);
+  ctx.strokeStyle = "#c44b3f";
+  ctx.lineWidth = lineWidth;
+  ctx.lineCap = "round";
+  ctx.stroke();
+
+  document.getElementById("piePct").textContent = Math.round((consumed / total) * 100) + "%";
+  document.getElementById("legendConsumed").textContent = fmt(consumed);
+  document.getElementById("legendAvailable").textContent = fmt(available);
+}
+
+function renderClientDashboard(c) {
+  const exposure = computeExposure(c);
+  const available = computeAvailable(c);
+  const status = getStatus(c);
+
+  drawPieChart(exposure, Math.max(available, 0));
+
+  document.getElementById("clientBreakdown").innerHTML = `
+    <div class="detail-row" style="cursor:pointer;border-radius:6px;padding:5px 6px;margin:-1px -6px;transition:background 0.12s" onclick="showAgeingBreakdown('${c.id}')" onmouseover="this.style.background='var(--primary-lighter)'" onmouseout="this.style.background='transparent'"><span class="label" style="display:flex;align-items:center;gap:4px">Outstanding Invoices (net of payments) <svg width="12" height="12" viewBox="0 0 16 16" fill="var(--primary)" style="opacity:0.7"><path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/><path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/></svg></span><span class="value" style="color:var(--primary)">${fmt(c.outstandingInvoices)}</span></div>
+    <div class="detail-row"><span class="label">+ Customer-Level Debit Notes</span><span class="value">+ ${fmt(c.customerDebitNotes)}</span></div>
+    <div class="detail-row"><span class="label">&minus; Customer-Level Credit Notes</span><span class="value">&minus; ${fmt(c.customerCreditNotes)}</span></div>
+    <div class="detail-row"><span class="label">&minus; Unadjusted Advances/Payments</span><span class="value">&minus; ${fmt(c.unadjustedAdvances)}</span></div>
+    <div class="detail-row" style="border-top:1px solid var(--border);padding-top:8px;margin-top:4px;font-weight:600">
+      <span class="label" style="color:var(--text);font-weight:600">= Credit Exposure</span>
+      <span class="value">${fmt(exposure)}</span>
+    </div>`;
+
+  document.getElementById("clientDocCount").textContent =
+    c.docs.map(d => d.name).join(", ") + ` (${c.docs.length} files)`;
+
+  const csBadge = document.querySelector("#clientHeader .badge");
+  if (csBadge) csBadge.outerHTML = statusBadge(status);
+
+  const csCards = document.getElementById("clientSummaryBar");
+  csCards.innerHTML = `
+    <div class="summary-card">
+      <div class="label">Assigned Limit</div>
+      <div class="value" style="color:#059669">${fmt(c.assignedLimit)}</div>
+      <div class="detail">${c.limitType} &middot; ${c.terms}</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">Current Exposure</div>
+      <div class="value" style="color:#d97706">${fmt(exposure)}</div>
+      <div class="detail">sum of all outstanding</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">Available Credit</div>
+      <div class="value" style="color:${available < 0 ? '#dc2626' : '#059669'}">${fmt(available)}</div>
+      <div class="detail">${available > 0 ? Math.round((available / c.assignedLimit) * 100) + '% remaining' : 'over limit'}</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">Current Bookings</div>
+      <div class="value" style="color:#4f46e5">${fmt(c.currentBookings || 0)}</div>
+      <div class="detail">${c.currentBookingsCount || 0} accepted, not yet invoiced</div>
+    </div>
+    <div class="summary-card">
+      <div class="label">Duties Outlay</div>
+      <div class="value" style="font-size:16px">${c.dutyOutlay}</div>
+      <div class="detail">&nbsp;</div>
+    </div>`;
+}
+
+function switchView(view) {
+  currentView = view;
+  document.getElementById("toggleAdmin").classList.toggle("active", view === "admin");
+  document.getElementById("toggleClient").classList.toggle("active", view === "client");
+
+  const badge = document.getElementById("viewBadge");
+  if (view === "admin") {
+    badge.textContent = "Admin View";
+    badge.style.background = "var(--primary-light)";
+    badge.style.color = "var(--primary)";
+  } else {
+    badge.textContent = "Client View";
+    badge.style.background = "var(--purple-bg)";
+    badge.style.color = "var(--purple)";
+  }
+
+  document.getElementById("summaryBar").classList.toggle("hidden", view === "client");
+  document.getElementById("clientSummaryBar").classList.toggle("hidden", view === "admin");
+  document.getElementById("clientHeader").classList.toggle("visible", view === "client");
+  document.getElementById("adminToolbar").classList.toggle("hidden", view === "client");
+  document.getElementById("addBtn").classList.toggle("hidden", view === "client");
+
+  const tableWrapper = document.querySelector(".table-wrapper");
+  const clientDash = document.getElementById("clientDashboard");
+
+  if (view === "client") {
+    tableWrapper.classList.add("hidden");
+    clientDash.classList.add("visible");
+    renderClientDashboard(DATA[0]);
+  } else {
+    tableWrapper.classList.remove("hidden");
+    clientDash.classList.remove("visible");
+    renderTable(DATA);
+    renderAdminSummary();
+  }
+}
+
+function openDetail(id) {
+  const c = DATA.find(x => x.id === id);
+  if (!c) return;
+  const exposure = computeExposure(c);
+  const available = computeAvailable(c);
+  const status = getStatus(c);
+  const util = pct(exposure, c.assignedLimit);
+
+  document.getElementById("detailClientName").textContent = c.name;
+  document.getElementById("detailClientId").textContent = `${c.id} · ${c.am} · ${c.approvalStatus}`;
+
+  const dor = isDOR(c);
+  document.getElementById("detailPosition").innerHTML = dor
+    ? `<div class="detail-row"><span class="label">Assigned Limit</span><span class="value" style="color:var(--text-secondary)">N/A (DOR)</span></div>
+       <div class="detail-row"><span class="label">Current Exposure</span><span class="value">${fmt(exposure)}</span></div>
+       <div class="detail-row"><span class="label">Available Credit</span><span class="value" style="color:var(--text-secondary)">N/A</span></div>
+       <div class="detail-row"><span class="label">Status</span><span class="value">${statusBadge(status)}</span></div>`
+    : `<div class="detail-row"><span class="label">Assigned Limit</span><span class="value">${fmt(c.assignedLimit)}</span></div>
+       <div class="detail-row"><span class="label">Current Exposure</span><span class="value" style="color:${exposure > c.assignedLimit ? 'var(--red)' : 'var(--text)'}">${fmt(exposure)}</span></div>
+       <div class="detail-row"><span class="label">Available Credit</span><span class="value" style="color:${available < 0 ? 'var(--red)' : 'var(--green)'}">${fmt(available)}</span></div>
+       <div class="detail-row"><span class="label">Utilization</span><span class="value">${util}% ${statusBadge(status)}</span></div>`;
+
+  const ageingHTML = c.ageing ? `
+    <div class="ageing-inline">
+      <div class="ageing-inline-title">Invoice Ageing Breakdown</div>
+      <div class="ageing-inline-grid">
+        <div class="ageing-inline-bucket aib-current"><div class="aib-label">Current</div><div class="aib-amount">${fmt(c.ageing.current.amt)}</div><div class="aib-count">${c.ageing.current.count} inv</div></div>
+        <div class="ageing-inline-bucket aib-1-30"><div class="aib-label">1–30</div><div class="aib-amount">${fmt(c.ageing.d1_30.amt)}</div><div class="aib-count">${c.ageing.d1_30.count} inv</div></div>
+        <div class="ageing-inline-bucket aib-31-60"><div class="aib-label">31–60</div><div class="aib-amount">${fmt(c.ageing.d31_60.amt)}</div><div class="aib-count">${c.ageing.d31_60.count} inv</div></div>
+        <div class="ageing-inline-bucket aib-61-90"><div class="aib-label">61–90</div><div class="aib-amount">${fmt(c.ageing.d61_90.amt)}</div><div class="aib-count">${c.ageing.d61_90.count} inv</div></div>
+        <div class="ageing-inline-bucket aib-90plus"><div class="aib-label">90+</div><div class="aib-amount">${fmt(c.ageing.d90plus.amt)}</div><div class="aib-count">${c.ageing.d90plus.count} inv</div></div>
+      </div>
+    </div>` : '';
+
+  document.getElementById("detailBreakdown").innerHTML = `
+    <div class="detail-row"><span class="label">Outstanding Invoices (net of payments)</span><span class="value">${fmt(c.outstandingInvoices)}</span></div>
+    ${ageingHTML}
+    <div class="detail-row"><span class="label">+ Customer-Level Debit Notes</span><span class="value">+ ${fmt(c.customerDebitNotes)}</span></div>
+    <div class="detail-row"><span class="label">&minus; Customer-Level Credit Notes</span><span class="value">&minus; ${fmt(c.customerCreditNotes)}</span></div>
+    <div class="detail-row"><span class="label">&minus; Unadjusted Advances/Payments</span><span class="value">&minus; ${fmt(c.unadjustedAdvances)}</span></div>
+    <div class="detail-row" style="border-top:1px solid var(--border);padding-top:8px;font-weight:600">
+      <span class="label" style="color:var(--text);font-weight:600">= Credit Exposure</span>
+      <span class="value">${fmt(exposure)}</span>
+    </div>`;
+
+  document.getElementById("detailTerms").innerHTML = `
+    <div class="detail-row"><span class="label">General Terms</span><span class="value">${c.terms}</span></div>
+    <div class="detail-row"><span class="label">Limit Type</span><span class="value">${c.limitType}</span></div>
+    <div class="detail-row"><span class="label">Duties Outlay Option</span><span class="value">${c.dutyOutlay}</span></div>
+    <div class="detail-row"><span class="label">Approval Status</span><span class="value">${c.approvalStatus}</span></div>
+    ${c.revisionRequested ? `<div class="detail-row" style="margin-top:8px;padding:8px 10px;background:var(--revision-row);border-radius:6px;border:1px solid var(--revision-border)"><span class="label" style="color:var(--primary);font-weight:600">Pending Revision Request</span><span class="value" style="font-size:12px;max-width:250px;white-space:normal;line-height:1.4">${c.revisionRequestDetail || ''}</span></div>` : ''}`;
+
+  document.getElementById("detailDocs").innerHTML = c.docs.map(d =>
+    `<a href="#" class="doc-chip">${docIcon()} ${d.name}.${d.type}</a>`
+  ).join("");
+
+  document.getElementById("detailRevisions").innerHTML = c.revisions.map(r =>
+    `<div class="revision-item">
+      <div class="revision-dot"></div>
+      <div class="revision-content">
+        <div class="revision-date">${r.date}</div>
+        <div class="revision-detail">${r.detail}</div>
+      </div>
+    </div>`
+  ).join("");
+
+  document.getElementById("detailOverlay").classList.add("open");
+  document.getElementById("detailPanel").classList.add("open");
+}
+
+function closeDetail() {
+  document.getElementById("detailOverlay").classList.remove("open");
+  document.getElementById("detailPanel").classList.remove("open");
+}
+
+function openModal() {
+  document.getElementById("modal").classList.add("open");
+  const termsSelect = document.getElementById("addCreditTerms");
+  const amountInput = document.getElementById("addLimitAmount");
+  termsSelect.value = "Select...";
+  amountInput.value = "";
+  amountInput.disabled = false;
+  amountInput.style.background = "";
+  amountInput.placeholder = "e.g. 500,000";
+}
+function closeModal() { document.getElementById("modal").classList.remove("open"); }
+
+function handleTermsChange(select) {
+  const amountInput = document.getElementById("addLimitAmount");
+  if (select.value === "DOR") {
+    amountInput.value = "0";
+    amountInput.disabled = true;
+    amountInput.style.background = "var(--gray-bg)";
+    amountInput.style.color = "var(--text-secondary)";
+    amountInput.placeholder = "";
+  } else {
+    if (amountInput.disabled) {
+      amountInput.value = "";
+      amountInput.disabled = false;
+      amountInput.style.background = "";
+      amountInput.style.color = "";
+      amountInput.placeholder = "e.g. 500,000";
+    }
+  }
+}
+
+function openRevise(id) {
+  const c = DATA.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById("reviseClient").value = c.name;
+  document.getElementById("reviseCurrentLimit").value = fmt(c.assignedLimit);
+  document.getElementById("reviseModal").classList.add("open");
+}
+
+function closeReviseModal() { document.getElementById("reviseModal").classList.remove("open"); }
+
+function openRequestRevisionModal() { document.getElementById("requestRevisionModal").classList.add("open"); }
+function closeRequestRevisionModal() { document.getElementById("requestRevisionModal").classList.remove("open"); }
+
+function submitRevisionRequest() {
+  const reason = document.getElementById("requestReason").value;
+  const detail = document.getElementById("requestDetail").value;
+  if (reason === "Select reason..." || !detail.trim()) {
+    alert("Please select a reason and provide details for your request.");
+    return;
+  }
+  closeRequestRevisionModal();
+  DATA[0].revisionRequested = true;
+  DATA[0].revisionRequestDetail = detail;
+  alert("Revision request submitted successfully! The Finance team will review your request.");
+  switchView("admin");
+  renderTable(DATA);
+}
+
+function filterTable(query) {
+  const rows = document.querySelectorAll("#tableBody tr");
+  rows.forEach(r => {
+    r.style.display = r.textContent.toLowerCase().includes(query.toLowerCase()) ? "" : "none";
+  });
+}
+
+function setFilter(el, status) {
+  document.querySelectorAll(".filter-chip").forEach(c => c.classList.remove("active"));
+  el.classList.add("active");
+  const rows = document.querySelectorAll("#tableBody tr");
+  rows.forEach(r => {
+    if (status === "all") { r.style.display = ""; return; }
+    if (status === "revision_requested") {
+      r.style.display = r.classList.contains("revision-request-row") ? "" : "none";
+      return;
+    }
+    r.style.display = r.dataset.status === status ? "" : "none";
+  });
+}
+
+function exportTable() { alert("Export triggered — would generate CSV/Excel in production."); }
+
+function showAgeingBreakdown(clientId) {
+  const c = clientId ? DATA.find(x => x.id === clientId) : DATA[0];
+  if (!c || !c.ageing) return;
+  document.getElementById("ageingPopupTitle").textContent = `Invoice Ageing — ${c.name}`;
+  const buckets = [
+    { key: "current", label: "Current", cls: "bucket-current" },
+    { key: "d1_30", label: "1–30 days", cls: "bucket-1-30" },
+    { key: "d31_60", label: "31–60 days", cls: "bucket-31-60" },
+    { key: "d61_90", label: "61–90 days", cls: "bucket-61-90" },
+    { key: "d90plus", label: "90+ days", cls: "bucket-90plus" }
+  ];
+  document.getElementById("ageingGrid").innerHTML = buckets.map(b => {
+    const d = c.ageing[b.key];
+    return `<div class="ageing-bucket ${b.cls}">
+      <div class="bucket-label">${b.label}</div>
+      <div class="bucket-amount">${fmt(d.amt)}</div>
+      <div class="bucket-count">${d.count} invoice${d.count !== 1 ? 's' : ''}</div>
+    </div>`;
+  }).join("");
+  document.getElementById("ageingTotal").textContent = fmt(c.outstandingInvoices);
+  document.getElementById("ageingPopup").classList.add("open");
+}
+
+function closeAgeingPopup() {
+  document.getElementById("ageingPopup").classList.remove("open");
+}
+
+function navigateToInvoices() {
+  const client = DATA[0];
+  const toast = document.getElementById("navToast");
+  document.getElementById("navToastMsg").textContent =
+    `Navigating to Invoices table for ${client.name}…`;
+  toast.classList.add("visible");
+  setTimeout(() => {
+    toast.classList.remove("visible");
+  }, 3000);
+}
+
+function drawAdminPie(counts) {
+  const canvas = document.getElementById("adminPieChart");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = 90 * dpr;
+  canvas.height = 90 * dpr;
+  ctx.scale(dpr, dpr);
+
+  const cx = 45, cy = 45, r = 34, lineWidth = 14;
+  const total = counts.within + counts.near + counts.over;
+  if (total === 0) return;
+
+  const slices = [
+    { count: counts.within, color: "#3d9a5f" },
+    { count: counts.near, color: "#c8842e" },
+    { count: counts.over, color: "#c44b3f" }
+  ];
+
+  ctx.clearRect(0, 0, 90, 90);
+
+  let startAngle = -Math.PI / 2;
+  slices.forEach(s => {
+    if (s.count === 0) return;
+    const sweep = (s.count / total) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, startAngle, startAngle + sweep);
+    ctx.strokeStyle = s.color;
+    ctx.lineWidth = lineWidth;
+    ctx.lineCap = "butt";
+    ctx.stroke();
+    startAngle += sweep;
+  });
+
+  document.getElementById("adminPieTotal").textContent = total;
+}
+
+function renderAdminSummary() {
+  const creditClients = DATA.filter(c => !isDOR(c));
+  const allClients = DATA;
+
+  const counts = { within: 0, near: 0, over: 0 };
+  creditClients.forEach(c => {
+    const s = getStatus(c);
+    if (counts[s] !== undefined) counts[s]++;
+  });
+
+  drawAdminPie(counts);
+
+  document.getElementById("adminPieLegend").innerHTML = `
+    <div class="admin-pie-legend-item">
+      <span class="legend-left"><span class="legend-dot" style="background:#3d9a5f"></span><span class="legend-label">Within Limit</span></span>
+      <span class="legend-count">${counts.within}</span>
+    </div>
+    <div class="admin-pie-legend-item">
+      <span class="legend-left"><span class="legend-dot" style="background:#c8842e"></span><span class="legend-label">Near Limit</span></span>
+      <span class="legend-count">${counts.near}</span>
+    </div>
+    <div class="admin-pie-legend-item">
+      <span class="legend-left"><span class="legend-dot" style="background:#c44b3f"></span><span class="legend-label">Over Limit</span></span>
+      <span class="legend-count">${counts.over}</span>
+    </div>`;
+
+  const totalExposure = creditClients.reduce((sum, c) => sum + computeExposure(c), 0);
+  const totalLimit = creditClients.reduce((sum, c) => sum + c.assignedLimit, 0);
+  const utilPct = totalLimit > 0 ? Math.round((totalExposure / totalLimit) * 100) : 0;
+  const barColor = utilPct >= 90 ? "var(--red)" : utilPct >= 70 ? "var(--yellow)" : "var(--green)";
+
+  document.getElementById("exposureProgressCard").innerHTML = `
+    <div class="exposure-progress-header">
+      <span class="exp-value">${fmt(totalExposure)}</span>
+      <span class="exp-of">of ${fmt(totalLimit)}</span>
+    </div>
+    <div class="exposure-progress-track">
+      <div class="exposure-progress-fill" style="width:${Math.min(utilPct, 100)}%;background:${barColor}"></div>
+    </div>
+    <div class="exposure-progress-footer">
+      <span>${utilPct}% utilized</span>
+      <span>${fmt(totalLimit - totalExposure)} available</span>
+    </div>`;
+
+  const totalAR = allClients.reduce((sum, c) => sum + c.outstandingInvoices, 0);
+  const dorCount = allClients.filter(c => isDOR(c)).length;
+  const clCount = creditClients.length;
+
+  document.getElementById("arCard").innerHTML = `
+    <div class="ar-amount">${fmt(totalAR)}</div>
+    <div class="ar-detail">${allClients.length} clients (${clCount} with credit limits, ${dorCount} DOR) &middot; as of today</div>`;
+}
+
+renderTable(DATA);
+renderAdminSummary();
+</script>
+</body>
+</html>
