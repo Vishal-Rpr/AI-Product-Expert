@@ -15,6 +15,11 @@
 - [x] Week 2 Build: Co-pilot expanded (Jira, Confluence, Excalidraw, ticket RAG)
 - [x] Week 2 Build: Plugin domain knowledge upgraded (255 lines, real-world depth)
 - [x] Week 2 Build: All reference docs sanitized for public portfolio
+- [x] Week 2 Build: Eval module built (eval.py + eval CLI command + --eval flag on generate)
+- [x] Week 2 Build: 13 pytest tests passing for RAG pipeline
+- [x] Week 2 Build: System prompt made adaptive (derives style from any user's reference docs)
+- [x] Week 2 Build: 5 eval test scenarios run, scores 16-22/25, style matching validated
+- [x] Week 2 Build: Reference docs replaced with sanitized real PRDs (authentic writing style)
 - [ ] Week 2 PUBLIC: Co-pilot teardown posted on LinkedIn (pending)
 
 ## Phase 2: Deepen + Second Project (Weeks 3-5)

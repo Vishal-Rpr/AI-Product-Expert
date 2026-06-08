@@ -100,11 +100,14 @@ Write down 5 questions you'd ask a client about their credit limit pain points, 
 - [x] CLI updated: diagram, publish commands + --target linear|jira flag on tickets
 - [x] .env.example updated with Jira/Confluence credentials
 - [x] AGENTS.md and README.md updated as portfolio-ready docs
-- [ ] Build eval module (copilot/eval.py) + EVAL_PROMPT in prompts.py
-- [ ] Add eval CLI command and --eval flag on generate
-- [ ] Create pytest tests for RAG pipeline (tests/test_rag.py)
-- [ ] Add second sanitized PRD to reference_docs/
-- [ ] End-to-end verify: pytest + CLI help
+- [x] Build eval module (copilot/eval.py) + EVAL_PROMPT in prompts.py
+- [x] Add eval CLI command and --eval flag on generate
+- [x] Create pytest tests for RAG pipeline (tests/test_rag.py) -- 13 tests passing
+- [x] Add second sanitized PRD to reference_docs/ (rate benchmarking PRD)
+- [x] End-to-end verify: pytest + CLI help -- all 6 commands working
+- [x] Replaced simplified reference PRDs with sanitized versions of real PRDs (preserved actual writing style)
+- [x] Improved system prompt to be adaptive -- derives style patterns from whatever references users provide
+- [x] Ran 5 eval test scenarios (credit limit, rate benchmarking, shipment alerts, RBAC x2), scores ranged 16-22/25
 
 **Practice Task:**
 Build an opportunity solution tree for the credit limit feature. What's the desired outcome? What are the opportunities? What solutions map to each?
