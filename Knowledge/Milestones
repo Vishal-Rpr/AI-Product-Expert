@@ -3,12 +3,19 @@
 ## Phase 1: Foundation (Weeks 1-2)
 - [x] Week 1 AI: Karpathy LLM intro watched
 - [x] Week 1 AI: AI Agent Stack 2026 article read
-- [ ] Week 1 PM: The Mom Test read + 5 discovery questions written
-- [ ] Week 1 Build: PM Co-pilot v0 working (RAG + MCP setup) + 1-page product brief
+- [x] Week 1 AI: Anthropic "Develop Tests" docs read
+- [ ] Week 1 AI: Anthropic prompt engineering docs (pending)
+- [ ] Week 1 PM: The Mom Test read + 5 discovery questions written (books ordered)
+- [x] Week 1 Build: PM Co-pilot v0 working (RAG + Linear MCP + CLI)
+- [x] Week 1 Build: Logistics PM Cowork Plugin scaffolded + published to GitHub
 - [x] Week 2 AI: Mind the Product 2026 AI strategy guide read
-- [ ] Week 2 PM: Continuous Discovery Habits Ch 1-6 + opportunity solution tree
-- [ ] Week 2 Build: Co-pilot v1 eval complete
-- [ ] Week 2 PUBLIC: Co-pilot teardown posted on LinkedIn
+- [x] Week 2 AI: AI Product Manager Roadmap 2026 read
+- [ ] Week 2 PM: Continuous Discovery Habits Ch 1-6 (books ordered)
+- [x] Week 2 Build: Eval rubric designed (5 dimensions, 1-25 scoring)
+- [x] Week 2 Build: Co-pilot expanded (Jira, Confluence, Excalidraw, ticket RAG)
+- [x] Week 2 Build: Plugin domain knowledge upgraded (255 lines, real-world depth)
+- [x] Week 2 Build: All reference docs sanitized for public portfolio
+- [ ] Week 2 PUBLIC: Co-pilot teardown posted on LinkedIn (pending)
 
 ## Phase 2: Deepen + Second Project (Weeks 3-5)
 - [ ] Week 3: RAG deep dive + CDH Ch 7-14 + Co-pilot v2
