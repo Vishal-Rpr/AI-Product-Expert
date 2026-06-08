@@ -65,11 +65,12 @@ Start publishing from Week 2. By the time you assemble the portfolio in Week 7, 
 - [ ] Reflect: Think about your last 3 features (credit limits, pod board, rate APIs). Did you validate the problem with users before building? What would you do differently?
 
 **Build (Logistics PM Cowork Plugin v0):**
-- [ ] Clone anthropics/knowledge-work-plugins and study the product-management plugin structure
-- [ ] Scaffold logistics-pm-plugin following their architecture (.claude-plugin/, skills/, commands/, .mcp.json)
-- [ ] Write first 2 domain skills: prd-generation.md + credit-assessment.md
-- [ ] Define the RAG style-matching skill using your existing reference PRDs
-- [ ] Get one slash command working end-to-end (/logistics-pm:write-spec)
+- [x] Clone anthropics/knowledge-work-plugins and study the product-management plugin structure
+- [x] Scaffold logistics-pm-plugin following their architecture (.claude-plugin/, skills/, commands/, .mcp.json)
+- [x] Write first 2 domain skills: prd-generation.md + credit-assessment.md (actually wrote 4: freight-domain-knowledge, logistics-prd-generation, eval-framework, style-matching)
+- [x] Define the RAG style-matching skill using your existing reference PRDs
+- [x] Get one slash command working end-to-end (/logistics-pm:write-spec)
+- [x] Additional: Published plugin to GitHub, upgraded freight-domain-knowledge to 255 lines of operational depth, sanitized all reference docs
 
 **Practice Task:**
 Write down 5 questions you'd ask a client about their credit limit pain points, following Mom Test principles. No leading questions, no pitching solutions. Then write a 1-page product brief for the PM Co-pilot.
@@ -85,11 +86,25 @@ Write down 5 questions you'd ask a client about their credit limit pain points, 
 - [ ] * Read: Continuous Discovery Habits by Teresa Torres, Chapters 1-6. Covers opportunity solution trees, continuous interviewing, assumption mapping. This is the framework that bridges your ops thinking to customer-outcome thinking.
 - [ ] Exercise: For your credit limit feature, map the outcome metrics you'd track if this were an external product (adoption rate, time-to-decision, error rate, revenue impact) vs. the internal efficiency metrics you're currently tracking.
 
-**Build (Logistics PM Cowork Plugin v1 — Evals):**
-- [ ] Define eval rubric: completeness, style consistency, domain accuracy, actionability
-- [ ] Create 5+ test scenarios (PRD generation, credit assessment, RFQ analysis) and evaluate systematically
+**Build (Logistics PM Cowork Plugin v1 -- Evals):**
+- [x] Define eval rubric: 5 dimensions (completeness, domain accuracy, actionability, style consistency, metric specificity), 1-5 scoring per dimension, ship/polish/rework/start-over verdicts
+- [ ] Create 5+ test scenarios (PRD generation, user stories) and evaluate systematically
 - [ ] Identify where plugin outputs are generic vs. domain-informed, improve skills
-- [ ] Build eval-framework.md skill that auto-checks outputs against rubrics
+- [x] Build eval-framework SKILL.md + rubric-details.md reference in plugin
+
+**Build (PM Co-pilot CLI -- Expanded Integrations):**
+- [x] RAG expanded to support reference_tickets/ with doc_type metadata filtering
+- [x] Excalidraw export: excalidraw.py + EXCALIDRAW_PROMPT for .excalidraw JSON output
+- [x] Jira REST API client (jira_client.py): create_issue, list_projects
+- [x] Confluence REST API client (confluence_client.py): create_page, list_spaces, markdown-to-storage converter
+- [x] CLI updated: diagram, publish commands + --target linear|jira flag on tickets
+- [x] .env.example updated with Jira/Confluence credentials
+- [x] AGENTS.md and README.md updated as portfolio-ready docs
+- [ ] Build eval module (copilot/eval.py) + EVAL_PROMPT in prompts.py
+- [ ] Add eval CLI command and --eval flag on generate
+- [ ] Create pytest tests for RAG pipeline (tests/test_rag.py)
+- [ ] Add second sanitized PRD to reference_docs/
+- [ ] End-to-end verify: pytest + CLI help
 
 **Practice Task:**
 Build an opportunity solution tree for the credit limit feature. What's the desired outcome? What are the opportunities? What solutions map to each?
@@ -498,8 +513,8 @@ Big tech interviews are structured rounds, not portfolio reviews. Your portfolio
 
 | Week | AI Track | PM Track | Co-pilot | Public artifact | Status |
 |------|----------|----------|----------|----------------|--------|
-| 1 | LLM fundamentals | Discovery (Mom Test) | v0 setup | (private) | In progress |
-| 2 | Product stack | Outcome metrics (CDH 1-6) | v1 evals | LinkedIn: co-pilot teardown | In progress |
+| 1 | LLM fundamentals (done) | Discovery (Mom Test -- books ordered) | v0 setup (done) + plugin scaffolded (done) | (private) | Done (AI+Build), PM pending |
+| 2 | Product stack (done) | Outcome metrics (CDH -- books ordered) | v1 expanded integrations (done), evals rubric designed (done), eval CLI pending | LinkedIn: co-pilot teardown (pending) | In progress |
 | 3 | RAG & retrieval | Product strategy (CDH 7-14) | v2 domain layer | LinkedIn/Substack: shipping AI landscape | Not started |
 | 4 | AI evals | Customer segmentation (Inspired) | Capstone 2 start | LinkedIn: eval framework post | Not started |
 | 5 | Agentic AI + freight AI | Competitive analysis | Ship both projects | GitHub: both repos live | Not started |

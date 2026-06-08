@@ -124,9 +124,27 @@ Output tokens cost 5x input across all models. PRD length matters more than prom
 
 | Decision | What we chose | Why | Alternative considered |
 |----------|--------------|-----|----------------------|
-| Style matching | RAG from reference docs | Personalized output without fine-tuning cost/complexity | Fine-tuning (too expensive, needs hundreds of examples) |
+| Style matching | RAG from reference docs (PRDs + tickets with doc_type filtering) | Personalized output without fine-tuning cost/complexity | Fine-tuning (too expensive, needs hundreds of examples) |
 | Vector store | ChromaDB (local) | Zero infrastructure, pip install only, good for personal tool | Pinecone/Weaviate (cloud, overkill for single user) |
 | Embedding model | all-MiniLM-L6-v2 (via ChromaDB default) | Free, local, fast, good enough for document similarity | OpenAI embeddings (better quality but adds API cost) |
 | LLM | Claude Sonnet 4.6 | Best quality-to-cost for structured generation | Haiku (cheaper but lower quality), Opus (better but 67% more expensive) |
 | Interface | CLI (Click) | Simplest path to working product | Web UI (more impressive demo but 10x build time) |
-| Ticket creation | Linear GraphQL API | Direct integration, matches user's actual workflow | MCP protocol (more portable but more complex setup) |
+| Ticket creation | Linear GraphQL + Jira REST API v3 | Dual-target support covers most PM workflows | Single integration (limits audience) |
+| Publishing | Confluence REST API v2 | Lightweight markdown-to-storage converter, no heavy SDK | Google Docs API (planned as upcoming, heavier auth flow) |
+| Diagram export | Excalidraw JSON output | Open format, PMs can edit diagrams after generation | Mermaid (less interactive), image export (not editable) |
+| Integration pattern | Lightweight REST clients (no SDKs) | Minimal dependencies, easy to audit, portable | Official SDKs (heavier, version lock-in) |
+
+### Current capabilities (as of June 2026)
+
+- **PRD generation**: RAG-powered, style-matched from reference_docs/ (filtered by doc_type=prd)
+- **Ticket generation**: RAG-powered style matching from reference_tickets/ (doc_type=ticket), output to Linear or Jira
+- **Diagram generation**: Excalidraw JSON export for architecture and flow diagrams
+- **Publishing**: Confluence page creation with markdown-to-storage conversion
+- **Eval framework**: Designed (5 dimensions, 1-25 scoring) but CLI command not yet built
+
+### Upcoming
+
+- Eval CLI command (copilot eval PRD.md + --eval flag on generate)
+- Google Docs publishing target
+- Interactive mode (chat-style PRD refinement)
+- pytest test suite for RAG pipeline

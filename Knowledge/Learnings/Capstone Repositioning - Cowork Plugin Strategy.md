@@ -39,23 +39,32 @@ A Cowork plugin for logistics/supply-chain PMs that adds:
 2. RAG-based style matching from reference documents (our original differentiator)
 3. An eval layer for measuring output quality (the gap nobody's filled)
 
-### Architecture (follows Anthropic's plugin structure)
+### Architecture (current, as shipped)
 
 ```
-logistics-pm-plugin/
+logistics-pm/
 ├── .claude-plugin/plugin.json   # Manifest: name, description, version
-├── .mcp.json                    # Connectors: Linear, your rate APIs, QuickBooks
+├── .mcp.json                    # Connector: Linear
 ├── commands/
 │   ├── write-spec.md            # /logistics-pm:write-spec
-│   ├── rfq-analysis.md          # /logistics-pm:rfq-analysis
-│   ├── rate-comparison.md       # /logistics-pm:rate-comparison
-│   └── credit-assessment.md     # /logistics-pm:credit-assessment
+│   └── user-stories.md          # /logistics-pm:user-stories (replaced rfq-analysis)
 ├── skills/
-│   ├── domain-knowledge.md      # Freight terminology, workflows, industry context
-│   ├── style-matching.md        # RAG instructions for matching user's writing voice
-│   ├── eval-framework.md        # Quality rubrics for generated artifacts
-│   └── prd-generation.md        # PRD skill with domain-specific sections
-└── reference-docs/              # Example PRDs, user stories for RAG style matching
+│   ├── freight-domain-knowledge/
+│   │   └── SKILL.md             # 255-line deep freight/logistics operational reference
+│   ├── logistics-prd-generation/
+│   │   ├── SKILL.md             # PRD skill with domain-specific sections
+│   │   └── references/prd-template.md
+│   ├── eval-framework/
+│   │   ├── SKILL.md             # 5-dimension quality rubric (1-25 scoring)
+│   │   └── references/rubric-details.md
+│   └── style-matching/
+│       └── SKILL.md             # RAG instructions for matching user's writing voice
+├── reference-docs/
+│   ├── credit-limit-prd.md      # Sanitized real PRD
+│   ├── xeneta-prd.md            # Sanitized real PRD
+│   └── sample-user-story.md     # Sanitized user story template
+├── CONNECTORS.md
+└── README.md                    # Product brief
 ```
 
 ### How this maps to what we already have
@@ -85,11 +94,20 @@ logistics-pm-plugin/
 
 ---
 
+## Completed steps
+
+1. ~~Clone the knowledge-work-plugins repo and study the product-management plugin structure~~ Done
+2. ~~Scaffold our logistics-pm-plugin following their architecture~~ Done
+3. ~~Write domain skills~~ Done (4 skills: freight-domain-knowledge, logistics-prd-generation, eval-framework, style-matching)
+4. ~~Design the eval rubric~~ Done (5 dimensions: completeness, domain accuracy, actionability, style consistency, metric specificity; verdicts: ship/polish/rework/start-over)
+5. ~~Sanitize reference PRDs for public use~~ Done
+6. ~~Publish to GitHub with a product-brief README~~ Done
+7. ~~Replace rfq-analysis command with user-stories~~ Done
+8. ~~Upgrade freight-domain-knowledge to full operational depth~~ Done (255 lines, 7 parts, real-world logistics detail)
+
 ## Next steps
 
-1. Clone the knowledge-work-plugins repo and study the product-management plugin structure in detail
-2. Scaffold our logistics-pm-plugin following their architecture
-3. Write 2-3 domain skills (start with PRD generation + credit risk assessment)
-4. Design the eval rubric (completeness, style consistency, domain accuracy, actionability)
-5. Test against our existing reference PRDs
-6. Publish to GitHub with a README that reads like a product brief
+1. Run 5+ test scenarios through the plugin (PRD generation, user stories) and evaluate with the eval rubric
+2. Iterate on skills based on eval results (identify generic vs. domain-informed outputs)
+3. Write the LinkedIn teardown post (Week 2 public artifact)
+4. Consider adding more commands (rate-comparison, credit-assessment) as stretch goals
