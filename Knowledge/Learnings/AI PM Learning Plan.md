@@ -121,7 +121,7 @@ Build an opportunity solution tree for the credit limit feature. What's the desi
 ### Week 3: RAG and Retrieval Systems + Product Strategy
 
 **AI Track:**
-- [ ] * Read: Building RAG & AI Agents: From Embeddings to Autonomous Systems (tutorialq.com/ai/ml/rag-and-ai-agents)
+- [x] * Read: Building RAG & AI Agents: From Embeddings to Autonomous Systems (tutorialq.com/ai/ml/rag-and-ai-agents)
 - [ ] Explore: Try building a simple RAG demo using your rate provider documentation (or similar non-proprietary docs) as the knowledge base
 - [ ] Read: a16z, "Emerging Architectures for LLM Applications"
 
@@ -130,8 +130,10 @@ Build an opportunity solution tree for the credit limit feature. What's the desi
 - [ ] Watch: Marty Cagan talks on YouTube about product strategy vs. feature teams
 
 **Build (PM Co-pilot v2):**
-- [ ] Add a shipping/logistics knowledge layer so the co-pilot can help with domain-specific PM work
-- [ ] Improve the RAG pipeline based on what you learned this week
+- [x] Add a shipping/logistics knowledge layer so the co-pilot can help with domain-specific PM work (reference_knowledge/ directory, freight-forwarding-domain.md, wired into RAG as doc_type="knowledge", injected into generate command alongside style chunks)
+- [x] Improve the RAG pipeline based on what you learned this week (domain chunks retrieved separately from style chunks, n_results=5, clearly labelled in prompt)
+- [ ] Explore: Try building a simple RAG demo using your rate provider documentation (or similar non-proprietary docs) as the knowledge base (SKIPPED -- already built production RAG; reading the article to audit decisions instead)
+- [ ] Run before/after comparison: generate "demurrage and detention alert system", eval both outputs, check Domain accuracy score improvement
 
 **Practice Task:**
 Write a 1-page product strategy brief for your rate provider integration. Include: the problem, who it serves, how you'd measure success (outcome metrics, not output), and what "good" looks like in 6 months.
@@ -517,8 +519,8 @@ Big tech interviews are structured rounds, not portfolio reviews. Your portfolio
 | Week | AI Track | PM Track | Co-pilot | Public artifact | Status |
 |------|----------|----------|----------|----------------|--------|
 | 1 | LLM fundamentals (done) | Discovery (Mom Test -- books ordered) | v0 setup (done) + plugin scaffolded (done) | (private) | Done (AI+Build), PM pending |
-| 2 | Product stack (done) | Outcome metrics (CDH -- books ordered) | v1 expanded integrations (done), evals rubric designed (done), eval CLI pending | LinkedIn: co-pilot teardown (pending) | In progress |
-| 3 | RAG & retrieval | Product strategy (CDH 7-14) | v2 domain layer | LinkedIn/Substack: shipping AI landscape | Not started |
+| 2 | Product stack (done) | Outcome metrics (CDH -- books ordered) | v1 expanded integrations (done), evals rubric designed (done), eval CLI (done) | LinkedIn: co-pilot teardown (done) | Done (AI+Build), PM pending |
+| 3 | RAG & retrieval (article done) | Product strategy (CDH 7-14 -- books ordered) | v2 domain layer (pending) | LinkedIn/Substack: shipping AI landscape (pending) | In progress |
 | 4 | AI evals | Customer segmentation (Inspired) | Capstone 2 start | LinkedIn: eval framework post | Not started |
 | 5 | Agentic AI + freight AI | Competitive analysis | Ship both projects | GitHub: both repos live | Not started |
 | 6 | Prompt engineering + strategy | Outcome roadmapping | v3 final | LinkedIn/Substack: strategy memo | Not started |

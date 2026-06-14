@@ -20,10 +20,15 @@
 - [x] Week 2 Build: System prompt made adaptive (derives style from any user's reference docs)
 - [x] Week 2 Build: 5 eval test scenarios run, scores 16-22/25, style matching validated
 - [x] Week 2 Build: Reference docs replaced with sanitized real PRDs (authentic writing style)
-- [ ] Week 2 PUBLIC: Co-pilot teardown posted on LinkedIn (pending)
+- [x] Week 2 PUBLIC: Co-pilot teardown posted on LinkedIn
 
 ## Phase 2: Deepen + Second Project (Weeks 3-5)
-- [ ] Week 3: RAG deep dive + CDH Ch 7-14 + Co-pilot v2
+- [x] Week 3 AI: Building RAG & AI Agents article read (tutorialq.com)
+- [ ] Week 3 AI: a16z Emerging Architectures for LLM Applications (pending)
+- [ ] Week 3 PM: CDH Ch 7-14 + Marty Cagan strategy talks
+- [x] Week 3 Build: Co-pilot v2 logistics knowledge layer (reference_knowledge/ + freight-forwarding-domain.md + RAG doc_type="knowledge" + wired into generate command)
+- [ ] Week 3 Build: Before/after eval comparison (demurrage PRD, Domain accuracy score)
+- [ ] Week 3 PUBLIC: "AI in B2B Shipping, 2026" landscape posted on LinkedIn/Substack
 - [ ] Week 3 PUBLIC: "AI in B2B Shipping, 2026" landscape posted on LinkedIn/Substack
 - [ ] Week 4: AI evals framework + Inspired + customer segmentation + Capstone 2 start
 - [ ] Week 4 PUBLIC: Eval framework posted on LinkedIn
