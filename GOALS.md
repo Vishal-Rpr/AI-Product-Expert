@@ -21,5 +21,10 @@ Build a swim lane dashboard for Pod Leads to manage daily RFQ priorities across 
 - Build deep understanding of AI agents, context engineering, RAG, memory, and related concepts
 - Complete hands-on learning (like this course) to develop real AI product sense
 
+### AI PM role transition
+- Land a vertical / domain AI PM role (logistics, supply chain, or adjacent B2B) — actively applying now, target offer in ~8-10 weeks
+- Convert existing capability into public evidence: eval harness, 3 real-work case studies, open-source co-pilot, portfolio site
+- See `Knowledge/Learnings/AI PM Learning Plan.md` for the execution plan
+
 ### Personal finance
 - Create a 5-year financial plan covering savings, investments, and long-term goals

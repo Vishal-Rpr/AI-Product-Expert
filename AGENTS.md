@@ -27,6 +27,8 @@ I am learning and upskilling myself in the area of AI and agents - with the goal
   - **Key goals:** Specific actions to take and expected behaviour
   - **Acceptance criteria:** How we know this is done
 - Link every task back to a goal in GOALS.md
+- Whenever I finish a learning as part of my plan, push it to https://github.com/Vishal-Rpr/AI-Product-Expert at the end of the session
+- At the beginning of a session - pull in the progress from here https://github.com/Vishal-Rpr/AI-Product-Expert as well
 
 ## Linear user story creation
 When asked to create a user story on Linear:
@@ -38,6 +40,12 @@ When asked to create a user story on Linear:
 
 ## MCP Setup
 - I have an MCP setup on personal - for Google Drive, Google Docs, and for Linear. Reference these for the integration requests.
+
+## My repos
+- **Learnings / plan (this workspace, PRIVATE):** https://github.com/Vishal-Rpr/AI-Product-Expert — where I push/pull my learning progress each session. Company-internal context is OK here because it is private.
+- **PM Co-pilot (PUBLIC):** https://github.com/Vishal-Rpr/Co-Pilot-build-v1 — RAG CLI: PRD generation, evals, PRD→tickets, prototypes, diagrams, Confluence publishing
+- **logistics-pm (PUBLIC):** https://github.com/Vishal-Rpr/logistics-pm — domain-specific Cowork plugin: freight skills, eval framework, style matching
+- **Guardrail:** the two PUBLIC repos must only ever contain fictional/anonymized data — never push company-confidential content (real project codenames, codebase internals, client data, ticket IDs) to them.
 
 ## Codebase Access
 - **Backend:** `C:\Users\visha\OneDrive\Desktop\silq` — Django 5.2 / Python, PostgreSQL+PostGIS, dual GraphQL (Graphene legacy + Strawberry), Celery, Kafka
