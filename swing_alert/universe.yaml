@@ -1,0 +1,228 @@
+# Swing alert universe
+# ---------------------
+# Two sections:
+#   sector_indices: NSE sectoral/thematic indices + their Yahoo tickers, used for RS ranking
+#   stocks: eligible small/mid-cap stocks tagged by sector, with a 1-line description
+#
+# To extend: add more stocks under `stocks:` with sector, ticker (Yahoo NSE format = SYMBOL.NS), and a short description
+# Refresh quarterly to reflect NSE index reconstitutions.
+
+benchmark:
+  name: "Nifty 50"
+  ticker: "^NSEI"
+
+# Yahoo Finance tickers for NSE sectoral/thematic indices.
+# NOTE: Yahoo's ^CNX* index tickers return metadata only via yfinance (no price history).
+# We proxy each sector via a highly-liquid ETF that tracks the same index (returns match within a few bps).
+# This preserves relative-strength ranking accuracy and works reliably in headless GitHub Actions.
+sector_indices:
+  - name: "Nifty Midcap 150"
+    ticker: "MIDCAPETF.NS"          # ICICI Prudential Nifty Midcap 150 ETF
+  - name: "Nifty Smallcap 250"
+    ticker: "SMALLCAP.NS"           # Motilal Oswal Nifty Smallcap 250 ETF
+  - name: "Nifty Auto"
+    ticker: "AUTOBEES.NS"           # Nippon India Nifty Auto ETF
+  - name: "Nifty PSU Bank"
+    ticker: "PSUBNKBEES.NS"         # Nippon India Nifty PSU Bank ETF
+  - name: "Nifty Bank"
+    ticker: "BANKBEES.NS"           # Nippon India Nifty Bank ETF
+  - name: "Nifty Realty"
+    ticker: "MOREALTY.NS"           # Motilal Oswal Nifty Realty ETF
+  - name: "Nifty Pharma"
+    ticker: "PHARMABEES.NS"         # Nippon India Nifty Pharma ETF
+  - name: "Nifty Metal"
+    ticker: "METALIETF.NS"          # ICICI Prudential Nifty Metal ETF
+  - name: "Nifty India Defence"
+    ticker: "MODEFENCE.NS"          # Motilal Oswal Nifty India Defence ETF
+  - name: "Nifty Financial Services"
+    ticker: "FINIETF.NS"            # ICICI Prudential Nifty Financial Services ETF
+  - name: "Nifty IT"
+    ticker: "ITBEES.NS"             # Nippon India Nifty IT ETF
+  - name: "Nifty Infra"
+    ticker: "INFRABEES.NS"          # Nippon India Nifty Infrastructure ETF
+  - name: "Nifty FMCG"
+    ticker: "FMCGIETF.NS"           # ICICI Prudential Nifty FMCG ETF
+  - name: "Nifty Consumer Durables"
+    ticker: "CONSUMBEES.NS"         # Nippon India Nifty Consumer Durables ETF
+
+# Curated small/mid-cap stock universe.
+# Tagged by primary sector so we can filter to stocks in the day's winning sectors.
+# Descriptions kept to one short line: what they do / their moat / niche.
+stocks:
+  # ---- Auto & Ancillaries ----
+  - ticker: "TVSMOTOR.NS"
+    name: "TVS Motor"
+    sector: "Nifty Auto"
+    desc: "Two-wheeler major with fast-growing EV portfolio (iQube) and premium bike JV (BMW)."
+  - ticker: "BHARATFORG.NS"
+    name: "Bharat Forge"
+    sector: "Nifty Auto"
+    desc: "Forgings leader; diversifying from auto into defence, aerospace, and industrial components."
+  - ticker: "EXIDEIND.NS"
+    name: "Exide Industries"
+    sector: "Nifty Auto"
+    desc: "Lead-acid battery leader building lithium-ion cell capacity for EV inflection."
+  - ticker: "SONACOMS.NS"
+    name: "Sona BLW"
+    sector: "Nifty Auto"
+    desc: "EV drivetrain specialist; 30%+ revenue from BEV programs globally."
+  - ticker: "MOTHERSON.NS"
+    name: "Samvardhana Motherson"
+    sector: "Nifty Auto"
+    desc: "Global tier-1 auto supplier; wiring harness, mirrors, polymers across OEMs."
+
+  # ---- Defence ----
+  - ticker: "HAL.NS"
+    name: "Hindustan Aeronautics"
+    sector: "Nifty India Defence"
+    desc: "PSU aerospace monopoly for Indian military aircraft, engines, and helicopters."
+  - ticker: "BEL.NS"
+    name: "Bharat Electronics"
+    sector: "Nifty India Defence"
+    desc: "Defence electronics PSU; radars, missile systems, communication equipment for MoD."
+  - ticker: "MAZDOCK.NS"
+    name: "Mazagon Dock Shipbuilders"
+    sector: "Nifty India Defence"
+    desc: "Warship and submarine builder for Indian Navy; large order book visibility."
+  - ticker: "COCHINSHIP.NS"
+    name: "Cochin Shipyard"
+    sector: "Nifty India Defence"
+    desc: "Largest shipyard in India; aircraft carrier builder and ship-repair hub."
+  - ticker: "BDL.NS"
+    name: "Bharat Dynamics"
+    sector: "Nifty India Defence"
+    desc: "PSU manufacturer of guided missiles and underwater weapons for Indian forces."
+  - ticker: "DATAPATTNS.NS"
+    name: "Data Patterns"
+    sector: "Nifty India Defence"
+    desc: "Private defence electronics; radar, avionics, ATE — beneficiary of indigenisation push."
+
+  # ---- Realty ----
+  - ticker: "DLF.NS"
+    name: "DLF"
+    sector: "Nifty Realty"
+    desc: "Largest listed realty developer; Gurgaon land bank + rental annuity portfolio."
+  - ticker: "GODREJPROP.NS"
+    name: "Godrej Properties"
+    sector: "Nifty Realty"
+    desc: "Pan-India developer with strong brand and asset-light JV model."
+  - ticker: "OBEROIRLTY.NS"
+    name: "Oberoi Realty"
+    sector: "Nifty Realty"
+    desc: "Premium Mumbai developer; luxury residential + high-margin annuity assets."
+  - ticker: "PRESTIGE.NS"
+    name: "Prestige Estates"
+    sector: "Nifty Realty"
+    desc: "South India realty leader; residential + Grade A commercial and retail."
+  - ticker: "PHOENIXLTD.NS"
+    name: "Phoenix Mills"
+    sector: "Nifty Realty"
+    desc: "Largest mall operator in India; rental income + expanding pipeline in Tier-1 cities."
+
+  # ---- PSU Bank & Financials ----
+  - ticker: "SBIN.NS"
+    name: "State Bank of India"
+    sector: "Nifty PSU Bank"
+    desc: "Largest PSU bank; sovereign backing + strongest deposit franchise in India."
+  - ticker: "BANKBARODA.NS"
+    name: "Bank of Baroda"
+    sector: "Nifty PSU Bank"
+    desc: "Second-largest PSU bank; improving asset quality + digital transformation."
+  - ticker: "CANBK.NS"
+    name: "Canara Bank"
+    sector: "Nifty PSU Bank"
+    desc: "Large PSU bank with re-rating on ROA improvement and clean-up cycle."
+  - ticker: "PFC.NS"
+    name: "Power Finance Corp"
+    sector: "Nifty Financial Services"
+    desc: "PSU NBFC funding India's power sector; beneficiary of energy transition capex."
+  - ticker: "RECLTD.NS"
+    name: "REC Ltd"
+    sector: "Nifty Financial Services"
+    desc: "PSU lender to power/infra; sister of PFC, high dividend yield, sovereign-backed."
+  - ticker: "IRFC.NS"
+    name: "Indian Railway Finance Corp"
+    sector: "Nifty Financial Services"
+    desc: "Dedicated financing arm for Indian Railways rolling stock and infrastructure."
+
+  # ---- Pharma ----
+  - ticker: "MANKIND.NS"
+    name: "Mankind Pharma"
+    sector: "Nifty Pharma"
+    desc: "Domestic branded formulations leader; strong consumer + chronic therapy franchise."
+  - ticker: "TORNTPHARM.NS"
+    name: "Torrent Pharmaceuticals"
+    sector: "Nifty Pharma"
+    desc: "Domestic + Brazil focused pharma with strong chronic portfolio and brand equity."
+  - ticker: "GLENMARK.NS"
+    name: "Glenmark Pharma"
+    sector: "Nifty Pharma"
+    desc: "Specialty + generics; innovation pipeline in dermatology, respiratory, oncology."
+  - ticker: "LAURUSLABS.NS"
+    name: "Laurus Labs"
+    sector: "Nifty Pharma"
+    desc: "API + CDMO player; ARV franchise, biologics and formulations expansion."
+
+  # ---- Metals ----
+  - ticker: "JINDALSTEL.NS"
+    name: "Jindal Steel & Power"
+    sector: "Nifty Metal"
+    desc: "Integrated steel producer with captive iron ore & coal; expansion to 15.9 MT."
+  - ticker: "NMDC.NS"
+    name: "NMDC"
+    sector: "Nifty Metal"
+    desc: "India's largest iron ore miner; low-cost PSU with export leverage."
+  - ticker: "HINDCOPPER.NS"
+    name: "Hindustan Copper"
+    sector: "Nifty Metal"
+    desc: "PSU copper miner; strategic play on India's energy transition + EV wiring demand."
+
+  # ---- Infra / Capital Goods ----
+  - ticker: "SIEMENS.NS"
+    name: "Siemens India"
+    sector: "Nifty Infra"
+    desc: "Automation, power, and mobility solutions; direct beneficiary of India capex cycle."
+  - ticker: "ABB.NS"
+    name: "ABB India"
+    sector: "Nifty Infra"
+    desc: "Electrification and industrial automation; data-center and renewables tailwinds."
+  - ticker: "CUMMINSIND.NS"
+    name: "Cummins India"
+    sector: "Nifty Infra"
+    desc: "Engines and power gen; CPCB-IV upgrade cycle + data-center backup demand."
+  - ticker: "KAYNES.NS"
+    name: "Kaynes Technology"
+    sector: "Nifty Infra"
+    desc: "EMS and OSAT play; end-to-end electronics manufacturing beneficiary."
+
+  # ---- Energy / Power ----
+  - ticker: "NTPC.NS"
+    name: "NTPC"
+    sector: "Nifty Energy"
+    desc: "Largest power generator in India; adding 60 GW renewables by 2032."
+  - ticker: "POWERGRID.NS"
+    name: "Power Grid Corp"
+    sector: "Nifty Energy"
+    desc: "PSU transmission monopoly; steady regulated returns + capex expansion."
+  - ticker: "TATAPOWER.NS"
+    name: "Tata Power"
+    sector: "Nifty Energy"
+    desc: "Integrated power + renewables + EV charging + solar cell manufacturing."
+  - ticker: "IREDA.NS"
+    name: "IREDA"
+    sector: "Nifty Energy"
+    desc: "Dedicated NBFC financing renewables; direct proxy for India's clean energy capex."
+
+  # ---- IT (midcap) ----
+  - ticker: "PERSISTENT.NS"
+    name: "Persistent Systems"
+    sector: "Nifty IT"
+    desc: "Digital engineering midcap; strong BFSI + hi-tech vertical growth."
+  - ticker: "COFORGE.NS"
+    name: "Coforge"
+    sector: "Nifty IT"
+    desc: "Midcap IT services; travel, BFSI, insurance verticals with steady deal momentum."
+  - ticker: "KPITTECH.NS"
+    name: "KPIT Technologies"
+    sector: "Nifty IT"
+    desc: "Automotive software specialist; software-defined vehicle megatrend play."

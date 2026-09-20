@@ -47,6 +47,14 @@ When asked to create a user story on Linear:
 - **logistics-pm (PUBLIC):** https://github.com/Vishal-Rpr/logistics-pm — domain-specific Cowork plugin: freight skills, eval framework, style matching
 - **Guardrail:** the two PUBLIC repos must only ever contain fictional/anonymized data — never push company-confidential content (real project codenames, codebase internals, client data, ticket IDs) to them.
 
+## Live systems I've built (read the handoff briefs before touching)
+
+Each of these is a shipping product with its own context doc in `Knowledge/Context/`. Read the relevant brief first before making changes.
+
+- **Daily AI PM Digest** (`daily_digest/`) — see `Knowledge/Context/Daily Digest System.md`
+- **Job Radar** (`job_radar/`) — see `Knowledge/Context/Job Radar System.md`
+- **Swing Trading Alert** (`swing_alert/`) — see `Knowledge/Context/Swing Trading Handoff Brief.md` first, then `Knowledge/Context/Swing Trading System.md`. Also `Knowledge/Swing Trading Strategy.md` (living strategy) and `Knowledge/Swing Trading Roadmap.md` (6-week plan).
+
 ## Codebase Access
 - **Backend:** `C:\Users\visha\OneDrive\Desktop\silq` — Django 5.2 / Python, PostgreSQL+PostGIS, dual GraphQL (Graphene legacy + Strawberry), Celery, Kafka
 - **Frontend:** `C:\Users\visha\OneDrive\Desktop\silq-frontend` — ReScript 11 + TypeScript, React 18, Relay 15, Vite, Tailwind

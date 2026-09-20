@@ -43,3 +43,17 @@
 
 ## Phase 4: Accelerate (Week 8)
 - [ ] Week 8 PUBLIC: 5 outreach messages sent + 10+ applications submitted
+
+## Swing trading system (Vijay Thakkar method, 6-week build)
+Handoff docs: `Knowledge/Context/Swing Trading Handoff Brief.md` (read first), `Knowledge/Context/Swing Trading System.md`, `Knowledge/Swing Trading Strategy.md` (living strategy), `Knowledge/Swing Trading Roadmap.md` (6-week plan).
+Linked task: `Tasks/swing-trading-alert.md`. Linked goal: Personal finance in `GOALS.md`.
+- [x] 19 Sep 2026: v1 shipped — morning email, sector RS ranking, top-8 picks, entry/SL/TP1/TP2, positions Google Sheet for Block B exit tracker
+- [x] 19 Sep 2026: v1.1-1.3 — universe expanded to ~666 stocks (curated 40 + NSE auto-fetch), fixed sector ETF tickers, added sector-rank bonus + max-3-per-sector diversification, redesigned email as tabular (Zerodha Aftermarket style)
+- [x] 19 Sep 2026: v1.4 — data freshness guard + fixed NaN-Close bug (Ipca 52W high mismatch caught by user; Kite showed Rs 2,039 vs our Rs 2,014)
+- [x] 20 Sep 2026: v2.0 Phase 1 Week 1 — Predictions Log auto-append (`predictions.py`), market regime filter TRADE/CAUTION/STAND_ASIDE (`regime.py`), earnings guard (`earnings_guard.py`); 6-week roadmap + trust ladder documented
+- [ ] 22 Sep 2026: First live automated 8 AM IST run (pending user push + Google Sheet + service account setup)
+- [ ] Week 2 (29 Sep – 3 Oct): Nightly outcome tracker, fundamental overlay (screener.in), news catalyst per pick
+- [ ] Week 3 (6-10 Oct) **Gate 1**: Weekly Eval Report, scoring retune, advance to Trust Level L1 if hit rate > 40% on BUY-STOPs
+- [ ] Week 4 (13-17 Oct): Backtest engine (2y replay), portfolio risk model, Kite GTT bulk-order text
+- [ ] Week 5 (20-24 Oct): Pullback-to-20-SMA entry, slippage tracker, sector rotation, FII/DII flows
+- [ ] Week 6 (27-31 Oct) **Gate 2**: 6-week performance review, confidence tiers, public portfolio decision

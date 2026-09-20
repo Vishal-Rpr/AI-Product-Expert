@@ -1,6 +1,13 @@
 # Credentials
 daily_digest/.env
+swing_alert/.env
 .env
+
+# Swing alert local cache (NSE constituent CSVs)
+swing_alert/.cache/
+swing_alert/__pycache__/
+swing_alert/preview.html
+swing_alert/preview.txt
 
 # Python
 __pycache__/

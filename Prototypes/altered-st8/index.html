@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AlteredSt8 — Altered State</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;500&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --void: #050403;
+      --panel: #0c0a08;
+      --ash: #d5c8b4;
+      --ash-dim: #8d8374;
+      --gold: #c4a056;
+      --gold-dim: #8a7034;
+      --blood: #6e1a1a;
+      --bone: #f3ead8;
+      --line: rgba(196, 160, 86, 0.22);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--void);
+      color: var(--ash);
+      font-family: "Cormorant Garamond", Georgia, serif;
+      overflow-x: hidden;
+    }
+
+    #manifesto,
+    #drop { scroll-margin-top: 88px; }
+
+    body::before {
+      content: "";
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: 8;
+      opacity: 0.09;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .mono {
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      font-size: 10px;
+    }
+
+    .mark {
+      font-family: Syne, sans-serif;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+
+    .mark .eight {
+      color: var(--gold);
+      position: relative;
+    }
+
+    .mark .eight::after {
+      content: "";
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: var(--gold);
+      border-radius: 50%;
+      top: 1px;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 0 6px var(--gold);
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 36px;
+      background: linear-gradient(to bottom, rgba(5,4,3,0.92), rgba(5,4,3,0));
+    }
+
+    nav { display: flex; gap: 28px; align-items: center; }
+
+    nav a {
+      color: var(--ash-dim);
+      transition: color 0.25s;
+    }
+
+    nav a:hover { color: var(--gold); }
+
+    .shop-link {
+      color: var(--gold) !important;
+      border: 1px solid var(--line);
+      padding: 8px 14px;
+    }
+
+    .shop-link:hover { background: rgba(196, 160, 86, 0.08); }
+
+    /* THRESHOLD — not a hero */
+    .threshold {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      position: relative;
+      isolation: isolate;
+    }
+
+    .threshold::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 20%, var(--void) 72%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .yantra-wrap {
+      width: min(72vmin, 640px);
+      aspect-ratio: 1;
+      position: relative;
+      z-index: 0;
+    }
+
+    .yantra-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      animation: spin 120s linear infinite;
+      filter: saturate(0.9) brightness(0.92);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .threshold-copy {
+      position: absolute;
+      z-index: 2;
+      text-align: center;
+      bottom: 9vh;
+      left: 0;
+      right: 0;
+    }
+
+    .threshold-copy .brand {
+      font-family: Syne, sans-serif;
+      font-weight: 800;
+      letter-spacing: 0.28em;
+      font-size: clamp(28px, 4.4vw, 52px);
+      color: var(--bone);
+      text-transform: uppercase;
+    }
+
+    .threshold-copy .spoken {
+      margin-top: 10px;
+      color: var(--gold);
+    }
+
+    .enter {
+      margin-top: 28px;
+      color: var(--ash-dim);
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .enter .line {
+      width: 1px;
+      height: 42px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+    }
+
+    /* MANIFESTO */
+    .manifesto {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 72px;
+      align-items: center;
+      padding: 12vh 8vw 10vh;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .manifesto h2 {
+      color: var(--gold);
+      margin-bottom: 28px;
+    }
+
+    .manifesto .lede {
+      font-size: clamp(28px, 3.4vw, 44px);
+      line-height: 1.18;
+      color: var(--bone);
+      font-weight: 500;
+      margin-bottom: 28px;
+    }
+
+    .manifesto p {
+      font-size: 22px;
+      line-height: 1.55;
+      color: var(--ash);
+      max-width: 38ch;
+      margin-bottom: 18px;
+    }
+
+    .manifesto p em {
+      font-style: italic;
+      color: var(--bone);
+    }
+
+    .still {
+      position: relative;
+    }
+
+    .still img {
+      width: 100%;
+      height: min(78vh, 720px);
+      object-fit: cover;
+      object-position: center 18%;
+      filter: contrast(1.05) saturate(0.85);
+    }
+
+    .still::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to right, var(--void), transparent 18%),
+        linear-gradient(to top, var(--void), transparent 28%);
+    }
+
+    .still figcaption {
+      position: absolute;
+      bottom: 18px;
+      left: 18px;
+      z-index: 1;
+      color: var(--gold);
+    }
+
+    /* NAGA GATE */
+    .gate {
+      position: relative;
+      height: 34vh;
+      min-height: 220px;
+      overflow: hidden;
+      margin: 4vh 0 8vh;
+    }
+
+    .gate img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 40%;
+      filter: brightness(0.72) saturate(0.8);
+    }
+
+    .gate::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, var(--void), transparent 25%, transparent 75%, var(--void)),
+                  linear-gradient(to bottom, var(--void), transparent 30%, transparent 70%, var(--void));
+    }
+
+    .gate span {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      color: var(--gold);
+      mix-blend-mode: plus-lighter;
+    }
+
+    /* DROP */
+    .drop {
+      padding: 0 6vw 14vh;
+      max-width: 1320px;
+      margin: 0 auto;
+    }
+
+    .drop-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 24px;
+      border-top: 1px solid var(--line);
+      padding-top: 36px;
+      margin-bottom: 48px;
+    }
+
+    .drop-head .btn { margin-top: 22px; flex-shrink: 0; }
+
+    .drop-head h2 {
+      font-family: Syne, sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      font-size: clamp(22px, 3vw, 34px);
+      color: var(--bone);
+      text-transform: uppercase;
+    }
+
+    .drop-head p {
+      color: var(--ash-dim);
+      font-size: 20px;
+      max-width: 36ch;
+    }
+
+    .btn {
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-size: 10px;
+      color: var(--void);
+      background: var(--gold);
+      border: 0;
+      padding: 14px 18px;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .btn:hover { filter: brightness(1.08); }
+
+    .btn.ghost {
+      background: transparent;
+      color: var(--gold);
+      border: 1px solid var(--gold-dim);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .piece {
+      background: var(--panel);
+      border: 1px solid rgba(196, 160, 86, 0.12);
+      padding: 12px 12px 22px;
+    }
+
+    .piece img {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+      display: block;
+    }
+
+    .piece-meta {
+      display: flex;
+      justify-content: space-between;
+      margin: 16px 4px 8px;
+      color: var(--ash-dim);
+    }
+
+    .piece h3 {
+      font-family: Syne, sans-serif;
+      letter-spacing: 0.14em;
+      font-size: 15px;
+      color: var(--bone);
+      margin: 0 4px 6px;
+    }
+
+    .piece .note {
+      margin: 0 4px 16px;
+      color: var(--ash-dim);
+      font-size: 18px;
+    }
+
+    .piece .btn { width: calc(100% - 8px); margin: 0 4px; }
+
+    footer {
+      padding: 36px 6vw 48px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      color: var(--ash-dim);
+      border-top: 1px solid rgba(196, 160, 86, 0.1);
+    }
+
+    /* CLAIM */
+    dialog {
+      position: fixed;
+      inset: 0;
+      margin: auto;
+      height: fit-content;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--ash);
+      width: min(440px, 92vw);
+      padding: 28px;
+    }
+
+    dialog::backdrop { background: rgba(0, 0, 0, 0.72); }
+
+    dialog h3 {
+      font-family: Syne, sans-serif;
+      letter-spacing: 0.14em;
+      color: var(--bone);
+      margin: 8px 0 6px;
+    }
+
+    .sizes {
+      display: flex;
+      gap: 8px;
+      margin: 20px 0 24px;
+    }
+
+    .sizes button {
+      flex: 1;
+      background: transparent;
+      border: 1px solid var(--line);
+      color: var(--ash);
+      padding: 10px 0;
+      cursor: pointer;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 11px;
+    }
+
+    .sizes button.on,
+    .sizes button:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    dialog .close {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      background: none;
+      border: 0;
+      color: var(--ash-dim);
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .held {
+      display: none;
+      color: var(--gold);
+      font-size: 20px;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 900px) {
+      header { padding: 16px 18px; }
+      nav { gap: 14px; }
+      nav a:not(.shop-link) { display: none; }
+      .shop-link { white-space: nowrap; }
+      .manifesto {
+        grid-template-columns: 1fr;
+        padding: 10vh 6vw;
+        gap: 36px;
+      }
+      .still img { height: 62vh; }
+      .grid { grid-template-columns: 1fr; }
+      .drop-head { flex-direction: column; align-items: flex-start; }
+      footer { flex-direction: column; }
+      .threshold-copy .brand { letter-spacing: 0.16em; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="mark" href="#top">AlteredSt<span class="eight">8</span></a>
+    <nav class="mono">
+      <a href="#manifesto">Manifesto</a>
+      <a href="#drop">Drop 01</a>
+      <a class="shop-link" href="#drop">Shop the drop</a>
+    </nav>
+  </header>
+
+  <section class="threshold" id="top">
+    <div class="yantra-wrap" id="yantra">
+      <img src="assets/yantra.png" alt="Sri Yantra in antique gold on black" />
+    </div>
+    <div class="threshold-copy">
+      <div class="brand">AlteredSt<span style="color:var(--gold)">8</span></div>
+      <div class="mono spoken">Altered State</div>
+      <a class="enter mono" href="#manifesto">
+        Enter
+        <span class="line"></span>
+      </a>
+    </div>
+  </section>
+
+  <section class="manifesto" id="manifesto">
+    <div>
+      <h2 class="mono">Manifesto</h2>
+      <p class="lede">We cut cloth for people who already left the single world.</p>
+      <p>
+        Altered State sits in the dark seam between Indian and East Asian myth.
+        <em>Yantra</em> as a map of rooms that should not open.
+        <em>Naga</em> as the animal on the lock.
+        <em>Erlang Shen</em> as the judge with a third aperture.
+      </p>
+      <p>
+        Most houses borrow gods for decoration. We take the part they sand down:
+        judgment, hunger, the geometry that does not care if you are ready.
+      </p>
+      <p>
+        AlteredSt8 drops are finite. This one is three black garments.
+        Thirty-three of each. Then the gate closes.
+      </p>
+    </div>
+    <figure class="still">
+      <img src="assets/erlang-third-eye.png" alt="Erlang Shen in shadow, third eye open on the forehead" />
+      <figcaption class="mono">Erlang Shen / the third watch</figcaption>
+    </figure>
+  </section>
+
+  <section class="gate" aria-hidden="true">
+    <img src="assets/naga.png" alt="" />
+    <span class="mono">The gate is finite</span>
+  </section>
+
+  <section class="drop" id="drop">
+    <div class="drop-head">
+      <div>
+        <p class="mono" style="color:var(--gold); margin-bottom:12px;">Drop 01 / Between</p>
+        <h2>One drop. Three tees.</h2>
+        <p>Limited edition. 33 pieces each. $88. Heavyweight black. Then nothing.</p>
+      </div>
+      <a class="btn" href="#drop" id="shop-top">Shop the drop</a>
+    </div>
+
+    <div class="grid">
+      <article class="piece" data-piece="ERLANG" data-left="33">
+        <img src="assets/tee-erlang.png" alt="Black t-shirt with a gold third-eye print" />
+        <div class="piece-meta mono">
+          <span>AST8-01</span>
+          <span class="left">33 left</span>
+        </div>
+        <h3>ERLANG</h3>
+        <p class="note">The third watch. The eye that ruins the lie.</p>
+        <button class="btn ghost claim">Claim</button>
+      </article>
+
+      <article class="piece" data-piece="NAGA" data-left="33">
+        <img src="assets/tee-naga.png" alt="Black t-shirt with a gold naga print" />
+        <div class="piece-meta mono">
+          <span>AST8-02</span>
+          <span class="left">33 left</span>
+        </div>
+        <h3>NAGA</h3>
+        <p class="note">The coil. Guardian of the threshold.</p>
+        <button class="btn ghost claim">Claim</button>
+      </article>
+
+      <article class="piece" data-piece="YANTRA" data-left="33">
+        <img src="assets/tee-yantra.png" alt="Black t-shirt with a gold yantra print" />
+        <div class="piece-meta mono">
+          <span>AST8-03</span>
+          <span class="left">33 left</span>
+        </div>
+        <h3>YANTRA</h3>
+        <p class="note">The gate. Geometry as a door.</p>
+        <button class="btn ghost claim">Claim</button>
+      </article>
+    </div>
+  </section>
+
+  <footer>
+    <span class="mark">AlteredSt<span class="eight">8</span></span>
+    <span class="mono">Altered State · Drop 01 · Between</span>
+    <span class="mono">Not costume. Instruction.</span>
+  </footer>
+
+  <dialog id="claim">
+    <button class="close" aria-label="Close">&times;</button>
+    <p class="mono" id="claim-code">AST8</p>
+    <h3 id="claim-name">ERLANG</h3>
+    <p id="claim-copy" style="font-size:20px; margin-bottom:8px;">Select a size. One piece. The hold lasts fifteen minutes.</p>
+    <div class="sizes" id="sizes">
+      <button type="button">XS</button>
+      <button type="button">S</button>
+      <button type="button" class="on">M</button>
+      <button type="button">L</button>
+      <button type="button">XL</button>
+    </div>
+    <button class="btn" id="hold" style="width:100%;">Hold this piece · $88</button>
+    <p class="held" id="held">Held. The gate does not wait. This is a preview, so nothing is charged.</p>
+  </dialog>
+
+  <script>
+    const yantra = document.getElementById("yantra");
+    window.addEventListener("mousemove", (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 8;
+      const y = (e.clientY / window.innerHeight - 0.5) * 8;
+      yantra.style.transform = `translate(${x}px, ${y}px)`;
+    });
+
+    const dialog = document.getElementById("claim");
+    let activePiece = null;
+    let size = "M";
+
+    document.querySelectorAll(".claim").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        activePiece = btn.closest(".piece");
+        document.getElementById("claim-name").textContent = activePiece.dataset.piece;
+        document.getElementById("claim-code").textContent =
+          activePiece.querySelector(".piece-meta span").textContent;
+        document.getElementById("held").style.display = "none";
+        document.getElementById("hold").style.display = "block";
+        document.getElementById("sizes").style.display = "flex";
+        document.getElementById("claim-copy").style.display = "block";
+        dialog.showModal();
+      });
+    });
+
+    document.querySelector("#claim .close").addEventListener("click", () => dialog.close());
+    dialog.addEventListener("click", (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+
+    document.querySelectorAll("#sizes button").forEach((b) => {
+      b.addEventListener("click", () => {
+        document.querySelectorAll("#sizes button").forEach((x) => x.classList.remove("on"));
+        b.classList.add("on");
+        size = b.textContent;
+      });
+    });
+
+    document.getElementById("hold").addEventListener("click", () => {
+      if (!activePiece) return;
+      let left = Number(activePiece.dataset.left) - 1;
+      if (left < 0) left = 0;
+      activePiece.dataset.left = String(left);
+      activePiece.querySelector(".left").textContent = left + " left";
+      document.getElementById("hold").style.display = "none";
+      document.getElementById("sizes").style.display = "none";
+      document.getElementById("claim-copy").style.display = "none";
+      const held = document.getElementById("held");
+      held.style.display = "block";
+      held.textContent =
+        activePiece.dataset.piece +
+        " · size " +
+        size +
+        " is held. The gate does not wait. This is a preview, so nothing is charged.";
+    });
+
+    document.getElementById("shop-top").addEventListener("click", (e) => {
+      e.preventDefault();
+      document.querySelector(".grid").scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  </script>
+</body>
+</html>
