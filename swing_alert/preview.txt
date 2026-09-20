@@ -1,0 +1,63 @@
+Swing Trading Alert — Saturday, September 19, 2026
+==================================================
+
+Data current as of 18 Sep 2026.
+
+TOP SECTORS (3M RS vs Nifty)
+--------------------
+  Nifty Pharma: +9.6% (RS +12.4%)
+  Nifty Infra: +1.0% (RS +3.7%)
+
+BLOCK A — ENTRY CANDIDATES (Top 6)
+--------------------
+1. Welspun Corp Ltd. (WELCORP.NS) — Nifty Infra
+   Welspun Corp Limited, together with its subsidiaries, manufactures, trades in, distributes, and sells steel pipes, tubes, bars, coils, and plates in India, the United States, an....
+   Price: ₹2660.1 | 52W high: ₹2784.8 (10 Sep 2026)
+   20 SMA: ₹2521.78 | Weekly HullMA30: ₹2310.36 | 3M return: +87.8%
+   Entry: ₹2798.72 | SL: ₹2728.75 | TP1: ₹2966.64 | TP2: ₹3022.62
+   Suggested qty: 142 | Position value: ₹397,418 | Risk: ₹9,936
+   Action: Too far from trigger (5.2% away); revisit if it consolidates higher
+
+2. SML Mahindra Ltd. (SMLMAH.NS) — Nifty Infra
+   SML Mahindra Limited manufactures and sells commercial vehicles and related parts in India and internationally.
+   Price: ₹6292.5 | 52W high: ₹6654.0 (10 Sep 2026)
+   20 SMA: ₹5864.5 | Weekly HullMA30: ₹5627.95 | 3M return: +53.8%
+   Entry: ₹6687.27 | SL: ₹6520.09 | TP1: ₹7088.51 | TP2: ₹7222.25
+   Suggested qty: 59 | Position value: ₹394,549 | Risk: ₹9,864
+   Action: Too far from trigger (6.3% away); revisit if it consolidates higher
+
+3. Laurus Labs (LAURUSLABS.NS) — Nifty Pharma
+   API + CDMO player; ARV franchise, biologics and formulations expansion.
+   Price: ₹1954.0 | 52W high: ₹1982.0 (18 Sep 2026)
+   20 SMA: ₹1900.16 | Weekly HullMA30: ₹1941.6 | 3M return: +36.1%
+   Entry: ₹1991.91 | SL: ₹1942.11 | TP1: ₹2111.42 | TP2: ₹2151.26
+   Suggested qty: 200 | Position value: ₹398,382 | Risk: ₹9,960
+   Action: Place buy-stop at ₹1991.91 (trigger 1.9% away)
+
+4. Jyoti CNC Automation Ltd. (JYOTICNC.NS) — Nifty Infra
+   Jyoti CNC Automation Limited engages in the manufacture and sale of metal cutting computer numerical control machines in India, rest of Asia, Europe, the Middle East, North Amer....
+   Price: ₹1049.7 | 52W high: ₹1065.0 (18 Sep 2026)
+   20 SMA: ₹1001.15 | Weekly HullMA30: ₹942.58 | 3M return: +41.9%
+   Entry: ₹1070.32 | SL: ₹1043.56 | TP1: ₹1134.54 | TP2: ₹1155.95
+   Suggested qty: 373 | Position value: ₹399,229 | Risk: ₹9,981
+   Action: Place buy-stop at ₹1070.32 (trigger 2.0% away)
+
+5. Gland Pharma Ltd. (GLAND.NS) — Nifty Pharma
+   Gland Pharma Limited engages in manufacturing and sale of injectable formulations in India, the United States, Europe, Canada, Australia, New Zealand, and internationally.
+   Price: ₹2961.9 | 52W high: ₹3042.0 (07 Sep 2026)
+   20 SMA: ₹2905.18 | Weekly HullMA30: ₹2945.9 | 3M return: +28.9%
+   Entry: ₹3057.21 | SL: ₹2980.78 | TP1: ₹3240.64 | TP2: ₹3301.79
+   Suggested qty: 130 | Position value: ₹397,437 | Risk: ₹9,936
+   Action: Watchlist — trigger ₹3057.21 is 3.2% away; alert when it closes above ₹3057.21
+
+6. Sai Life Sciences Ltd. (SAILIFE.NS) — Nifty Pharma
+   Sai Life Sciences Limited operates as a contract research, development, and manufacturing organization (CRDMO) in India and internationally.
+   Price: ₹1545.7 | 52W high: ₹1697.0 (09 Sep 2026)
+   20 SMA: ₹1539.82 | Weekly HullMA30: ₹1512.9 | 3M return: +28.6%
+   Entry: ₹1705.48 | SL: ₹1662.84 | TP1: ₹1807.81 | TP2: ₹1841.92
+   Suggested qty: 234 | Position value: ₹399,082 | Risk: ₹9,978
+   Action: Too far from trigger (10.3% away); revisit if it consolidates higher
+
+BLOCK B — EXIT TRACKER (Open Positions)
+--------------------
+  No open positions — all cash.

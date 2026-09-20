@@ -1,0 +1,1497 @@
+{
+  "scanned_at": "2026-08-21T12:36:24.288383+00:00",
+  "cv_version": "cv-base-tab2",
+  "stats": {
+    "companies_listed": 120,
+    "companies_hit": 36,
+    "companies_hit_unique": 35,
+    "companies_miss": 84,
+    "jobs_raw": 5290,
+    "jobs_pm_title": 197,
+    "jobs_after_location": 30,
+    "strong": 25,
+    "possible": 3,
+    "stretch": 2,
+    "hit_names": [
+      "Anthropic",
+      "Brex",
+      "CRED",
+      "Careem",
+      "CloudSEK",
+      "Coinbase",
+      "Cursor",
+      "Druva",
+      "ElevenLabs",
+      "Flexport",
+      "FourKites",
+      "Glean",
+      "Harvey",
+      "InMobi",
+      "Intercom",
+      "Linear",
+      "Mindtickle",
+      "MongoDB",
+      "Murphy AI",
+      "Nium",
+      "Notion",
+      "Okta",
+      "OpenAI",
+      "Perplexity",
+      "PhonePe",
+      "Porter",
+      "Postman",
+      "Ramp",
+      "Razorpay",
+      "Sarvam AI",
+      "Smartsheet",
+      "Stripe",
+      "Tabby",
+      "Tamara",
+      "project44"
+    ]
+  },
+  "boards": [
+    {
+      "name": "Acko",
+      "ats": "ashby",
+      "token": "acko",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Anthropic",
+      "ats": "greenhouse",
+      "token": "anthropic",
+      "hit": true,
+      "note": "ok n=502 owner=Anthropic",
+      "raw_count": 502
+    },
+    {
+      "name": "Anthropic",
+      "ats": "ashby",
+      "token": "anthropic",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Anysphere",
+      "ats": "ashby",
+      "token": "anysphere",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Apna",
+      "ats": "ashby",
+      "token": "apna-com",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Atlassian",
+      "ats": "greenhouse",
+      "token": "atlassian",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Atlassian",
+      "ats": "workday",
+      "token": "atlassian",
+      "hit": false,
+      "note": "miss 422 site=Atlassian",
+      "raw_count": 0
+    },
+    {
+      "name": "Bayzat",
+      "ats": "greenhouse",
+      "token": "bayzat",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Bayzat",
+      "ats": "lever",
+      "token": "bayzat",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "BharatPe",
+      "ats": "greenhouse",
+      "token": "bharatpe",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Bizongo",
+      "ats": "lever",
+      "token": "bizongo",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "BlackBuck",
+      "ats": "lever",
+      "token": "blackbuck",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Brex",
+      "ats": "greenhouse",
+      "token": "brex",
+      "hit": true,
+      "note": "ok n=297 owner=Brex",
+      "raw_count": 297
+    },
+    {
+      "name": "BrowserStack",
+      "ats": "greenhouse",
+      "token": "browserstack",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "CRED",
+      "ats": "lever",
+      "token": "cred",
+      "hit": true,
+      "note": "ok n=12",
+      "raw_count": 12
+    },
+    {
+      "name": "Careem",
+      "ats": "greenhouse",
+      "token": "careem",
+      "hit": true,
+      "note": "ok n=23 owner=Careem",
+      "raw_count": 23
+    },
+    {
+      "name": "Cashfree",
+      "ats": "greenhouse",
+      "token": "cashfree",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Chargebee",
+      "ats": "greenhouse",
+      "token": "chargebee",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "CleverTap",
+      "ats": "greenhouse",
+      "token": "clevertap",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "CloudSEK",
+      "ats": "greenhouse",
+      "token": "cloudsek",
+      "hit": true,
+      "note": "ok n=20 owner=CloudSEK",
+      "raw_count": 20
+    },
+    {
+      "name": "Coinbase",
+      "ats": "greenhouse",
+      "token": "coinbase",
+      "hit": true,
+      "note": "ok n=170 owner=Coinbase",
+      "raw_count": 170
+    },
+    {
+      "name": "Credgenics",
+      "ats": "ashby",
+      "token": "credgenics",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Cursor",
+      "ats": "ashby",
+      "token": "cursor",
+      "hit": true,
+      "note": "ok n=115",
+      "raw_count": 115
+    },
+    {
+      "name": "Darwinbox",
+      "ats": "greenhouse",
+      "token": "darwinbox",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Delhivery",
+      "ats": "lever",
+      "token": "delhivery",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Druva",
+      "ats": "greenhouse",
+      "token": "druva",
+      "hit": true,
+      "note": "ok n=36 owner=Druva",
+      "raw_count": 36
+    },
+    {
+      "name": "ElasticRun",
+      "ats": "greenhouse",
+      "token": "elasticrun",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "ElevenLabs",
+      "ats": "ashby",
+      "token": "elevenlabs",
+      "hit": true,
+      "note": "ok n=255",
+      "raw_count": 255
+    },
+    {
+      "name": "Fi Money",
+      "ats": "ashby",
+      "token": "epifi",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Fibe",
+      "ats": "lever",
+      "token": "earlysalary",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Fleet (spend)",
+      "ats": "greenhouse",
+      "token": "fleet",
+      "hit": false,
+      "note": "miss wrong-owner=Fleet Data Centers",
+      "raw_count": 0
+    },
+    {
+      "name": "Fleet (spend)",
+      "ats": "ashby",
+      "token": "fleet",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Fleet (spend)",
+      "ats": "lever",
+      "token": "fleet",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Fleetx",
+      "ats": "greenhouse",
+      "token": "fleetx",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Fleetx",
+      "ats": "ashby",
+      "token": "fleetx",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Fleetx",
+      "ats": "lever",
+      "token": "fleetx",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Flexport",
+      "ats": "greenhouse",
+      "token": "flexport",
+      "hit": true,
+      "note": "ok n=163 owner=Flexport",
+      "raw_count": 163
+    },
+    {
+      "name": "FourKites",
+      "ats": "greenhouse",
+      "token": "fourkites",
+      "hit": true,
+      "note": "ok n=13 owner=FourKites",
+      "raw_count": 13
+    },
+    {
+      "name": "Fractal Analytics",
+      "ats": "greenhouse",
+      "token": "fractal",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Freshworks",
+      "ats": "greenhouse",
+      "token": "freshworks",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Glean",
+      "ats": "greenhouse",
+      "token": "gleanwork",
+      "hit": true,
+      "note": "ok n=113 owner=Glean",
+      "raw_count": 113
+    },
+    {
+      "name": "Glean",
+      "ats": "ashby",
+      "token": "glean",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Glean",
+      "ats": "ashby",
+      "token": "gleanwork",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Gnani AI",
+      "ats": "ashby",
+      "token": "gnani",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Groww",
+      "ats": "lever",
+      "token": "growwapp",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Gupshup",
+      "ats": "greenhouse",
+      "token": "gupshup",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Happay",
+      "ats": "greenhouse",
+      "token": "happay",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Haptik",
+      "ats": "lever",
+      "token": "haptik",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Harvey",
+      "ats": "ashby",
+      "token": "harvey",
+      "hit": true,
+      "note": "ok n=369",
+      "raw_count": 369
+    },
+    {
+      "name": "Harvey",
+      "ats": "ashby",
+      "token": "harveyai",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Hasura",
+      "ats": "greenhouse",
+      "token": "hasura",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "INDmoney",
+      "ats": "ashby",
+      "token": "indmoney",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Icertis",
+      "ats": "lever",
+      "token": "icertis",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "InMobi",
+      "ats": "greenhouse",
+      "token": "inmobi",
+      "hit": true,
+      "note": "ok n=67 owner=InMobi ",
+      "raw_count": 67
+    },
+    {
+      "name": "Innovaccer",
+      "ats": "greenhouse",
+      "token": "innovaccer",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Intercom",
+      "ats": "greenhouse",
+      "token": "intercom",
+      "hit": true,
+      "note": "ok n=118 owner=Fin",
+      "raw_count": 118
+    },
+    {
+      "name": "Jar",
+      "ats": "ashby",
+      "token": "jar-app",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Juspay",
+      "ats": "greenhouse",
+      "token": "juspay",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Khatabook",
+      "ats": "ashby",
+      "token": "khatabook",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Kitopi",
+      "ats": "lever",
+      "token": "kitopi",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "KredX",
+      "ats": "greenhouse",
+      "token": "kredx",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Krutrim",
+      "ats": "ashby",
+      "token": "krutrim",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Leegality",
+      "ats": "ashby",
+      "token": "leegality",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Linear",
+      "ats": "ashby",
+      "token": "linear",
+      "hit": true,
+      "note": "ok n=32",
+      "raw_count": 32
+    },
+    {
+      "name": "Mindtickle",
+      "ats": "lever",
+      "token": "mindtickle",
+      "hit": true,
+      "note": "ok n=20",
+      "raw_count": 20
+    },
+    {
+      "name": "MoEngage",
+      "ats": "greenhouse",
+      "token": "moengage",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Moglix",
+      "ats": "lever",
+      "token": "moglix",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "MongoDB",
+      "ats": "greenhouse",
+      "token": "mongodb",
+      "hit": true,
+      "note": "ok n=409 owner=MongoDB",
+      "raw_count": 409
+    },
+    {
+      "name": "Murphy AI",
+      "ats": "manual",
+      "token": "",
+      "hit": true,
+      "note": "ok n=1 manual",
+      "raw_count": 1
+    },
+    {
+      "name": "Ninjacart",
+      "ats": "lever",
+      "token": "ninjacart",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Nium",
+      "ats": "manual",
+      "token": "",
+      "hit": true,
+      "note": "ok n=1 manual",
+      "raw_count": 1
+    },
+    {
+      "name": "Nium",
+      "ats": "lever",
+      "token": "nium",
+      "hit": true,
+      "note": "ok n=38",
+      "raw_count": 38
+    },
+    {
+      "name": "Niyo",
+      "ats": "greenhouse",
+      "token": "niyo",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Noon",
+      "ats": "greenhouse",
+      "token": "noon",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Noon",
+      "ats": "lever",
+      "token": "noon",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Notion",
+      "ats": "greenhouse",
+      "token": "notion",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Notion",
+      "ats": "ashby",
+      "token": "notion",
+      "hit": true,
+      "note": "ok n=129",
+      "raw_count": 129
+    },
+    {
+      "name": "Observe.AI",
+      "ats": "ashby",
+      "token": "observeai",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Ofbusiness",
+      "ats": "lever",
+      "token": "ofbusiness",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Okta",
+      "ats": "greenhouse",
+      "token": "okta",
+      "hit": true,
+      "note": "ok n=336 owner=Okta",
+      "raw_count": 336
+    },
+    {
+      "name": "Open Financial",
+      "ats": "greenhouse",
+      "token": "open-financial",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "OpenAI",
+      "ats": "ashby",
+      "token": "openai",
+      "hit": true,
+      "note": "ok n=747",
+      "raw_count": 747
+    },
+    {
+      "name": "Perplexity",
+      "ats": "ashby",
+      "token": "perplexityai",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Perplexity",
+      "ats": "ashby",
+      "token": "perplexity",
+      "hit": true,
+      "note": "ok n=100",
+      "raw_count": 100
+    },
+    {
+      "name": "PhonePe",
+      "ats": "greenhouse",
+      "token": "phonepe",
+      "hit": true,
+      "note": "ok n=69 owner=PhonePe",
+      "raw_count": 69
+    },
+    {
+      "name": "Pine Labs",
+      "ats": "manual",
+      "token": "",
+      "hit": false,
+      "note": "miss no-jobs (careers page only)",
+      "raw_count": 0
+    },
+    {
+      "name": "Pixxel",
+      "ats": "ashby",
+      "token": "pixxel",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Plaid",
+      "ats": "greenhouse",
+      "token": "plaid",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Porter",
+      "ats": "lever",
+      "token": "porter",
+      "hit": true,
+      "note": "ok n=28",
+      "raw_count": 28
+    },
+    {
+      "name": "Postman",
+      "ats": "greenhouse",
+      "token": "postman",
+      "hit": true,
+      "note": "ok n=113 owner=Postman",
+      "raw_count": 113
+    },
+    {
+      "name": "Property Finder",
+      "ats": "greenhouse",
+      "token": "propertyfinder",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Property Finder",
+      "ats": "lever",
+      "token": "propertyfinder",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Ramp",
+      "ats": "ashby",
+      "token": "ramp",
+      "hit": true,
+      "note": "ok n=136",
+      "raw_count": 136
+    },
+    {
+      "name": "Razorpay",
+      "ats": "greenhouse",
+      "token": "razorpaysoftwareprivatelimited",
+      "hit": true,
+      "note": "ok n=25 owner=Razorpay Software Private Limited",
+      "raw_count": 25
+    },
+    {
+      "name": "Rippling",
+      "ats": "greenhouse",
+      "token": "rippling",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Rupeek",
+      "ats": "ashby",
+      "token": "rupeek",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Sarvam AI",
+      "ats": "ashby",
+      "token": "sarvam",
+      "hit": true,
+      "note": "ok n=59",
+      "raw_count": 59
+    },
+    {
+      "name": "Setu",
+      "ats": "greenhouse",
+      "token": "setu",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Shadowfax",
+      "ats": "greenhouse",
+      "token": "shadowfax",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Shiprocket",
+      "ats": "lever",
+      "token": "shiprocket",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Signzy",
+      "ats": "greenhouse",
+      "token": "signzy",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Slice",
+      "ats": "ashby",
+      "token": "sliceit",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Smallcase",
+      "ats": "ashby",
+      "token": "smallcase",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Smartsheet",
+      "ats": "greenhouse",
+      "token": "smartsheet",
+      "hit": true,
+      "note": "ok n=94 owner=Smartsheet",
+      "raw_count": 94
+    },
+    {
+      "name": "Sprinklr",
+      "ats": "greenhouse",
+      "token": "sprinklr",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Sprinto",
+      "ats": "ashby",
+      "token": "sprinto",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Stripe",
+      "ats": "greenhouse",
+      "token": "stripe",
+      "hit": true,
+      "note": "ok n=569 owner=Stripe",
+      "raw_count": 569
+    },
+    {
+      "name": "Tabby",
+      "ats": "greenhouse",
+      "token": "tabby",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Tabby",
+      "ats": "ashby",
+      "token": "tabby",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Tabby",
+      "ats": "pinpoint",
+      "token": "tabby",
+      "hit": true,
+      "note": "ok n=41",
+      "raw_count": 41
+    },
+    {
+      "name": "Tamara",
+      "ats": "greenhouse",
+      "token": "tamara",
+      "hit": true,
+      "note": "ok n=39 owner=Tamara",
+      "raw_count": 39
+    },
+    {
+      "name": "Udaan",
+      "ats": "lever",
+      "token": "udaan",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Uniphore",
+      "ats": "greenhouse",
+      "token": "uniphore",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Urban Company",
+      "ats": "lever",
+      "token": "urbanclap",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Vymo",
+      "ats": "lever",
+      "token": "vymo",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Whatfix",
+      "ats": "greenhouse",
+      "token": "whatfix",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Yellow.ai",
+      "ats": "ashby",
+      "token": "yellowai",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Yubi",
+      "ats": "greenhouse",
+      "token": "yubi",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "Zetwerk",
+      "ats": "lever",
+      "token": "zetwerk",
+      "hit": false,
+      "note": "miss 404",
+      "raw_count": 0
+    },
+    {
+      "name": "project44",
+      "ats": "greenhouse",
+      "token": "project44",
+      "hit": true,
+      "note": "ok n=31 owner=project44",
+      "raw_count": 31
+    }
+  ],
+  "jobs": [
+    {
+      "date_found": "2026-08-21",
+      "company": "Razorpay",
+      "role": "Senior Product Manager",
+      "location": "Bengaluru",
+      "source": "greenhouse:razorpaysoftwareprivatelimited",
+      "url": "https://job-boards.greenhouse.io/razorpaysoftwareprivatelimited/jobs/4716555005",
+      "fit_band": "Strong",
+      "blockers": "",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "named seed; platform PM, not an AI-title role; senior/staff/founding/lead PM; fintech; india",
+      "priority": "seed",
+      "loc_bucket": "india"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "Murphy AI",
+      "role": "Product Manager",
+      "location": "Dubai, UAE (Hybrid)",
+      "source": "manual:manual",
+      "url": "https://careers.getmurphy.ai/jobs/8147662-product-manager",
+      "fit_band": "Strong",
+      "blockers": "",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "named seed; AI-native company; uae",
+      "priority": "seed",
+      "loc_bucket": "uae"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "Coinbase",
+      "role": "Senior Product Manager, Help Center (CX Automation)",
+      "location": "Remote - India",
+      "source": "greenhouse:coinbase",
+      "url": "https://www.coinbase.com/careers/positions/8031208?gh_jid=8031208",
+      "fit_band": "Strong",
+      "blockers": "",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "platform PM, not an AI-title role; senior/staff/founding/lead PM; fintech; india",
+      "priority": "normal",
+      "loc_bucket": "india"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "FourKites",
+      "role": "Product Manager, Inventory & Orders",
+      "location": "Chennai or Remote, India",
+      "source": "greenhouse:fourkites",
+      "url": "https://job-boards.greenhouse.io/fourkites/jobs/7971690",
+      "fit_band": "Strong",
+      "blockers": "",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "platform PM, not an AI-title role; logistics; B2B SaaS; india",
+      "priority": "high",
+      "loc_bucket": "india"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "Glean",
+      "role": "Product Manager, Connectors",
+      "location": "Bangalore, India",
+      "source": "greenhouse:gleanwork",
+      "url": "https://job-boards.greenhouse.io/gleanwork/jobs/4629292005",
+      "fit_band": "Strong",
+      "blockers": "",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "platform PM, not an AI-title role; AI-native company; india",
+      "priority": "high",
+      "loc_bucket": "india"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "Glean",
+      "role": "Product Manager, Glean Protect (Security & Governance)",
+      "location": "Bangalore, India",
+      "source": "greenhouse:gleanwork",
+      "url": "https://job-boards.greenhouse.io/gleanwork/jobs/4641940005",
+      "fit_band": "Strong",
+      "blockers": "",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "platform PM, not an AI-title role; AI-native company; india",
+      "priority": "high",
+      "loc_bucket": "india"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "Mindtickle",
+      "role": "Senior Product Manager - Seller Mastery",
+      "location": "Bengaluru, Karnataka",
+      "source": "lever:mindtickle",
+      "url": "https://jobs.lever.co/mindtickle/e55245fd-983c-4564-9b3f-491b7d16b8e8",
+      "fit_band": "Strong",
+      "blockers": "",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "platform PM, not an AI-title role; senior/staff/founding/lead PM; B2B SaaS; india",
+      "priority": "normal",
+      "loc_bucket": "india"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "MongoDB",
+      "role": "Senior Product Manager",
+      "location": "Gurugram",
+      "source": "greenhouse:mongodb",
+      "url": "https://www.mongodb.com/careers/job/?gh_jid=7851080",
+      "fit_band": "Strong",
+      "blockers": "",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "platform PM, not an AI-title role; senior/staff/founding/lead PM; B2B SaaS; india",
+      "priority": "normal",
+      "loc_bucket": "india"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "Nium",
+      "role": "Sr Product Manager - Payments Platform",
+      "location": "Bangalore / Mumbai",
+      "source": "manual:manual",
+      "url": "https://jobs.lever.co/nium/0b795f90-7cef-4e5f-9279-f6dc2be45090",
+      "fit_band": "Strong",
+      "blockers": "",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "platform PM, not an AI-title role; senior/staff/founding/lead PM; fintech; india",
+      "priority": "high",
+      "loc_bucket": "india"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "Okta",
+      "role": "Principal Product Manager, Marketing Technology",
+      "location": "Bengaluru, India",
+      "source": "greenhouse:okta",
+      "url": "https://www.okta.com/company/careers/opportunity/8015002?gh_jid=8015002",
+      "fit_band": "Strong",
+      "blockers": "Principal/Senior Staff may expect 10+ years PM",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "platform PM, not an AI-title role; senior/staff/founding/lead PM; B2B SaaS; india",
+      "priority": "high",
+      "loc_bucket": "india"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "Okta",
+      "role": "Senior Product Manager, Data Platform",
+      "location": "Bengaluru, India",
+      "source": "greenhouse:okta",
+      "url": "https://www.okta.com/company/careers/opportunity/8022961?gh_jid=8022961",
+      "fit_band": "Strong",
+      "blockers": "",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "platform PM, not an AI-title role; senior/staff/founding/lead PM; B2B SaaS; india",
+      "priority": "high",
+      "loc_bucket": "india"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "PhonePe",
+      "role": "Product Lead",
+      "location": "Bangalore",
+      "source": "greenhouse:phonepe",
+      "url": "https://job-boards.greenhouse.io/phonepe/jobs/7752800003",
+      "fit_band": "Strong",
+      "blockers": "",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "platform PM, not an AI-title role; senior/staff/founding/lead PM; fintech; india",
+      "priority": "high",
+      "loc_bucket": "india"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "PhonePe",
+      "role": "Product Manager",
+      "location": "Bengaluru, Karnataka",
+      "source": "greenhouse:phonepe",
+      "url": "https://job-boards.greenhouse.io/phonepe/jobs/7799414003",
+      "fit_band": "Strong",
+      "blockers": "",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "platform PM, not an AI-title role; fintech; india",
+      "priority": "high",
+      "loc_bucket": "india"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "PhonePe",
+      "role": "Product Manager : Data Platform",
+      "location": "Bangalore",
+      "source": "greenhouse:phonepe",
+      "url": "https://job-boards.greenhouse.io/phonepe/jobs/7813734003",
+      "fit_band": "Strong",
+      "blockers": "",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "platform PM, not an AI-title role; fintech; india",
+      "priority": "high",
+      "loc_bucket": "india"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "Smartsheet",
+      "role": "Sr, Product Manager II - Gantt View (Hybrid, Bangalore)",
+      "location": "Bangalore, INDIA",
+      "source": "greenhouse:smartsheet",
+      "url": "https://job-boards.greenhouse.io/smartsheet/jobs/8064552",
+      "fit_band": "Strong",
+      "blockers": "",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "platform PM, not an AI-title role; senior/staff/founding/lead PM; B2B SaaS; india",
+      "priority": "high",
+      "loc_bucket": "india"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "Stripe",
+      "role": "Product Manager, Risk & Compliance",
+      "location": "Bengaluru",
+      "source": "greenhouse:stripe",
+      "url": "https://stripe.com/jobs/search?gh_jid=7625842",
+      "fit_band": "Strong",
+      "blockers": "",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "platform PM, not an AI-title role; fintech; india",
+      "priority": "high",
+      "loc_bucket": "india"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "Stripe",
+      "role": "Staff Product Manager, Global Expansion",
+      "location": "Bengaluru",
+      "source": "greenhouse:stripe",
+      "url": "https://stripe.com/jobs/search?gh_jid=7570242",
+      "fit_band": "Strong",
+      "blockers": "",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "platform PM, not an AI-title role; senior/staff/founding/lead PM; fintech; india",
+      "priority": "high",
+      "loc_bucket": "india"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "Tabby",
+      "role": "Senior Product Manager, B2B Lifecycle",
+      "location": "Dubai, UAE, United Arab Emirates",
+      "source": "pinpoint:tabby",
+      "url": "https://tabby.pinpointhq.com/en/postings/96c20ea1-3340-4e0d-9169-d63c87fd1590",
+      "fit_band": "Strong",
+      "blockers": "",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "platform PM, not an AI-title role; senior/staff/founding/lead PM; fintech; uae",
+      "priority": "high",
+      "loc_bucket": "uae"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "Sarvam AI",
+      "role": "Product Manager",
+      "location": "Bengaluru",
+      "source": "ashby:sarvam",
+      "url": "https://jobs.ashbyhq.com/sarvam/c4bb3b2c-7608-4d57-8761-650b4222ac13",
+      "fit_band": "Strong",
+      "blockers": "",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "AI-native company; india",
+      "priority": "high",
+      "loc_bucket": "india"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "Sarvam AI",
+      "role": "Product Manager (Models)",
+      "location": "Bengaluru",
+      "source": "ashby:sarvam",
+      "url": "https://jobs.ashbyhq.com/sarvam/9e197c29-5164-42eb-8e74-4f691a794517",
+      "fit_band": "Strong",
+      "blockers": "Models PM may expect ML/model-training depth",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "AI-native company; india",
+      "priority": "high",
+      "loc_bucket": "india"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "Sarvam AI",
+      "role": "Product Manager \u2013 Media & Entertainment, Sarvam Studio",
+      "location": "Bengaluru",
+      "source": "ashby:sarvam",
+      "url": "https://jobs.ashbyhq.com/sarvam/adbc090f-3aad-4b12-af36-a2f4b55c017e",
+      "fit_band": "Strong",
+      "blockers": "",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "AI-native company; india",
+      "priority": "high",
+      "loc_bucket": "india"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "Sarvam AI",
+      "role": "Product Manager, Growth",
+      "location": "Bengaluru",
+      "source": "ashby:sarvam",
+      "url": "https://jobs.ashbyhq.com/sarvam/929e2e12-7a2f-4e28-9d27-f220910b2125",
+      "fit_band": "Strong",
+      "blockers": "",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "AI-native company; india",
+      "priority": "high",
+      "loc_bucket": "india"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "Sarvam AI",
+      "role": "Product Manager, Monetization & Retention",
+      "location": "Bengaluru",
+      "source": "ashby:sarvam",
+      "url": "https://jobs.ashbyhq.com/sarvam/6390e602-7b98-4700-baa9-ced5be8b1651",
+      "fit_band": "Strong",
+      "blockers": "",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "AI-native company; india",
+      "priority": "high",
+      "loc_bucket": "india"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "Sarvam AI",
+      "role": "Product Manager On-Device & Edge AI",
+      "location": "Bengaluru",
+      "source": "ashby:sarvam",
+      "url": "https://jobs.ashbyhq.com/sarvam/f462051e-ec76-45cf-96c5-e0192dd4dcc6",
+      "fit_band": "Strong",
+      "blockers": "",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "AI in title; AI-native company; india",
+      "priority": "high",
+      "loc_bucket": "india"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "Smartsheet",
+      "role": "Principal Product Manager, Data & AI Platforms ( Hybrid in Bangalore )",
+      "location": "Bangalore, INDIA",
+      "source": "greenhouse:smartsheet",
+      "url": "https://job-boards.greenhouse.io/smartsheet/jobs/7794964",
+      "fit_band": "Strong",
+      "blockers": "Principal/Senior Staff may expect 10+ years PM",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "AI in title; senior/staff/founding/lead PM; B2B SaaS; india",
+      "priority": "high",
+      "loc_bucket": "india"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "Druva",
+      "role": "Product Manager",
+      "location": "Pune, Maharashtra, India",
+      "source": "greenhouse:druva",
+      "url": "https://www.druva.com/why-druva/explore/careers/jobs/8651130002/?gh_jid=8651130002",
+      "fit_band": "Possible",
+      "blockers": "",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "platform PM, not an AI-title role; B2B SaaS; india",
+      "priority": "normal",
+      "loc_bucket": "india"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "InMobi",
+      "role": "Product Manager - Accelerate",
+      "location": "Bangalore, IN",
+      "source": "greenhouse:inmobi",
+      "url": "https://job-boards.greenhouse.io/inmobi/jobs/8076340",
+      "fit_band": "Possible",
+      "blockers": "",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "platform PM, not an AI-title role; india",
+      "priority": "normal",
+      "loc_bucket": "india"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "Anthropic",
+      "role": "Product Manager, Public Sector",
+      "location": "Remote-Friendly (Travel-Required) |  Washington, DC",
+      "source": "greenhouse:anthropic",
+      "url": "https://job-boards.greenhouse.io/anthropic/jobs/5393452008",
+      "fit_band": "Possible",
+      "blockers": "",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "AI-native company; remote",
+      "priority": "high",
+      "loc_bucket": "remote"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "InMobi",
+      "role": "Group Product Manager - Accelerate",
+      "location": "Bangalore, IN",
+      "source": "greenhouse:inmobi",
+      "url": "https://job-boards.greenhouse.io/inmobi/jobs/8076327",
+      "fit_band": "Stretch",
+      "blockers": "Head/Director/VP is stretch vs current SPM",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "platform PM, not an AI-title role; india",
+      "priority": "normal",
+      "loc_bucket": "india"
+    },
+    {
+      "date_found": "2026-08-21",
+      "company": "Mindtickle",
+      "role": "Group Product Manager, Behavior Intelligence",
+      "location": "Pune, Maharashtra",
+      "source": "lever:mindtickle",
+      "url": "https://jobs.lever.co/mindtickle/4365dc2a-87b1-4751-bd30-c90c70dea92c",
+      "fit_band": "Stretch",
+      "blockers": "Head/Director/VP is stretch vs current SPM",
+      "cv_version": "cv-base-tab2",
+      "date_applied": "",
+      "status": "Sourced",
+      "why": "platform PM, not an AI-title role; B2B SaaS; india",
+      "priority": "normal",
+      "loc_bucket": "india"
+    }
+  ]
+}
