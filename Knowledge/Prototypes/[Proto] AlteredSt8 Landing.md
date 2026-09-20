@@ -8,15 +8,15 @@ Dark landing preview for **Altered State**, an apparel house at the seam of Indi
 
 ## Brand
 - Name: Altered State
-- Mark: AlteredSt8
+- Mark: Altered State, top left only
 - Audience: people who think between dimensions / in altered states
 - Tone: clean, finite, high quality, the dark side of myth as instruction not costume
 
 ## Page structure
 1. Threshold (yantra + wordmark). Not a hero.
-2. Manifesto, with Erlang Shen / third eye as a still
+2. Manifesto, full-width type only
 3. Naga as a horizontal gate
-4. DROP 01 / BETWEEN — 3 tees (Erlang, Naga, Yantra), 33 pieces each
+4. DROP 01 / BETWEEN — 3 tees (Yantra, Naga, Wukong), 33 pieces each
 5. Shop the drop claim flow (size + hold)
 
 ## Assets

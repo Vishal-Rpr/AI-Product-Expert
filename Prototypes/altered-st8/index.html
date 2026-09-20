@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AlteredSt8 — Altered State</title>
+  <title>Altered State</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;500&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
@@ -56,27 +56,10 @@
     .mark {
       font-family: Syne, sans-serif;
       font-weight: 800;
-      letter-spacing: 0.16em;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      font-size: 13px;
-    }
-
-    .mark .eight {
-      color: var(--gold);
-      position: relative;
-    }
-
-    .mark .eight::after {
-      content: "";
-      position: absolute;
-      width: 3px;
-      height: 3px;
-      background: var(--gold);
-      border-radius: 50%;
-      top: 1px;
-      left: 50%;
-      transform: translateX(-50%);
-      box-shadow: 0 0 6px var(--gold);
+      font-size: 14px;
+      color: var(--bone);
     }
 
     header {
@@ -155,22 +138,17 @@
       right: 0;
     }
 
-    .threshold-copy .brand {
+    .threshold-name {
       font-family: Syne, sans-serif;
       font-weight: 800;
       letter-spacing: 0.28em;
-      font-size: clamp(28px, 4.4vw, 52px);
-      color: var(--bone);
       text-transform: uppercase;
-    }
-
-    .threshold-copy .spoken {
-      margin-top: 10px;
-      color: var(--gold);
+      font-size: clamp(22px, 3.2vw, 38px);
+      color: var(--bone);
+      margin-bottom: 16px;
     }
 
     .enter {
-      margin-top: 28px;
       color: var(--ash-dim);
       display: inline-flex;
       flex-direction: column;
@@ -186,68 +164,33 @@
 
     /* MANIFESTO */
     .manifesto {
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 72px;
-      align-items: center;
-      padding: 12vh 8vw 10vh;
-      max-width: 1280px;
+      min-height: 72vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 16vh 12vw 14vh;
+      max-width: 920px;
       margin: 0 auto;
     }
 
-    .manifesto h2 {
-      color: var(--gold);
-      margin-bottom: 28px;
-    }
-
     .manifesto .lede {
-      font-size: clamp(28px, 3.4vw, 44px);
-      line-height: 1.18;
+      font-size: clamp(32px, 4vw, 52px);
+      line-height: 1.16;
       color: var(--bone);
       font-weight: 500;
-      margin-bottom: 28px;
+      margin-bottom: 36px;
     }
 
     .manifesto p {
-      font-size: 22px;
+      font-size: 24px;
       line-height: 1.55;
       color: var(--ash);
-      max-width: 38ch;
-      margin-bottom: 18px;
+      margin-bottom: 22px;
     }
 
     .manifesto p em {
       font-style: italic;
       color: var(--bone);
-    }
-
-    .still {
-      position: relative;
-    }
-
-    .still img {
-      width: 100%;
-      height: min(78vh, 720px);
-      object-fit: cover;
-      object-position: center 18%;
-      filter: contrast(1.05) saturate(0.85);
-    }
-
-    .still::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(to right, var(--void), transparent 18%),
-        linear-gradient(to top, var(--void), transparent 28%);
-    }
-
-    .still figcaption {
-      position: absolute;
-      bottom: 18px;
-      left: 18px;
-      z-index: 1;
-      color: var(--gold);
     }
 
     /* NAGA GATE */
@@ -460,21 +403,18 @@
       nav a:not(.shop-link) { display: none; }
       .shop-link { white-space: nowrap; }
       .manifesto {
-        grid-template-columns: 1fr;
-        padding: 10vh 6vw;
-        gap: 36px;
+        padding: 12vh 6vw 10vh;
+        min-height: 0;
       }
-      .still img { height: 62vh; }
       .grid { grid-template-columns: 1fr; }
       .drop-head { flex-direction: column; align-items: flex-start; }
       footer { flex-direction: column; }
-      .threshold-copy .brand { letter-spacing: 0.16em; }
     }
   </style>
 </head>
 <body>
   <header>
-    <a class="mark" href="#top">AlteredSt<span class="eight">8</span></a>
+    <a class="mark" href="#top">Altered State</a>
     <nav class="mono">
       <a href="#manifesto">Manifesto</a>
       <a href="#drop">Drop 01</a>
@@ -484,11 +424,10 @@
 
   <section class="threshold" id="top">
     <div class="yantra-wrap" id="yantra">
-      <img src="assets/yantra.png" alt="Sri Yantra in antique gold on black" />
+      <img src="assets/yantra.png" alt="Gold yantra on black" />
     </div>
     <div class="threshold-copy">
-      <div class="brand">AlteredSt<span style="color:var(--gold)">8</span></div>
-      <div class="mono spoken">Altered State</div>
+      <div class="threshold-name">Altered State</div>
       <a class="enter mono" href="#manifesto">
         Enter
         <span class="line"></span>
@@ -497,28 +436,18 @@
   </section>
 
   <section class="manifesto" id="manifesto">
-    <div>
-      <h2 class="mono">Manifesto</h2>
-      <p class="lede">We cut cloth for people who already left the single world.</p>
+      <p class="lede">A statement for people who think between worlds.</p>
       <p>
-        Altered State sits in the dark seam between Indian and East Asian myth.
-        <em>Yantra</em> as a map of rooms that should not open.
-        <em>Naga</em> as the animal on the lock.
-        <em>Erlang Shen</em> as the judge with a third aperture.
+        It sits in the dark seam of Asian mythology.
       </p>
       <p>
-        Most houses borrow gods for decoration. We take the part they sand down:
+        Most tellings of these stories stay in the light. We work with what they leave in the dark:
         judgment, hunger, the geometry that does not care if you are ready.
       </p>
       <p>
-        AlteredSt8 drops are finite. This one is three black garments.
+        Drops are finite. This one is three black garments.
         Thirty-three of each. Then the gate closes.
       </p>
-    </div>
-    <figure class="still">
-      <img src="assets/erlang-third-eye.png" alt="Erlang Shen in shadow, third eye open on the forehead" />
-      <figcaption class="mono">Erlang Shen / the third watch</figcaption>
-    </figure>
   </section>
 
   <section class="gate" aria-hidden="true">
@@ -537,14 +466,14 @@
     </div>
 
     <div class="grid">
-      <article class="piece" data-piece="ERLANG" data-left="33">
-        <img src="assets/tee-erlang.png" alt="Black t-shirt with a gold third-eye print" />
+      <article class="piece" data-piece="YANTRA" data-left="33">
+        <img src="assets/tee-yantra.png" alt="Black t-shirt with a gold yantra print" />
         <div class="piece-meta mono">
           <span>AST8-01</span>
           <span class="left">33 left</span>
         </div>
-        <h3>ERLANG</h3>
-        <p class="note">The third watch. The eye that ruins the lie.</p>
+        <h3>YANTRA</h3>
+        <p class="note">The gate. Geometry as a door.</p>
         <button class="btn ghost claim">Claim</button>
       </article>
 
@@ -559,29 +488,28 @@
         <button class="btn ghost claim">Claim</button>
       </article>
 
-      <article class="piece" data-piece="YANTRA" data-left="33">
-        <img src="assets/tee-yantra.png" alt="Black t-shirt with a gold yantra print" />
+      <article class="piece" data-piece="WUKONG" data-left="33">
+        <img src="assets/tee-erlang.png" alt="Black t-shirt with a gold third-eye print" />
         <div class="piece-meta mono">
           <span>AST8-03</span>
           <span class="left">33 left</span>
         </div>
-        <h3>YANTRA</h3>
-        <p class="note">The gate. Geometry as a door.</p>
+        <h3>WUKONG</h3>
+        <p class="note">Fire-eyes. The sage equal to heaven.</p>
         <button class="btn ghost claim">Claim</button>
       </article>
     </div>
   </section>
 
   <footer>
-    <span class="mark">AlteredSt<span class="eight">8</span></span>
-    <span class="mono">Altered State · Drop 01 · Between</span>
+    <span class="mono">Drop 01 · Between</span>
     <span class="mono">Not costume. Instruction.</span>
   </footer>
 
   <dialog id="claim">
     <button class="close" aria-label="Close">&times;</button>
     <p class="mono" id="claim-code">AST8</p>
-    <h3 id="claim-name">ERLANG</h3>
+    <h3 id="claim-name">YANTRA</h3>
     <p id="claim-copy" style="font-size:20px; margin-bottom:8px;">Select a size. One piece. The hold lasts fifteen minutes.</p>
     <div class="sizes" id="sizes">
       <button type="button">XS</button>
