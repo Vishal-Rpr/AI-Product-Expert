@@ -76,9 +76,22 @@ TARGET_2_PCT = 0.08                # 8% above entry (second exit, then trail)
 
 # Position sizing
 # 2% capital risk per trade (classic risk-parity rule). Overridable via env.
-CAPITAL_INR = float(os.environ.get("CAPITAL_INR", "500000"))       # ₹5L default; set your real number in env
-RISK_PER_TRADE_PCT = float(os.environ.get("RISK_PER_TRADE_PCT", "0.02"))  # 2%
+# GitHub Actions injects unset secrets as "" (not missing), which would crash float().
+def _env_float(key: str, default: float) -> float:
+    raw = os.environ.get(key)
+    if raw is None or str(raw).strip() == "":
+        return default
+    try:
+        return float(raw)
+    except ValueError:
+        log.warning(f"Invalid {key}={raw!r}; using default {default}")
+        return default
+
+
+CAPITAL_INR = _env_float("CAPITAL_INR", 500000.0)       # ₹5L default; set your real number in env
+RISK_PER_TRADE_PCT = _env_float("RISK_PER_TRADE_PCT", 0.02)  # 2%
 RISK_PER_TRADE_INR = CAPITAL_INR * RISK_PER_TRADE_PCT
+log.info(f"Position sizing: capital=INR {CAPITAL_INR:,.0f} · risk={RISK_PER_TRADE_PCT:.1%}")
 
 IST = timezone(timedelta(hours=5, minutes=30))
 
@@ -811,7 +824,8 @@ def build_plaintext(
 
 def send_email(subject: str, html: str, plaintext: str):
     host = os.environ.get("SMTP_HOST", "smtp.gmail.com")
-    port = int(os.environ.get("SMTP_PORT", "587"))
+    port_raw = os.environ.get("SMTP_PORT") or "587"
+    port = int(port_raw)
     user = os.environ["SMTP_USER"]
     password = os.environ["SMTP_PASSWORD"]
     recipient = os.environ.get("RECIPIENT_EMAIL", user)
@@ -852,84 +866,91 @@ def build_alert(preview_mode: bool = False) -> tuple[str, str, str, dict]:
 
     # 1. Rank sectors + capture benchmark for freshness check
     top_sectors, benchmark_df = rank_sectors(universe)
-    if not top_sectors:
-        log.error("No sectors ranked — aborting.")
-        sys.exit(1)
-    top_sector_names = {s.name for s in top_sectors}
-    log.info(f"Top sectors: {[s.name for s in top_sectors]}")
-
     is_fresh, freshness_msg = check_data_freshness(benchmark_df)
     log.info(freshness_msg)
 
-    # 2. Build FULL scan universe (curated 40 + NSE Smallcap/Midcap/Microcap constituents)
-    curated_path = Path(__file__).parent / "universe.yaml"
-    scan_stocks, universe_stats = build_scan_universe(curated_path)
-
-    # 3. Filter to stocks in top sectors
-    eligible_stocks = [s for s in scan_stocks if s["sector"] in top_sector_names]
-    log.info(f"Analysing {len(eligible_stocks)} stocks from winning sectors "
-             f"(universe total: {universe_stats['total']})")
-
-    # 4. Analyse each stock (with sector-rank bonus applied to the score)
-    benchmark_3m = top_sectors[0].benchmark_return_3m
-    sector_bonus_by_name = {
-        s.name: (SECTOR_RANK_BONUS[i] if i < len(SECTOR_RANK_BONUS) else 0.0)
-        for i, s in enumerate(top_sectors)
-    }
-    all_passing: list[StockPick] = []
-    for cfg in eligible_stocks:
-        bonus = sector_bonus_by_name.get(cfg["sector"], 0.0)
-        pick = analyze_stock(cfg, benchmark_3m, sector_bonus=bonus)
-        if pick:
-            all_passing.append(pick)
-
-    log.info(f"{len(all_passing)} stocks passed all filters")
-
-    # 5. Diversified top-N selection:
-    #    - sort by score desc
-    #    - cap per sector at MAX_STOCKS_PER_SECTOR
-    #    - guarantee at least 1 stock from top-3 sectors if they have any passer
-    all_passing.sort(key=lambda p: p.score, reverse=True)
-
     picks: list[StockPick] = []
-    per_sector_count: dict[str, int] = {}
+    universe_stats: dict = {"total": 0, "curated": 0, "nse_added": 0}
+    new_names: list[str] = []
 
-    # Pass 1: guarantee coverage of top-3 sectors (highest scorer from each)
-    for sector_score in top_sectors[:3]:
-        best_in_sector = next((p for p in all_passing if p.sector == sector_score.name), None)
-        if best_in_sector and best_in_sector not in picks:
-            picks.append(best_in_sector)
-            per_sector_count[best_in_sector.sector] = 1
+    if not top_sectors:
+        log.error("No sectors ranked — sending alert with empty pick list instead of aborting.")
+        freshness_msg = (freshness_msg + " " if freshness_msg else "") + (
+            "No sector beat Nifty on 3M RS (or Yahoo data was unavailable). "
+            "No new entries today."
+        )
+        is_fresh = False
+    else:
+        top_sector_names = {s.name for s in top_sectors}
+        log.info(f"Top sectors: {[s.name for s in top_sectors]}")
 
-    # Pass 2: fill remaining slots by score, respecting the per-sector cap
-    for p in all_passing:
-        if len(picks) >= TOP_N_STOCKS:
-            break
-        if p in picks:
-            continue
-        if per_sector_count.get(p.sector, 0) >= MAX_STOCKS_PER_SECTOR:
-            log.debug(f"  cap-skipped {p.name} ({p.sector}, count={per_sector_count[p.sector]})")
-            continue
-        picks.append(p)
-        per_sector_count[p.sector] = per_sector_count.get(p.sector, 0) + 1
+        # 2. Build FULL scan universe (curated 40 + NSE Smallcap/Midcap/Microcap constituents)
+        curated_path = Path(__file__).parent / "universe.yaml"
+        scan_stocks, universe_stats = build_scan_universe(curated_path)
 
-    log.info(f"Selected {len(picks)} picks across sectors: {per_sector_count}")
+        # 3. Filter to stocks in top sectors
+        eligible_stocks = [s for s in scan_stocks if s["sector"] in top_sector_names]
+        log.info(f"Analysing {len(eligible_stocks)} stocks from winning sectors "
+                 f"(universe total: {universe_stats['total']})")
 
-    # Final ordering: by score for presentation
-    picks.sort(key=lambda p: p.score, reverse=True)
+        # 4. Analyse each stock (with sector-rank bonus applied to the score)
+        benchmark_3m = top_sectors[0].benchmark_return_3m
+        sector_bonus_by_name = {
+            s.name: (SECTOR_RANK_BONUS[i] if i < len(SECTOR_RANK_BONUS) else 0.0)
+            for i, s in enumerate(top_sectors)
+        }
+        all_passing: list[StockPick] = []
+        for cfg in eligible_stocks:
+            bonus = sector_bonus_by_name.get(cfg["sector"], 0.0)
+            pick = analyze_stock(cfg, benchmark_3m, sector_bonus=bonus)
+            if pick:
+                all_passing.append(pick)
 
-    # 6. Lazy-fetch descriptions + earnings check for stocks that made the top N
-    new_names = []
-    for p in picks:
-        if not p.desc:
-            p.desc = fetch_fallback_description(p.ticker)
-            new_names.append(p.name)
-        # Earnings guard — flag stocks with earnings in next ~5 trading days
-        p.earnings_soon, p.earnings_date = has_earnings_soon(p.ticker)
-        if p.earnings_soon:
-            log.warning(f"  ⚠️ {p.name} has earnings on {p.earnings_date}")
-    if new_names:
-        log.info(f"Fetched fallback descriptions for: {new_names}")
+        log.info(f"{len(all_passing)} stocks passed all filters")
+
+        # 5. Diversified top-N selection:
+        #    - sort by score desc
+        #    - cap per sector at MAX_STOCKS_PER_SECTOR
+        #    - guarantee at least 1 stock from top-3 sectors if they have any passer
+        all_passing.sort(key=lambda p: p.score, reverse=True)
+
+        per_sector_count: dict[str, int] = {}
+
+        # Pass 1: guarantee coverage of top-3 sectors (highest scorer from each)
+        for sector_score in top_sectors[:3]:
+            best_in_sector = next((p for p in all_passing if p.sector == sector_score.name), None)
+            if best_in_sector and best_in_sector not in picks:
+                picks.append(best_in_sector)
+                per_sector_count[best_in_sector.sector] = 1
+
+        # Pass 2: fill remaining slots by score, respecting the per-sector cap
+        for p in all_passing:
+            if len(picks) >= TOP_N_STOCKS:
+                break
+            if p in picks:
+                continue
+            if per_sector_count.get(p.sector, 0) >= MAX_STOCKS_PER_SECTOR:
+                log.debug(f"  cap-skipped {p.name} ({p.sector}, count={per_sector_count[p.sector]})")
+                continue
+            picks.append(p)
+            per_sector_count[p.sector] = per_sector_count.get(p.sector, 0) + 1
+
+        log.info(f"Selected {len(picks)} picks across sectors: {per_sector_count}")
+
+        # Final ordering: by score for presentation
+        picks.sort(key=lambda p: p.score, reverse=True)
+
+        # 6. Lazy-fetch descriptions + earnings check for stocks that made the top N
+        for p in picks:
+            if not p.desc:
+                p.desc = fetch_fallback_description(p.ticker)
+                new_names.append(p.name)
+            # Earnings guard — flag stocks with earnings in next ~5 trading days
+            p.earnings_soon, p.earnings_date = has_earnings_soon(p.ticker)
+            if p.earnings_soon:
+                log.warning(f"  ⚠️ {p.name} has earnings on {p.earnings_date}")
+        if new_names:
+            log.info(f"Fetched fallback descriptions for: {new_names}")
 
     # 7. Load and evaluate open positions from Google Sheet (exit tracker)
     open_positions = load_positions_from_sheet()
@@ -967,7 +988,20 @@ def build_alert(preview_mode: bool = False) -> tuple[str, str, str, dict]:
 
 
 def main():
-    subject, html, plaintext, meta = build_alert(preview_mode=False)
+    try:
+        subject, html, plaintext, meta = build_alert(preview_mode=False)
+    except Exception as e:
+        log.exception("Alert pipeline crashed")
+        try:
+            send_email(
+                "⚠️ Swing Alert FAILED",
+                f"<p>The morning pipeline crashed before picks were built.</p><pre>{e}</pre>",
+                f"Swing alert pipeline crashed: {e}",
+            )
+        except Exception:
+            log.exception("Also failed to send crash-notification email")
+        sys.exit(1)
+        return
     try:
         send_email(subject, html, plaintext)
     except KeyError as e:
