@@ -1,0 +1,208 @@
+% =====================================================================
+% AYUDA CV TEMPLATE  (pdflatex-compatible, ATS-parsable)
+% ---------------------------------------------------------------------
+% HOW TO USE THIS FILE WHEN RUNNING THE ayuda-cv-rewriter SKILL:
+%   1. Copy this file. Keep the ENTIRE preamble and all \newcommand
+%      definitions byte-for-byte. Do NOT touch anything above
+%      \begin{document}.
+%   2. Replace ONLY the content between \begin{document} and
+%      \end{document}: the name/contact heading, Summary, every
+%      Experience block, Education, and Skills.
+%   3. The blocks below are a worked EXAMPLE (candidate "Chandan B.").
+%      Nothing from this example may survive into a real candidate's CV.
+%      Replace the name, contact line, and every single bullet.
+%   4. Escape LaTeX special characters in all candidate text:
+%      %  -> \%        &  -> \&        $  -> \$
+%      #  -> \#        _  -> \_        ~  -> \textasciitilde{}
+%      Use -- for a numeric range (68%--91%) and write a real hyphen
+%      or "to", never a raw em dash, in bullets.
+%   5. Command cheat-sheet:
+%      \resumeSubheading{Role - Company (context)}{Date -- Date}{One-liner italic summary}{Location}
+%      \resumeItem{One-line bullet.}
+%   6. If a contact field (phone / email / linkedin) is unknown, leave a
+%      clear placeholder like {YOUR-PHONE} so it is obvious to fill in.
+% =====================================================================
+
+%-------------------------
+% Resume in Latex
+% Author : Jake Gutierrez
+% Based off of: https://github.com/sb2nov/resume
+% License : MIT
+%------------------------
+
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\input{glyphtounicode}
+
+
+%----------FONT OPTIONS----------
+% sans-serif
+% \usepackage[sfdefault]{FiraSans}
+% \usepackage[sfdefault]{roboto}
+% \usepackage[sfdefault]{noto-sans}
+% \usepackage[default]{sourcesanspro}
+
+% serif
+% \usepackage{CormorantGaramond}
+% \usepackage{charter}
+
+
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Sections formatting
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+% Ensure that generate pdf is machine readable/ATS parsable
+\pdfgentounicode=1
+
+%-------------------------
+% Custom commands
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubSubheading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \textit{\small#1} & \textit{\small #2} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------------------------
+%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+
+%----------HEADING----------
+\begin{center}    \textbf{\Huge \scshape Vishal Prabhakar} \\ \vspace{1pt}
+    \small +91 97314 28532 $|$ \href{mailto:vishalraviprabhakar@gmail.com}{\underline{vishalraviprabhakar@gmail.com}} $|$
+    \href{https://www.linkedin.com/in/vishal-prabhakar}{\underline{linkedin.com/in/vishal-prabhakar}} $|$
+    \href{https://github.com/Vishal-Rpr}{\underline{github.com/Vishal-Rpr}}
+\end{center}
+%-----------SUMMARY-----------
+\section{Summary}
+\begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{Senior Product Manager with 8 years across B2B platforms, logistics, and trade finance, 5 of them in product. Owns a US freight forwarder's operating system end to end as sole SPM partnering with the CTO. Built a 0-to-1 quotation engine that cut quote TAT from 24 hrs to under 4.5 hrs, lifted conversion from 65\% to 78\%, and added $\sim$\$325K in monthly revenue. Pairs finance depth with an AI-native build workflow; targeting Senior PM roles in B2B SaaS, logistics tech, and fintech.} \\
+     }}
+\end{itemize}
+
+%-----------EXPERIENCE-----------
+\section{Experience}
+  \resumeSubHeadingListStart
+
+    \resumeSubheading
+      {Senior Product Manager - Silq (US B2B freight forwarder)}{Jun 2024 -- Present}
+      {Promoted PM to SPM; cut quote TAT 81\%, +\$325K/mo revenue}{Remote}
+      \resumeItemListStart
+        \resumeItem{Cut quote TAT from $\sim$24 hrs to under 4.5 hrs and lifted quote conversion from 65\% to 78\% by building a 0-to-1 quotation engine (rate masters, lane pricing, dynamic transit times), adding $\sim$\$325K in monthly sales revenue.}
+        \resumeItem{Reduced client credit exposure from \$1.8M to \$1.2M in 4 months by shipping QuickBooks-synced credit limits against live shipment exposure, lifting credit-term compliance to 85\%+.}
+        \resumeItem{Validated through quote-level data that speed of response, not lower pricing, drove win rate, shifting the quoting roadmap from discount levers to TAT and pricing accuracy.}
+        \resumeItem{Designed a webhook plus daily CDC reconciliation layer for invoice and credit data, catching missed events and bringing credit-position drift between systems to zero.}
+        \resumeItem{Automated lowest-rate benchmarking via a third-party rate API on every RFQ, cutting rate chase on uncovered lanes from 6--10 hrs to under 1 hr for Procurement and Account Management.}
+        \resumeItem{Own 6 modules from RFQ to invoicing as sole SPM, leading 5 engineers and 1 designer, mentoring an APM, and aligning Sales, Finance, Ops, and Procurement on one roadmap.}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Product Manager - Zetwerk (B2B manufacturing marketplace)}{Dec 2021 -- Jun 2024}
+      {Promoted APM to PM; led 7-person pod}{Bengaluru}
+      \resumeItemListStart
+        \resumeItem{Shipped a letter-of-credit lifecycle module (approvals, audit logs, MS Dynamics ERP sync) governing $\sim$INR 240 Cr/month across 8 business units, cutting LC approval cycle from $\sim$5 days to 2.}
+        \resumeItem{Delivered procure-to-delivery inventory visibility across OMS and the internal PJM tool for $\sim$INR 60 Cr of on-hand stock, reducing inventory mismatches by $\sim$30\%.}
+        \resumeItem{Drove org-wide Item Master standards (unit rates, HSN codes, OMS masters), the data foundation for the MS Dynamics ERP rollout; won the ZetStar Award for inventory and finance impact.}
+        \resumeItem{Launched an A/R collections module for the apparel business, a supplier recommendation engine, and a denim catalog with chatbot-assisted quoting, reducing apparel DSO by $\sim$12 days.}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Analyst to Assistant Manager - Deloitte Financial Advisory}{Mar 2018 -- Dec 2021}
+      {Built calculation engines for Goldman Sachs, Burberry}{Bengaluru}
+      \resumeItemListStart
+        \resumeItem{Built calculation-engine modules (ACE, LeaseLight) letting Goldman Sachs and Burberry UK scale valuations beyond Excel.}
+        \resumeItem{Built IFRS 16 transition tooling and buy-side models for $\sim$EUR 500--800M Spanish NPL deals; multiple Outstanding Achiever Awards.}
+      \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
+%-----------PROJECTS-----------
+\section{Selected AI Builds}
+  \resumeSubHeadingListStart
+    \resumeProjectHeading
+      {\textbf{PM Co-pilot + logistics-pm plugin} $|$ \emph{Python, Claude API, ChromaDB, MCP}}{\href{https://github.com/Vishal-Rpr}{\underline{github.com/Vishal-Rpr}}}
+      \resumeItemListStart
+        \resumeItem{Built a RAG PM co-pilot (CLI, then a freight-domain Claude plugin) that drafts PRDs and tickets in the user's style with a 5-dimension eval gate, cutting first-draft PRD time from $\sim$6 hrs to $\sim$1.5 hrs.}
+      \resumeItemListEnd
+  \resumeSubHeadingListEnd
+
+%-----------EDUCATION-----------
+\section{Education}
+  \resumeSubHeadingListStart
+    \resumeProjectHeading
+      {\textbf{BSc Economics and Management} - King's College London, UK}{Oct 2014 -- Jun 2017}
+  \resumeSubHeadingListEnd
+%-----------SKILLS-----------
+\section{Skills}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{Product \& Domain}{: 0-to-1 B2B platforms, pricing and quoting, freight forwarding, OMS, trade credit, FinOps, experimentation} \\
+     \textbf{Tools}{: SQL, Metabase, Mixpanel, Datadog, Linear, Jira, Figma, Cursor, Claude, MCP, RAG} \\
+    }}
+ \end{itemize}
+
+\end{document}

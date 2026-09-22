@@ -44,6 +44,9 @@
 ## Phase 4: Accelerate (Week 8)
 - [ ] Week 8 PUBLIC: 5 outreach messages sent + 10+ applications submitted
 
+## Living CVs (this chat)
+- [x] 22 Sep 2026: Locked two LaTeX CVs as source of truth — SPM + AI PM under `Knowledge/CV/` (task: `Tasks/cv-latex-living-versions.md`)
+
 ## Swing trading system (Vijay Thakkar method, 6-week build)
 Handoff docs: `Knowledge/Context/Swing Trading Handoff Brief.md` (read first), `Knowledge/Context/Swing Trading System.md`, `Knowledge/Swing Trading Strategy.md` (living strategy), `Knowledge/Swing Trading Roadmap.md` (6-week plan).
 Linked task: `Tasks/swing-trading-alert.md`. Linked goal: Personal finance in `GOALS.md`.
