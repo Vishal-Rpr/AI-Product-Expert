@@ -1,62 +1,80 @@
-Swing Trading Alert — Saturday, September 19, 2026
+Swing Trading Alert — Tuesday, September 22, 2026
 ==================================================
 
-Data current as of 18 Sep 2026.
+MARKET REGIME: STAND_ASIDE
+  STAND_ASIDE · Nifty 23,326 (below 50-SMA, below 200-SMA) · VIX 11.3
+  - Nifty (23,326) below 200-SMA (24,466) — structural downtrend
+  Risk per trade overridden to 0.0%
+
+Data current as of 22 Sep 2026.
 
 TOP SECTORS (3M RS vs Nifty)
 --------------------
-  Nifty Pharma: +9.6% (RS +12.4%)
-  Nifty Infra: +1.0% (RS +3.7%)
+  Nifty Pharma: +7.8% (RS +9.9%)
+  Nifty Smallcap 250: +4.7% (RS +6.8%)
+  Nifty Realty: +4.7% (RS +6.8%)
+  Nifty IT: +3.8% (RS +5.9%)
+  Nifty Auto: +3.1% (RS +5.2%)
 
-BLOCK A — ENTRY CANDIDATES (Top 6)
+BLOCK A - WATCHLIST ONLY (DO NOT ENTER) - 7 names
 --------------------
-1. Welspun Corp Ltd. (WELCORP.NS) — Nifty Infra
-   Welspun Corp Limited, together with its subsidiaries, manufactures, trades in, distributes, and sells steel pipes, tubes, bars, coils, and plates in India, the United States, an....
-   Price: ₹2660.1 | 52W high: ₹2784.8 (10 Sep 2026)
-   20 SMA: ₹2521.78 | Weekly HullMA30: ₹2310.36 | 3M return: +87.8%
-   Entry: ₹2798.72 | SL: ₹2728.75 | TP1: ₹2966.64 | TP2: ₹3022.62
-   Suggested qty: 142 | Position value: ₹397,418 | Risk: ₹9,936
-   Action: Too far from trigger (5.2% away); revisit if it consolidates higher
+Cash is the trade. Do not place buy-stops. Qty is zero on purpose.
 
-2. SML Mahindra Ltd. (SMLMAH.NS) — Nifty Infra
-   SML Mahindra Limited manufactures and sells commercial vehicles and related parts in India and internationally.
-   Price: ₹6292.5 | 52W high: ₹6654.0 (10 Sep 2026)
-   20 SMA: ₹5864.5 | Weekly HullMA30: ₹5627.95 | 3M return: +53.8%
-   Entry: ₹6687.27 | SL: ₹6520.09 | TP1: ₹7088.51 | TP2: ₹7222.25
-   Suggested qty: 59 | Position value: ₹394,549 | Risk: ₹9,864
-   Action: Too far from trigger (6.3% away); revisit if it consolidates higher
-
-3. Laurus Labs (LAURUSLABS.NS) — Nifty Pharma
+1. Laurus Labs (LAURUSLABS.NS) — Nifty Pharma
    API + CDMO player; ARV franchise, biologics and formulations expansion.
-   Price: ₹1954.0 | 52W high: ₹1982.0 (18 Sep 2026)
-   20 SMA: ₹1900.16 | Weekly HullMA30: ₹1941.6 | 3M return: +36.1%
-   Entry: ₹1991.91 | SL: ₹1942.11 | TP1: ₹2111.42 | TP2: ₹2151.26
-   Suggested qty: 200 | Position value: ₹398,382 | Risk: ₹9,960
-   Action: Place buy-stop at ₹1991.91 (trigger 1.9% away)
+   Price: ₹2008.0 | 52W high: ₹2032.8 (22 Sep 2026)
+   20 SMA: ₹1917.81 | Weekly HullMA30: ₹1982.46 | 3M return: +38.1%
+   Entry: ₹2042.96 | SL: ₹1991.89 | TP1: ₹2165.54 | TP2: ₹2206.4
+   Suggested qty: n/a (STAND_ASIDE - no size)
+   Action: DO NOT ENTER. Setup if regime flips: Place buy-stop at ₹2042.96 (trigger 1.7% away)
 
-4. Jyoti CNC Automation Ltd. (JYOTICNC.NS) — Nifty Infra
-   Jyoti CNC Automation Limited engages in the manufacture and sale of metal cutting computer numerical control machines in India, rest of Asia, Europe, the Middle East, North Amer....
-   Price: ₹1049.7 | 52W high: ₹1065.0 (18 Sep 2026)
-   20 SMA: ₹1001.15 | Weekly HullMA30: ₹942.58 | 3M return: +41.9%
-   Entry: ₹1070.32 | SL: ₹1043.56 | TP1: ₹1134.54 | TP2: ₹1155.95
-   Suggested qty: 373 | Position value: ₹399,229 | Risk: ₹9,981
-   Action: Place buy-stop at ₹1070.32 (trigger 2.0% away)
+2. SRI LOTUS DEVELOPERS AND REALTY Ltd. (LOTUSDEV.NS) — Nifty Realty
+   Sri Lotus Developers and Realty Limited develops residential and commercial premises in Mumbai.
+   Price: ₹216.0 | 52W high: ₹220.4 (16 Sep 2026)
+   20 SMA: ₹197.63 | Weekly HullMA30: ₹198.72 | 3M return: +48.2%
+   Entry: ₹221.5 | SL: ₹215.96 | TP1: ₹234.79 | TP2: ₹239.22
+   Suggested qty: n/a (STAND_ASIDE - no size)
+   Action: DO NOT ENTER. Setup if regime flips: Watchlist — trigger ₹221.50 is 2.5% away; alert when it closes above ₹221.50
 
-5. Gland Pharma Ltd. (GLAND.NS) — Nifty Pharma
-   Gland Pharma Limited engages in manufacturing and sale of injectable formulations in India, the United States, Europe, Canada, Australia, New Zealand, and internationally.
-   Price: ₹2961.9 | 52W high: ₹3042.0 (07 Sep 2026)
-   20 SMA: ₹2905.18 | Weekly HullMA30: ₹2945.9 | 3M return: +28.9%
-   Entry: ₹3057.21 | SL: ₹2980.78 | TP1: ₹3240.64 | TP2: ₹3301.79
-   Suggested qty: 130 | Position value: ₹397,437 | Risk: ₹9,936
-   Action: Watchlist — trigger ₹3057.21 is 3.2% away; alert when it closes above ₹3057.21
+3. Akums Drugs and Pharmaceuticals Ltd. (AKUMS.NS) — Nifty Pharma
+   Akums Drugs and Pharmaceuticals Limited manufactures and sells pharmaceutical products and active pharmaceutical ingredients India and internationally.
+   Price: ₹817.4 | 52W high: ₹834.7 (22 Sep 2026)
+   20 SMA: ₹767.87 | Weekly HullMA30: ₹791.96 | 3M return: +33.2%
+   Entry: ₹838.87 | SL: ₹817.9 | TP1: ₹889.2 | TP2: ₹905.98
+   Suggested qty: n/a (STAND_ASIDE - no size)
+   Action: DO NOT ENTER. Setup if regime flips: Watchlist — trigger ₹838.87 is 2.6% away; alert when it closes above ₹838.87
 
-6. Sai Life Sciences Ltd. (SAILIFE.NS) — Nifty Pharma
+4. Sai Life Sciences Ltd. (SAILIFE.NS) — Nifty Pharma
    Sai Life Sciences Limited operates as a contract research, development, and manufacturing organization (CRDMO) in India and internationally.
-   Price: ₹1545.7 | 52W high: ₹1697.0 (09 Sep 2026)
-   20 SMA: ₹1539.82 | Weekly HullMA30: ₹1512.9 | 3M return: +28.6%
+   Price: ₹1605.0 | 52W high: ₹1697.0 (09 Sep 2026)
+   20 SMA: ₹1555.43 | Weekly HullMA30: ₹1554.28 | 3M return: +33.2%
    Entry: ₹1705.48 | SL: ₹1662.84 | TP1: ₹1807.81 | TP2: ₹1841.92
-   Suggested qty: 234 | Position value: ₹399,082 | Risk: ₹9,978
-   Action: Too far from trigger (10.3% away); revisit if it consolidates higher
+   Suggested qty: n/a (STAND_ASIDE - no size)
+   Action: DO NOT ENTER. Setup if regime flips: Too far from trigger (6.3% away); revisit if it consolidates higher
+
+5. Varroc Engineering Ltd. (VARROC.NS) — Nifty Auto
+   Varroc Engineering Limited provides aftermarket automotive components and solutions in India, the Asia Pacific, Europe, North America, and internationally.
+   Price: ₹882.0 | 52W high: ₹912.2 (22 Sep 2026)
+   20 SMA: ₹845.38 | Weekly HullMA30: ₹861.07 | 3M return: +43.0%
+   Entry: ₹916.76 | SL: ₹893.84 | TP1: ₹971.77 | TP2: ₹990.1
+   Suggested qty: n/a (STAND_ASIDE - no size)
+   Action: DO NOT ENTER. Setup if regime flips: Watchlist — trigger ₹916.76 is 3.9% away; alert when it closes above ₹916.76
+
+6. ASK Automotive Ltd. (ASKAUTOLTD.NS) — Nifty Auto
+   ASK Automotive Limited manufactures and sells auto components for the automobile industry in India.
+   Price: ₹662.75 | 52W high: ₹687.7 (06 Aug 2026)
+   20 SMA: ₹625.64 | Weekly HullMA30: ₹642.12 | 3M return: +43.4%
+   Entry: ₹678.17 | SL: ₹661.22 | TP1: ₹718.86 | TP2: ₹732.42
+   Suggested qty: n/a (STAND_ASIDE - no size)
+   Action: DO NOT ENTER. Setup if regime flips: Watchlist — trigger ₹678.17 is 2.3% away; alert when it closes above ₹678.17
+
+7. Lumax Auto Technologies Ltd. (LUMAXTECH.NS) — Nifty Auto
+   Lumax Auto Technologies Limited, together with its subsidiaries, manufactures and sells automotive components in India.
+   Price: ₹2104.4 | 52W high: ₹2148.7 (01 Sep 2026)
+   20 SMA: ₹1990.42 | Weekly HullMA30: ₹1909.87 | 3M return: +39.9%
+   Entry: ₹2159.44 | SL: ₹2105.45 | TP1: ₹2289.01 | TP2: ₹2332.2
+   Suggested qty: n/a (STAND_ASIDE - no size)
+   Action: DO NOT ENTER. Setup if regime flips: Watchlist — trigger ₹2159.44 is 2.6% away; alert when it closes above ₹2159.44
 
 BLOCK B — EXIT TRACKER (Open Positions)
 --------------------

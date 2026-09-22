@@ -11,9 +11,9 @@ Every weekday morning, an email lands with:
 
 1. **Market regime banner** (TRADE / CAUTION / STAND_ASIDE) — position size auto-adjusts
 2. **Top-sector ranking** by 3-month relative strength vs Nifty 50
-3. **Block A — Entry Candidates** (up to 8 stocks) in a scannable table with entry / SL / TP1 / TP2 / suggested qty / colour-coded action pill (BUY NOW · BUY-STOP · WATCH · WAIT)
+3. **Block A** on TRADE/CAUTION: **Entry Candidates** (up to 8 stocks) with entry / SL / TP1 / TP2 / suggested qty / colour-coded action pill (BUY NOW · BUY-STOP · WATCH · WAIT). On STAND_ASIDE: **Watchlist only (do not enter)** with SKIP pills, qty n/a, and a red "Cash is the trade" notice. Levels stay visible for a later 50-SMA reclaim.
 4. **Block B — Exit Tracker** for stocks the user already holds (from a Google Sheet), with critical/warn/info actions
-5. **AI narrative** (Gemini) — 3-4 sentence "why these sectors, why these picks today"
+5. **AI narrative** (Gemini) - 3-4 sentences. On TRADE/CAUTION: why these sectors and picks. On STAND_ASIDE: no new entries, cash is the position, names to revisit if the regime flips.
 
 Every pick is auto-logged to a **Predictions Log** Google Sheet for outcome tracking (Week 2 builds the nightly tracker that populates the "did it trigger?" columns).
 

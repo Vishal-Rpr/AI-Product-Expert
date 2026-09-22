@@ -108,18 +108,21 @@ def log_predictions(
 
     rows = []
     for p in picks:
-        # Derive action pill label (same logic as email)
-        lower = p.action_today.lower()
-        if lower.startswith("broke out") or "buy on any dip" in lower:
-            pill = "BUY NOW"
-        elif lower.startswith("place buy-stop"):
-            pill = "BUY-STOP"
-        elif lower.startswith("watchlist"):
-            pill = "WATCH"
-        elif lower.startswith("too far") or "already extended" in lower:
-            pill = "WAIT"
+        # Derive action pill label (same logic as email). STAND_ASIDE is never a buy.
+        if regime == "STAND_ASIDE":
+            pill = "SKIP"
         else:
-            pill = "REVIEW"
+            lower = p.action_today.lower()
+            if lower.startswith("broke out") or "buy on any dip" in lower:
+                pill = "BUY NOW"
+            elif lower.startswith("place buy-stop"):
+                pill = "BUY-STOP"
+            elif lower.startswith("watchlist"):
+                pill = "WATCH"
+            elif lower.startswith("too far") or "already extended" in lower:
+                pill = "WAIT"
+            else:
+                pill = "REVIEW"
 
         rows.append([
             date_str,
@@ -139,7 +142,7 @@ def log_predictions(
             "", "", "", "", "", "",
             "", "", "", "", "",
             regime,
-            "",
+            "watchlist only; do not enter" if regime == "STAND_ASIDE" else "",
         ])
 
     if dry_run:

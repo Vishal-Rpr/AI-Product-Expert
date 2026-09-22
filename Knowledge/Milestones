@@ -46,6 +46,7 @@
 
 ## Living CVs (this chat)
 - [x] 22 Sep 2026: Locked two LaTeX CVs as source of truth — SPM + AI PM under `Knowledge/CV/` (task: `Tasks/cv-latex-living-versions.md`)
+- [x] 22 Sep 2026: Silq location corrected from Remote to Bengaluru on both CVs; PDFs recompiled
 
 ## Swing trading system (Vijay Thakkar method, 6-week build)
 Handoff docs: `Knowledge/Context/Swing Trading Handoff Brief.md` (read first), `Knowledge/Context/Swing Trading System.md`, `Knowledge/Swing Trading Strategy.md` (living strategy), `Knowledge/Swing Trading Roadmap.md` (6-week plan).
@@ -54,6 +55,8 @@ Linked task: `Tasks/swing-trading-alert.md`. Linked goal: Personal finance in `G
 - [x] 19 Sep 2026: v1.1-1.3 — universe expanded to ~666 stocks (curated 40 + NSE auto-fetch), fixed sector ETF tickers, added sector-rank bonus + max-3-per-sector diversification, redesigned email as tabular (Zerodha Aftermarket style)
 - [x] 19 Sep 2026: v1.4 — data freshness guard + fixed NaN-Close bug (Ipca 52W high mismatch caught by user; Kite showed Rs 2,039 vs our Rs 2,014)
 - [x] 20 Sep 2026: v2.0 Phase 1 Week 1 — Predictions Log auto-append (`predictions.py`), market regime filter TRADE/CAUTION/STAND_ASIDE (`regime.py`), earnings guard (`earnings_guard.py`); 6-week roadmap + trust ladder documented
+- [x] 22 Sep 2026: First live scan in-session (13:36 IST). Regime **STAND_ASIDE** (Nifty 23,346 vs 50-SMA 24,046 vs 200-SMA 24,466). Decision: no new entries. Analysis canvas: `canvases/swing-trading-22-sep-decision.canvas.tsx`
+- [x] 22 Sep 2026: STAND_ASIDE email copy changed to watchlist-only (SKIP pills, qty n/a, "Cash is the trade", subject `watchlist N, no new entries`)
 - [ ] 22 Sep 2026: First live automated 8 AM IST run (pending user push + Google Sheet + service account setup)
 - [ ] Week 2 (29 Sep – 3 Oct): Nightly outcome tracker, fundamental overlay (screener.in), news catalyst per pick
 - [ ] Week 3 (6-10 Oct) **Gate 1**: Weekly Eval Report, scoring retune, advance to Trust Level L1 if hit rate > 40% on BUY-STOPs

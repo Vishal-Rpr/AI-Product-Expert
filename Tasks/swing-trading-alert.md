@@ -20,7 +20,7 @@ Send myself an automated daily 8:00 AM IST email that lists 8 Indian small/mid-c
 - [ ] `swing_alert/universe_fetcher.py` auto-pulls NSE Smallcap 250 + Midcap 150 + Microcap 250 constituents; caches for 24h.
 - [ ] `swing_alert/positions.py` reads open positions from a Google Sheet and evaluates exit actions.
 - [ ] `.github/workflows/swing-alert.yml` scheduled for 02:30 UTC Mon–Fri; can also be triggered manually via `workflow_dispatch`.
-- [ ] Email includes: (a) AI summary, (b) top-sector table, (c) **Block A — 8 entry candidates**, (d) **Block B — exit tracker for open positions** (or "no open positions" when empty), (e) footer showing scan-universe stats.
+- [ ] Email includes: (a) AI summary, (b) top-sector table, (c) **Block A** as entry candidates on TRADE/CAUTION or **watchlist only (do not enter)** on STAND_ASIDE, (d) **Block B — exit tracker for open positions** (or "no open positions" when empty), (e) footer showing scan-universe stats.
 - [ ] Each entry card shows: name, 1-line description, 52W high + date, 20 SMA, weekly Hull MA 30, entry, TP1, TP2, stop-loss, R:R, action for today.
 - [ ] Each exit card shows: buy price/qty/date, current price, unrealized P&L, SL, TP1/TP2, 20-SMA, colour-coded action (critical/warn/info).
 - [ ] All numbers sourced from yfinance (real NSE data) / NSE India (constituents). No fabricated numbers.

@@ -115,6 +115,8 @@ Product manager at a freight forwarding company, upskilling into AI Product Mana
 
 3. **Ipca 52W high reported ₹2,014 vs Kite's ₹2,039** (Sep 19, caught by user): `fetch_history` was dropping rows with NaN Close, discarding today's fresh intraday high. Fix: keep rows with valid High even if Close is NaN; downstream calcs use `close.dropna()` explicitly. Also added `check_data_freshness()` guard.
 
+4. **STAND_ASIDE email looked like a shopping list** (Sep 22, caught by user): Block A still said "Entry Candidates" with BUY-STOP pills even when regime forbade entries. Fix: on STAND_ASIDE, heading is "Watchlist only (do not enter)", pills are SKIP, qty is n/a, Gemini prompt forbids buy language, subject says `(watchlist N, no new entries)`.
+
 If you see these classes of issue recurring, treat as a regression, not a new bug.
 
 ---

@@ -2,7 +2,7 @@
 
 Living document. This is the source of truth for how the daily swing-trading alert works. Refine over time as we backtest and learn.
 
-Last updated: 2026-09-19
+Last updated: 2026-09-22
 
 ---
 
@@ -154,7 +154,7 @@ Every recommendation shows the current status so I know exactly what to do (or n
 
 The email has **two blocks**:
 
-**Block A — Entry Candidates** (top 8 new setups, per Section 4-6 above).
+**Block A** on TRADE/CAUTION days: **Entry Candidates** (top 8 new setups, per Section 4-6 above). On STAND_ASIDE days: **Watchlist only (do not enter)** - names that passed filters, levels kept for a later 50-SMA reclaim, pills forced to SKIP, qty shown as n/a. Cash is the trade.
 
 **Block B — Exit Tracker** for stocks I already hold, sourced from a Google Sheet titled *"Swing Trading Positions"*.
 
@@ -204,7 +204,8 @@ Add dated entries here as we tune the strategy.
 - **2026-09-19** — v1.2: TP1 moved from +4% to +6% (per user preference for wider targets). Added 2% capital-risk position sizing; each entry card now shows suggested quantity, position value, and rupee risk.
 - **2026-09-19** — v1.3: Fixed sector ETF tickers (Yahoo `^CNX*` symbols don't return price history via yfinance; now using tracked ETFs like `AUTOBEES.NS`, `PSUBNKBEES.NS`, `MOREALTY.NS`, `MODEFENCE.NS`). Added sector-rank bonus to score + max-3-per-sector cap + guaranteed top-3-sector coverage — fixes the bug where Auto momentum dominated over Pharma (higher-ranked sector). Redesigned email as compact scannable table (Zerodha Aftermarket / Axis Morning Note style) instead of stacked cards. Fixed industry→sector map so Realty/Media stocks tag correctly.
 - **2026-09-19** — v1.4 (bug fix caught by user): Kite showed Ipca 52W high as ₹2,039 while our tool reported ₹2,014. Root cause — yfinance publishes the current day's High/Low/Volume before the settled Close, and we were dropping rows with NaN Close, discarding the fresh intraday high. Fix: `fetch_history` now keeps rows with valid High even if Close is NaN; downstream calcs use only fully-settled closes. Also added a `check_data_freshness` guard that compares the benchmark's latest bar to the expected most-recent Indian trading day; prints a prominent warning banner in the email if stale.
-- **2026-09-20** — v2.0 Phase 1 Week 1: **Learning loop foundation shipped.** (1) New `predictions.py` — every morning's picks auto-append to a Google Sheet with 25-column schema for outcome tracking. Nightly outcome tracker built in Week 2. (2) New `regime.py` — evaluates market regime (TRADE / CAUTION / STAND_ASIDE) based on Nifty position vs its own 50/200 SMA + India VIX. In CAUTION regime, position size auto-reduced from 2% → 1% risk. In STAND_ASIDE, no new entries suggested. (3) New `earnings_guard.py` — flags picks with earnings within next ~5 trading days as "⚠️ EARNINGS RISK". (4) Email subject line now prefixed with regime tag when non-TRADE.
+- **2026-09-20** - v2.0 Phase 1 Week 1: **Learning loop foundation shipped.** (1) New `predictions.py` - every morning's picks auto-append to a Google Sheet with 25-column schema for outcome tracking. Nightly outcome tracker built in Week 2. (2) New `regime.py` - evaluates market regime (TRADE / CAUTION / STAND_ASIDE) based on Nifty position vs its own 50/200 SMA + India VIX. In CAUTION regime, position size auto-reduced from 2% to 1% risk. In STAND_ASIDE, no new entries suggested. (3) New `earnings_guard.py` - flags picks with earnings within next ~5 trading days as "⚠️ EARNINGS RISK". (4) Email subject line now prefixed with regime tag when non-TRADE.
+- **2026-09-22** - STAND_ASIDE email is a watchlist, not a shopping list. Block A heading becomes "Watchlist only (do not enter)", red "Cash is the trade" notice, action pills forced to SKIP, qty shown as n/a, Gemini prompt forbids buy language, subject reads `(watchlist N, no new entries)`, Predictions Log pill is SKIP. Levels stay visible so you can act if Nifty reclaims the 50-SMA. Ranking still unbacktested until Gate 1 (10 Oct).
 
 ---
 

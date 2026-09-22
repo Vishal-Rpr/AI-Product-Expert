@@ -457,7 +457,11 @@ def analyze_stock(stock_cfg: dict, benchmark_return_3m: float, sector_bonus: flo
 # AI narrative
 # ---------------------------------------------------------------------------
 
-def generate_narrative(sectors: list[SectorScore], picks: list[StockPick]) -> Optional[str]:
+def generate_narrative(
+    sectors: list[SectorScore],
+    picks: list[StockPick],
+    regime: Optional[Regime] = None,
+) -> Optional[str]:
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key or not picks:
         return None
@@ -476,7 +480,27 @@ def generate_narrative(sectors: list[SectorScore], picks: list[StockPick]) -> Op
         for p in picks
     )
 
-    prompt = f"""You are a swing-trading analyst writing a brief morning note for an Indian equities investor following Vijay Thakkar's top-down strategy.
+    stand_aside = regime is not None and regime.label == "STAND_ASIDE"
+    if stand_aside:
+        prompt = f"""You are a swing-trading analyst writing a brief morning note for an Indian equities investor following Vijay Thakkar's top-down strategy.
+
+MARKET REGIME IS STAND_ASIDE. Nifty is below its 50-day and/or 200-day SMA. Fresh swing entries are forbidden today. Cash is the position.
+
+Leading sectors on 3M relative strength vs Nifty 50 (context only, not a buy list):
+{sector_lines}
+
+Watchlist names that passed filters (NOT trades, NOT buy-stops):
+{stock_lines}
+
+Write 3-4 crisp sentences covering:
+1. State clearly that regime is STAND_ASIDE and no new entries today
+2. Name the leading sector(s) as context for a later reclaim
+3. Mention 1-2 watchlist names as names to revisit if Nifty reclaims its 50-SMA, not as orders
+4. Do not use the words buy, buy-stop, enter, or pick as an instruction
+
+Be direct. No greetings, no disclaimers, no bullet points."""
+    else:
+        prompt = f"""You are a swing-trading analyst writing a brief morning note for an Indian equities investor following Vijay Thakkar's top-down strategy.
 
 Today's winning sectors (ranked by 3M relative strength vs Nifty 50):
 {sector_lines}
@@ -512,8 +536,10 @@ URGENCY_STYLES = {
 }
 
 
-def _action_pill(action_text: str) -> tuple[str, str, str]:
+def _action_pill(action_text: str, stand_aside: bool = False) -> tuple[str, str, str]:
     """Classify entry action into (label, bg, fg) for a compact pill."""
+    if stand_aside:
+        return ("SKIP", "#721c24", "#fff")
     lower = action_text.lower()
     if lower.startswith("broke out") or "buy on any dip" in lower:
         return ("BUY NOW", "#0d5f3f", "#fff")
@@ -526,17 +552,42 @@ def _action_pill(action_text: str) -> tuple[str, str, str]:
     return ("REVIEW", "#555", "#fff")
 
 
-def _entry_block_html(picks: list) -> str:
+def _entry_block_html(picks: list, stand_aside: bool = False) -> str:
     """
-    Block A: entry candidates rendered as a compact scannable table
-    (Zerodha Aftermarket / Axis Morning Note style) with a details strip
-    below listing the 'why' per stock.
+    Block A: TRADE/CAUTION = entry candidates.
+    STAND_ASIDE = watchlist only. Levels kept for a later reclaim; pills are SKIP.
     """
+    if stand_aside:
+        heading = (
+            f'<h2 style="font-size: 15px; color: #721c24; border-bottom: 2px solid #b23a3a; '
+            f'padding-bottom: 6px; margin-top: 28px;">Block A &middot; Watchlist only '
+            f'(do not enter) &middot; {len(picks)} names</h2>'
+        )
+        notice = (
+            '<div style="padding: 12px 14px; margin-bottom: 12px; background: #f8d7da; '
+            'border-left: 4px solid #b23a3a; border-radius: 4px; font-size: 13px; color: #721c24;">'
+            '<b>Cash is the trade.</b> Nifty is below its 50-day and/or 200-day SMA. '
+            'Do not place BUY-STOPs. Names below passed filters so you can revisit them '
+            'if the index reclaims the 50-SMA. Qty is zero on purpose.</div>'
+        )
+        head_bg, name_color, entry_color = "#721c24", "#721c24", "#555"
+        details_title = "Levels if regime flips (not orders)"
+    else:
+        heading = (
+            f'<h2 style="font-size: 15px; color: #0d5f3f; border-bottom: 2px solid #148055; '
+            f'padding-bottom: 6px; margin-top: 28px;">Block A &middot; Entry Candidates '
+            f'(Top {len(picks)})</h2>'
+        )
+        notice = ""
+        head_bg, name_color, entry_color = "#0d5f3f", "#0d5f3f", "#148055"
+        details_title = "Why these stocks"
+
     html = [
-        f'<h2 style="font-size: 15px; color: #0d5f3f; border-bottom: 2px solid #148055; padding-bottom: 6px; margin-top: 28px;">Block A &middot; Entry Candidates (Top {len(picks)})</h2>',
+        heading,
+        notice,
         '<div style="overflow-x: auto;">',
         '<table style="width: 100%; border-collapse: collapse; font-size: 12px; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.04); border-radius: 6px; overflow: hidden;">',
-        '<thead><tr style="background: #0d5f3f; color: #fff; text-align: left;">'
+        f'<thead><tr style="background: {head_bg}; color: #fff; text-align: left;">'
         '<th style="padding: 8px 6px;">#</th>'
         '<th style="padding: 8px 6px;">Stock</th>'
         '<th style="padding: 8px 6px;">Sector</th>'
@@ -552,39 +603,58 @@ def _entry_block_html(picks: list) -> str:
     ]
 
     for i, p in enumerate(picks, 1):
-        pill_label, pill_bg, pill_fg = _action_pill(p.action_today)
+        pill_label, pill_bg, pill_fg = _action_pill(p.action_today, stand_aside=stand_aside)
         distance_from_high = (p.week52_high - p.current_price) / p.week52_high
         row_bg = "#fafafa" if i % 2 == 0 else "#fff"
         earnings_tag = ""
         if p.earnings_soon:
-            earnings_tag = f'<br><span style="background: #ffc107; color: #856404; padding: 2px 6px; border-radius: 3px; font-size: 9px; font-weight: 700;">⚠️ EARNINGS {p.earnings_date}</span>'
+            earnings_tag = (
+                f'<br><span style="background: #ffc107; color: #856404; padding: 2px 6px; '
+                f'border-radius: 3px; font-size: 9px; font-weight: 700;">⚠️ EARNINGS {p.earnings_date}</span>'
+            )
+        if stand_aside:
+            qty_html = (
+                '<td style="padding: 8px 6px; text-align: right; color: #999;">n/a'
+                '<br><span style="font-size: 10px;">no size</span></td>'
+            )
+        else:
+            qty_html = (
+                f'<td style="padding: 8px 6px; text-align: right; font-weight: 600;">{p.suggested_qty:,}'
+                f'<br><span style="color: #999; font-size: 10px;">₹{p.position_value_inr/1000:,.0f}k</span></td>'
+            )
         html.append(
             f'<tr style="background: {row_bg}; border-bottom: 1px solid #eee;">'
             f'<td style="padding: 8px 6px; color: #888;">{i}</td>'
-            f'<td style="padding: 8px 6px;"><b style="color: #0d5f3f;">{p.name}</b><br><span style="color: #999; font-size: 10px;">{p.ticker}</span>{earnings_tag}</td>'
+            f'<td style="padding: 8px 6px;"><b style="color: {name_color};">{p.name}</b><br><span style="color: #999; font-size: 10px;">{p.ticker}</span>{earnings_tag}</td>'
             f'<td style="padding: 8px 6px; color: #555; font-size: 11px;">{p.sector.replace("Nifty ", "")}</td>'
             f'<td style="padding: 8px 6px; text-align: right; font-weight: 600;">₹{p.current_price:,.0f}</td>'
             f'<td style="padding: 8px 6px; text-align: right;">₹{p.week52_high:,.0f}<br><span style="color: #b23a3a; font-size: 10px;">-{distance_from_high*100:.1f}%</span></td>'
             f'<td style="padding: 8px 6px; text-align: right;">₹{p.sma_20:,.0f}</td>'
-            f'<td style="padding: 8px 6px; text-align: right; font-weight: 700; color: #148055;">₹{p.entry:,.0f}</td>'
+            f'<td style="padding: 8px 6px; text-align: right; font-weight: 700; color: {entry_color};">₹{p.entry:,.0f}</td>'
             f'<td style="padding: 8px 6px; text-align: right; color: #b23a3a;">₹{p.stop_loss:,.0f}</td>'
             f'<td style="padding: 8px 6px; text-align: right; color: #0d5f3f;">₹{p.target_1:,.0f}<br><span style="color: #148055; font-size: 10px;">₹{p.target_2:,.0f}</span></td>'
-            f'<td style="padding: 8px 6px; text-align: right; font-weight: 600;">{p.suggested_qty:,}<br><span style="color: #999; font-size: 10px;">₹{p.position_value_inr/1000:,.0f}k</span></td>'
+            f'{qty_html}'
             f'<td style="padding: 8px 6px;"><span style="background: {pill_bg}; color: {pill_fg}; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; letter-spacing: 0.3px; white-space: nowrap;">{pill_label}</span></td>'
             f'</tr>'
         )
     html.append('</tbody></table></div>')
 
-    # Details strip below the table
     html.append('<div style="margin-top: 14px; padding: 12px 14px; background: #fff; border-radius: 6px; border: 1px solid #e0e0e0;">')
-    html.append('<div style="font-size: 11px; font-weight: 700; color: #0d5f3f; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Why these stocks</div>')
+    html.append(
+        f'<div style="font-size: 11px; font-weight: 700; color: {name_color}; text-transform: uppercase; '
+        f'letter-spacing: 0.5px; margin-bottom: 8px;">{details_title}</div>'
+    )
     for i, p in enumerate(picks, 1):
+        display_action = (
+            f"DO NOT ENTER. Setup if regime flips: {p.action_today}"
+            if stand_aside else p.action_today
+        )
         html.append(
             f'<div style="font-size: 12px; color: #333; line-height: 1.6; margin-bottom: 6px;">'
-            f'<b style="color: #0d5f3f;">{i}. {p.name}</b> '
+            f'<b style="color: {name_color};">{i}. {p.name}</b> '
             f'<span style="color: #888;">&middot; 3M {p.return_3m*100:+.1f}% &middot; at {p.proximity_to_high_pct*100:.0f}% of 52W high &middot; wkly HullMA {p.hull_ma_30_weekly:,.0f}</span><br>'
             f'<span style="color: #555;">{p.desc}</span><br>'
-            f'<span style="color: #7a5c00; font-size: 11px;">↳ {p.action_today}</span>'
+            f'<span style="color: #7a5c00; font-size: 11px;">↳ {display_action}</span>'
             f'</div>'
         )
     html.append('</div>')
@@ -726,9 +796,10 @@ def build_html(
             parts.append(f'<tr style="border-bottom: 1px solid #e0e0e0;"><td style="padding: 8px;">{s.name}</td><td style="padding: 8px; text-align: right; color: #0d5f3f; font-weight: 600;">{s.return_3m*100:+.1f}%</td><td style="padding: 8px; text-align: right; color: #0d5f3f; font-weight: 600;">{s.rs*100:+.1f}%</td></tr>')
         parts.append("</tbody></table>")
 
-    # Stocks — Block A: Entry candidates
+    # Stocks — Block A: entry candidates, or watchlist-only on STAND_ASIDE
+    stand_aside = regime is not None and regime.label == "STAND_ASIDE"
     if picks:
-        parts.append(_entry_block_html(picks))
+        parts.append(_entry_block_html(picks, stand_aside=stand_aside))
     else:
         parts.append('<p style="color: #666; font-size: 14px;">No stocks passed all filters today. Market may be in risk-off mode — stay in cash.</p>')
 
@@ -785,17 +856,36 @@ def build_plaintext(
             lines.append(f"  {s.name}: {s.return_3m*100:+.1f}% (RS {s.rs*100:+.1f}%)")
         lines.append("")
     if picks:
-        lines += [f"BLOCK A — ENTRY CANDIDATES (Top {len(picks)})", "-" * 20]
+        stand_aside = regime is not None and regime.label == "STAND_ASIDE"
+        if stand_aside:
+            lines += [
+                f"BLOCK A - WATCHLIST ONLY (DO NOT ENTER) - {len(picks)} names",
+                "-" * 20,
+                "Cash is the trade. Do not place buy-stops. Qty is zero on purpose.",
+                "",
+            ]
+        else:
+            lines += [f"BLOCK A — ENTRY CANDIDATES (Top {len(picks)})", "-" * 20]
         for i, p in enumerate(picks, 1):
             earnings_line = f"   ⚠️ EARNINGS RISK: {p.earnings_date} (within 5 trading days)" if p.earnings_soon else None
+            qty_line = (
+                "   Suggested qty: n/a (STAND_ASIDE - no size)"
+                if stand_aside
+                else f"   Suggested qty: {p.suggested_qty} | Position value: ₹{p.position_value_inr:,.0f} | Risk: ₹{p.risk_amount_inr:,.0f}"
+            )
+            action_line = (
+                f"   Action: DO NOT ENTER. Setup if regime flips: {p.action_today}"
+                if stand_aside
+                else f"   Action: {p.action_today}"
+            )
             entry_lines = [
                 f"{i}. {p.name} ({p.ticker}) — {p.sector}",
                 f"   {p.desc}",
                 f"   Price: ₹{p.current_price} | 52W high: ₹{p.week52_high} ({p.week52_high_date})",
                 f"   20 SMA: ₹{p.sma_20} | Weekly HullMA30: ₹{p.hull_ma_30_weekly} | 3M return: {p.return_3m*100:+.1f}%",
                 f"   Entry: ₹{p.entry} | SL: ₹{p.stop_loss} | TP1: ₹{p.target_1} | TP2: ₹{p.target_2}",
-                f"   Suggested qty: {p.suggested_qty} | Position value: ₹{p.position_value_inr:,.0f} | Risk: ₹{p.risk_amount_inr:,.0f}",
-                f"   Action: {p.action_today}",
+                qty_line,
+                action_line,
             ]
             if earnings_line:
                 entry_lines.append(earnings_line)
@@ -965,12 +1055,15 @@ def build_alert(preview_mode: bool = False) -> tuple[str, str, str, dict]:
             log.info(f"Predictions Log: wrote {rows_logged} rows.")
 
     # 8. Narrative
-    narrative = generate_narrative(top_sectors, picks)
+    narrative = generate_narrative(top_sectors, picks, regime=regime)
 
     # 9. Build email content
     date_str = datetime.now(IST).strftime("%A, %B %d, %Y")
-    regime_tag = "" if regime.label == "TRADE" else f"[{regime.label}] "
-    subject = f"{regime_tag}Swing Alert — {date_str} ({len(picks)} new / {len(evaluated_positions)} open)"
+    if regime.label == "STAND_ASIDE":
+        subject = f"[STAND_ASIDE] Swing Alert - {date_str} (watchlist {len(picks)}, no new entries)"
+    else:
+        regime_tag = "" if regime.label == "TRADE" else f"[{regime.label}] "
+        subject = f"{regime_tag}Swing Alert — {date_str} ({len(picks)} new / {len(evaluated_positions)} open)"
     if not is_fresh:
         subject = "⚠️ " + subject + " [STALE DATA]"
     html = build_html(top_sectors, picks, evaluated_positions, narrative, date_str, universe_stats, new_names, freshness_msg=freshness_msg, is_fresh=is_fresh, regime=regime)
