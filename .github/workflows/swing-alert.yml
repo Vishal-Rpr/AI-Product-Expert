@@ -2,12 +2,9 @@ name: Swing Trading Alert
 
 on:
   schedule:
-    # 08:12 AM IST Mon-Fri (NSE days). Not 08:00 — daily-digest already owns
-    # 02:30 UTC, and GitHub drops colliding scheduled jobs under load.
-    # Changing this cron also reactivates a scheduled workflow GitHub has
-    # deactivated (manual Run workflow does not).
-    - cron: "12 8 * * 1-5"
-      timezone: "Asia/Kolkata"
+    # Same UTC pattern as daily-digest.yml (no timezone: key).
+    # 02:51 UTC = 08:21 AM IST. Monday-Friday only (NSE sessions).
+    - cron: "51 2 * * 1-5"
   workflow_dispatch:
 
 jobs:
