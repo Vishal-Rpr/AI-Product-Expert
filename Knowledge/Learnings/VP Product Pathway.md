@@ -8,7 +8,48 @@ This file is the pickup note for the other machine. The PDF is the source. Do th
 - Weekly tracker: https://docs.google.com/spreadsheets/d/1opv196vY2AIwAVHQBfwnDmWHaOeIyHafmkO-PFn-3yg/edit
 - Job list: Job Radar spreadsheet, tab **Pathway targets** (https://docs.google.com/spreadsheets/d/1g5tZ2S6GmeYYgxjIXNzYoEyw84sMIbxM7GA6_NkXcjs/edit)
 
-As of 30 Sep 2026 the open week is **Week 1 (28 Sep to 4 Oct)**. The eval below is specified in Part 3 and scheduled across Weeks 2 to 4. It is not the Week 1 task.
+## Resume here (16 Oct 2026)
+
+Week 3 (12 to 18 Oct) is the open week: finish generating the 30 PRDs. Week 4 scoring starts 19 Oct. Do not score until the four missing condition C docs are linked.
+
+Sheet: Scenario Run Master on the weekly tracker. That tab holds the output links. Score later on Blind rank, not on this tab and not on Eval key, because those show the condition.
+
+Progress on 16 Oct, before the last four runs:
+
+- Conditions A and B are done. 10 docs each. All linked. Do not regenerate them.
+- Condition C has 6 docs linked: Blind IDs 2, 3, 6, 7, 9, 12.
+- Condition C still needs links for Blind IDs 14 (invoicing and disputes), 18 (sales workload), 23 (HTS codes), and 25 (carrier scorecard).
+- Model for every run: Sonnet 5.5.
+
+How to finish condition C, one new Claude Desktop chat per PRD:
+
+1. Plugin is logistics-pm, already pushed (`Updated write spec command`). Reinstall from the Desktop zip only if this machine does not have that version. The two style PRDs are inside `skills/style-matching/SKILL.md`.
+2. Send `/logistics-pm:write-spec` plus the feature text only. Do not wrap it in "Generate a PRD for".
+3. On every follow-up, send only: `Nothing to add. Write the PRD.`
+4. Paste the PRD into the doc. Leave the plugin scorecard out.
+5. Name the doc `Eval {Blind ID} - {short title}`. Short titles: Shipment tracking, Sales workload, RFQ to priced quote, Demurrage and detention, Invoicing and disputes, Carrier scorecard, HTS codes, Credit limits, LCL consolidation, Rate-sheet ingestion.
+
+Before scoring, two linked docs still reveal the generation setup:
+
+- Eval 2, Demurrage and detention. A non-goal says the feature does not name users, sources, systems, workflows, or latency. The integration section says "The feature text does not name any source."
+- Eval 6, Shipment tracking. The overview says scope "is not specified in the feature request."
+
+No linked C doc names the plugin, the model, or a scorecard.
+
+Locked domain anchors, written before generation. Do not paste these into either public repo.
+
+- Demurrage: container still at the port past free time. Clock starts at offload. Ends at pickup from the port.
+- Detention: empty container not returned to the yard.
+- Sales priority: a rejected quote and an unanswered RFQ both outrank an accepted quote that expired and needs a requote.
+- Stage flow: Shipper Bookings, then RFQ submitted, then Quote shared, then after acceptance send the booking email, then rejected quotes if any.
+- LCL score of 5 includes weight and volume, stackable and dangerous goods, and the breakeven `Cost per CBM x Total CBM occupied >= Total $ cost of the full container`.
+- Carrier congestion sits next to the score and must not lower it. Shipper delay is not carrier performance.
+- One HTS code can be shared. The official definition must be shown.
+- Credit score of 5 includes outstanding invoices, credit notes, and ageing.
+
+Scoring rules for Week 4: domain accuracy 1 is a false operating rule an engineer would build, 3 is correct but missing a cost or compliance consequence, 5 is correct and names the second-order economics. Completeness is not "it copied my headings." Style is voice and format, not length. A metric needs a name, a formula, and a data source. Human scores and judge scores stay in separate column blocks. If C wins completeness because the template demands more sections, say that. If domain accuracy does not move, say that too. B and C now share the same two style PRDs. C still adds the freight skill, the template, the questions, and the checklist.
+
+Code state, already on GitHub: `Pilot build v1` at `readme and freight knowledge removed from primary copilot`. `logistics-pm` at `Updated write spec command`. Pull both on the other machine. Do not put company facts back into either public repo.
 
 The July 2026 note in `AI PM Learning Plan.md` is the older plan. Do not mark those milestone boxes done against this pathway.
 
